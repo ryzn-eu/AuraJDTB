@@ -389,37 +389,29 @@
 
         /* === FIX MOBILE 100% (Senza intaccare Desktop) === */
         @media (max-width: 768px) {
-            /* Rimuove il blocco d'orientamento per permettere l'uso su mobile */
             #orientation-blocker { display: none !important; }
             
-            /* Riorganizza la Top Bar in modo che non si sovrapponga */
             .home-top-bar { padding: 15px 20px !important; flex-direction: column; gap: 10px; align-items: center !important; text-align: center; background: transparent; }
             .sys-meta { font-size: 1rem; gap: 15px; justify-content: center; }
             
-            /* Notifiche adattate */
             #toast-layer { top: 30px; width: 95vw; }
             
-            /* Orologio e icone Home sistemati in modo pulito sotto la top bar */
             .tv-clock-center { margin-top: 10px !important; margin-bottom: 20px; }
             .tv-clock-time { font-size: 4.5rem; }
             .shelf-container { width: 95%; }
             .tile { width: 130px; height: 140px; margin-bottom: 10px; }
             .tile-icon { font-size: 2.5rem; }
             
-            /* App TV Mobile: Sidebar a tutto schermo e input OSD piccolo */
             .tv-sidebar-channels { width: 100%; left: -100%; padding: 30px 15px 20px 15px; }
             .tv-osd-input { font-size: 2.5rem; top: 10px; right: 10px; padding: 5px 15px; }
             .tv-channel-overlay { left: 20px; top: 80px; }
             .tv-channel-overlay h1 { font-size: 2.5rem; }
             
-            /* Guida TV a colonna singola pulita */
             .guide-grid { grid-template-columns: 1fr; gap: 15px; padding-bottom: 80px; }
             
-            /* Paddings generali per app */
             .full-app-padding { padding: 30px 20px 30px 20px; }
             .app-view-title { font-size: 1.8rem; }
             
-            /* Meteo: Stack verticale e margini corretti */
             .meteo-search-bar { flex-direction: column; }
             .meteo-search-bar button { padding: 12px; margin-top: 5px; }
             .meteo-main-card { padding: 20px; }
@@ -427,21 +419,18 @@
             .meteo-main-card #meteoTemp { font-size: 4rem !important; }
             .meteo-row-stats { grid-template-columns: 1fr; gap: 10px; }
             
-            /* Store: Card verticali ben impaginate */
             .store-catalog-grid { grid-template-columns: 1fr; }
             .store-promo-banner h2 { font-size: 1.5rem; }
             
-            /* Settings e Tutorial ottimizzati per spazio ridotto */
             .settings-layout { padding: 15px; }
             .tutorial-box { padding: 25px; margin: 15px; }
             
-            /* Barra navigazione browser fix */
             .browser-nav-bar { flex-direction: column; padding: 15px; }
             .browser-nav-bar input { width: 100%; }
             .browser-action-btn { width: 100%; }
         }
 
-        /* === AUTH & REMOTE ADDITIONS === */
+        /* === AUTH, REMOTE & FULLSCREEN ADDITIONS === */
         #aura-auth-overlay {
             position: fixed; inset: 0; background: rgba(3, 5, 10, 0.95); z-index: 999999999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -456,27 +445,25 @@
         #google-login-btn:hover { transform: scale(1.05); }
 
         /* Hides OS entirely on Mobile and Remote entirely on Desktop */
-        body.is-mobile-remote > *:not(#mobile-remote-view):not(#aura-auth-overlay):not(#toast-layer):not(.bg-ambient):not(script) {
+        body.is-mobile-remote > *:not(#mobile-remote-view):not(#aura-auth-overlay):not(#fullscreen-prompt):not(#toast-layer):not(.bg-ambient):not(script) {
             display: none !important;
         }
         body.is-desktop-os #mobile-remote-view { display: none !important; }
+        body.is-desktop-os #fullscreen-prompt { z-index: 9999999999; }
 
         #mobile-remote-view {
             position: fixed; inset: 0; background: var(--bg-dark); color: #fff; z-index: 9999999;
             display: flex; flex-direction: column; padding: 20px;
             overflow-y: auto;
         }
-        .remote-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); margin-top: 20px;}
-        .remote-header h3 { color: var(--neon-purple); font-size: 2.5rem; font-weight: 800; text-shadow: var(--glow-purple); }
+        .remote-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid transparent; margin-top: 30px;}
+        .remote-header h3 { color: #fff; font-size: 3.5rem; font-weight: 300; letter-spacing: 8px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
         .remote-header div { color: var(--text-gray); font-size: 1rem; margin-top: 5px; }
 
-        .remote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; max-width: 500px; width: 100%; margin-left: auto; margin-right: auto;}
-        .remote-grid button {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 20px; color: #fff; font-size: 1.2rem; font-weight: 600;
-            display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer;
-        }
-        .remote-grid button:active { background: var(--neon-blue); color: #000; box-shadow: var(--glow-blue);}
+        .remote-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 40px; max-width: 400px; width: 100%; margin-left: auto; margin-right: auto;}
+        .remote-grid button { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 0; color: var(--text-gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;}
+        .remote-grid button:hover { background: rgba(255,255,255,0.1); color: #fff; transform: translateY(-3px); }
+        .remote-grid button:active { background: var(--neon-blue); color: #000; box-shadow: var(--glow-blue); transform: scale(0.95);}
 
         .remote-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 350px; margin: 0 auto; width: 100%;}
         .remote-numpad button {
@@ -502,31 +489,37 @@
         </button>
     </div>
 
+    <div id="fullscreen-prompt" style="display: none; position: fixed; inset: 0; background: rgba(3, 5, 10, 0.95); z-index: 9999999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
+        <h2 style="color: var(--neon-blue); font-size: 2.5rem; margin-bottom: 20px; text-shadow: var(--glow-blue); text-align: center;">Esperienza Immersiva</h2>
+        <p style="color: var(--text-gray); font-size: 1.2rem; margin-bottom: 40px; text-align: center; max-width: 80%;">Aura OS è progettato per funzionare a schermo intero.</p>
+        <button onclick="enableFullscreenAndStart()" style="background: #fff; color: #000; font-size: 1.5rem; font-weight: 800; padding: 15px 40px; border-radius: 30px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.2);">ATTIVA E INIZIA</button>
+    </div>
+
     <div id="mobile-remote-view">
         <div class="remote-header">
-            <h3>Aura Remote</h3>
-            <div id="remote-user-email">In attesa...</div>
+            <h3>AURA</h3>
+            <div id="remote-user-email" style="opacity: 0.6; letter-spacing: 1px;">Connesso</div>
         </div>
         
         <div class="remote-grid">
-            <button onclick="sendRemoteCmd('GO_HOME', null)"><i data-lucide="home"></i> Home</button>
-            <button onclick="sendRemoteCmd('OPEN_APP', 'tv-view')"><i data-lucide="tv"></i> TV App</button>
-            <button onclick="sendRemoteCmd('OPEN_APP', 'music-view')"><i data-lucide="music"></i> Musica</button>
-            <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')"><i data-lucide="calendar"></i> Guida TV</button>
+            <button onclick="sendRemoteCmd('GO_HOME', null)"><i data-lucide="home"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'tv-view')"><i data-lucide="tv"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'music-view')"><i data-lucide="music"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')"><i data-lucide="calendar"></i></button>
         </div>
 
         <div class="remote-numpad">
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 1)">1</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 2)">2</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 3)">3</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 4)">4</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 5)">5</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 6)">6</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 7)">7</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 8)">8</button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 9)">9</button>
-            <button onclick="sendRemoteCmd('MEDIA_TOGGLE', null)" style="background: rgba(0,240,255,0.2);"><i data-lucide="play"></i></button>
-            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 0)">0</button>
+            <button onclick="handleRemoteNumber(1)">1</button>
+            <button onclick="handleRemoteNumber(2)">2</button>
+            <button onclick="handleRemoteNumber(3)">3</button>
+            <button onclick="handleRemoteNumber(4)">4</button>
+            <button onclick="handleRemoteNumber(5)">5</button>
+            <button onclick="handleRemoteNumber(6)">6</button>
+            <button onclick="handleRemoteNumber(7)">7</button>
+            <button onclick="handleRemoteNumber(8)">8</button>
+            <button onclick="handleRemoteNumber(9)">9</button>
+            <button onclick="sendRemoteCmd('MEDIA_TOGGLE', null)" style="background: rgba(0,240,255,0.1); border-color: var(--neon-blue);"><i data-lucide="play"></i></button>
+            <button onclick="handleRemoteNumber(0)">0</button>
             <button onclick="sendRemoteCmd('OPEN_APP', 'settings-view')"><i data-lucide="settings"></i></button>
         </div>
     </div>
@@ -563,6 +556,9 @@
         <div class="home-top-bar">
             <div class="sys-brand">AURA<span>TV</span></div>
             <div class="sys-meta">
+                <button onclick="toggleFullScreen()" style="background:transparent; border:none; color:var(--neon-blue); cursor:pointer; display:flex; align-items:center; transition:0.3s; margin-right: 15px;" title="Schermo Intero">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                </button>
                 <div class="badge-net">ONLINE</div>
                 <div id="sysTopTime">00:00</div>
             </div>
@@ -1287,13 +1283,8 @@
                     currentUser = user;
                     authOverlay.style.display = 'none';
                     
-                    if (isMobileDevice) {
-                        document.getElementById('remote-user-email').innerText = user.email;
-                        if(window.lucide) lucide.createIcons();
-                    } else {
-                        bootDesktopOS();
-                        listenToRemoteCommands();
-                    }
+                    // MOSTRA IL PROMPT PER IL FULLSCREEN PRIMA DI AVVIARE
+                    document.getElementById('fullscreen-prompt').style.display = 'flex';
                 } else {
                     authOverlay.style.display = 'flex';
                 }
@@ -1302,6 +1293,25 @@
             document.getElementById('google-login-btn').addEventListener('click', () => {
                 firebase.auth().signInWithPopup(provider).catch(error => alert("Errore di Login: " + error.message));
             });
+        };
+
+        /* === FUNZIONE DI AVVIO DOPO CONFERMA FULLSCREEN === */
+        window.enableFullscreenAndStart = () => {
+            // Tenta di richiedere il fullscreen (i browser moderni richiedono l'interazione umana, il click sul bottone basta)
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen API error:", err));
+            }
+            
+            document.getElementById('fullscreen-prompt').style.display = 'none';
+            
+            if (isMobileDevice) {
+                const emailDiv = document.getElementById('remote-user-email');
+                if(emailDiv) emailDiv.innerText = currentUser.email;
+                if(window.lucide) lucide.createIcons();
+            } else {
+                bootDesktopOS();
+                listenToRemoteCommands();
+            }
         };
 
         /* === LOGICA ORIGINAL BOOT DESKTOP OS === */
@@ -1860,6 +1870,53 @@
 
         function executeWebNavigation() { let inputUrl = document.getElementById('browserUrlField').value.trim(); if(!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) inputUrl = 'https://' + inputUrl; document.getElementById('sysBrowserFrame').src = inputUrl; document.getElementById('browserUrlField').value = inputUrl; }
         function clearSystemCache() { localStorage.clear(); triggerNotification("Ripristino sistema in corso..."); setTimeout(() => location.reload(), 1500); }
+
+        /* === LOGICA TELECOMANDO 2 CIFRE === */
+        let remoteChannelBuffer = "";
+        let remoteChannelTimeout;
+
+        window.handleRemoteNumber = function(num) {
+            remoteChannelBuffer += num;
+            const emailDiv = document.getElementById('remote-user-email');
+            if(emailDiv) emailDiv.innerText = "CH: " + remoteChannelBuffer;
+            
+            clearTimeout(remoteChannelTimeout);
+            
+            if (remoteChannelBuffer.length >= 2) {
+                const finalChannel = parseInt(remoteChannelBuffer);
+                sendRemoteCmd('CHANGE_CHANNEL', finalChannel);
+                resetRemoteBuffer();
+            } else {
+                remoteChannelTimeout = setTimeout(() => {
+                    const finalChannel = parseInt(remoteChannelBuffer);
+                    sendRemoteCmd('CHANGE_CHANNEL', finalChannel);
+                    resetRemoteBuffer();
+                }, 2000);
+            }
+            if(navigator.vibrate) navigator.vibrate(50);
+        };
+
+        window.resetRemoteBuffer = function() {
+            remoteChannelBuffer = "";
+            setTimeout(() => {
+                const emailDiv = document.getElementById('remote-user-email');
+                if(emailDiv && currentUser) emailDiv.innerText = currentUser.email;
+            }, 1000);
+        };
+
+        /* === GESTIONE SCHERMO INTERO MANUALE (TOP BAR) === */
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    triggerNotification(`Errore FS: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        };
+
     </script>
 </body>
 </html>
