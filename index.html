@@ -1229,7 +1229,8 @@
           projectId: "palinsesto-75399",
           storageBucket: "palinsesto-75399.firebasestorage.app",
           messagingSenderId: "1033591071601",
-          appId: "1:1033591071601:web:d3812a387de05bc93dccd0"
+          appId: "1:1033591071601:web:d3812a387de05bc93dccd0",
+          measurementId: "G-8F7NHHE67W"
         };
         const palinsestoApp = firebase.initializeApp(palinsestoConfig, "palinsestoApp");
         const queueRef = palinsestoApp.database().ref('palinsesto_queue');
@@ -1573,7 +1574,7 @@
 
         /* === LOGICA FIREBASE GUIDA TV ESTETICA MODERNA === */
         function initializeFirebaseGuide() {
-            const guideRef = database.ref('guida_tv_channels');
+            const guideRef = palinsestoApp.database().ref('guida_tv_channels');
             const container = document.getElementById('firebaseGuideGrid');
 
             guideRef.on('value', (snapshot) => {
