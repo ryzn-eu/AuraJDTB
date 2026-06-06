@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTV OS - Next-Gen Smart Interface</title>
+    <title>AuraTV</title>
     
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -1937,7 +1937,7 @@
             const list = document.getElementById('chListContainer'); list.innerHTML = '';
             for(let i = 1; i <= 99; i++) {
                 const isAura = i === 1; const row = document.createElement('div'); row.className = `ch-row ${isAura ? 'active' : ''}`; row.id = `sidebar-ch-${i}`; row.onclick = () => selectTvChannel(i);
-                row.innerHTML = `<div class="ch-idx">${i.toString().padStart(2, '0')}</div><div class="ch-meta-title">${isAura ? 'Aura1 HD' : 'Canale ' + i}</div>`; list.appendChild(row);
+                row.innerHTML = `<div class="ch-idx">${i.toString().padStart(2, '0')}</div><div class="ch-meta-title">${isAura ? 'Aura1 HD' : 'CH ' + i}</div>`; list.appendChild(row);
             }
             selectTvChannel(1);
         }
@@ -1946,7 +1946,7 @@
             currentChannelNum = num; document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
             const activeRow = document.getElementById(`sidebar-ch-${num}`); if(activeRow) { activeRow.classList.add('active'); activeRow.scrollIntoView({ behavior: "smooth", block: "center" }); }
             const isAura = num === 1;
-            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTT';
+            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTS';
             const overlay = document.querySelector('.tv-channel-overlay'); overlay.classList.add('visible');
             clearTimeout(channelOverlayTimeout); channelOverlayTimeout = setTimeout(() => { overlay.classList.remove('visible'); }, 1000);
             const player = document.getElementById('tvPlayerCore');
@@ -1972,7 +1972,7 @@
                     tvInputBuffer += e.key; if(tvInputBuffer.length > 3) tvInputBuffer = tvInputBuffer.slice(-3);
                     const osd = document.getElementById('tvOsdDisplay'); osd.innerText = tvInputBuffer; osd.classList.add('visible');
                     clearTimeout(tvInputTimeout); tvInputTimeout = setTimeout(() => {
-                        const channelNum = parseInt(tvInputBuffer, 10); if(channelNum > 0 && channelNum <= 99) selectTvChannel(channelNum); else triggerNotification("Canale non disponibile");
+                        const channelNum = parseInt(tvInputBuffer, 10); if(channelNum > 0 && channelNum <= 99) selectTvChannel(channelNum); else triggerNotification("non disponibile");
                         tvInputBuffer = ""; osd.classList.remove('visible');
                     }, 1200);
                 }
