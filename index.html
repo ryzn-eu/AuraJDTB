@@ -440,12 +440,96 @@
             .browser-nav-bar input { width: 100%; }
             .browser-action-btn { width: 100%; }
         }
+
+        /* === AUTH & REMOTE ADDITIONS === */
+        #aura-auth-overlay {
+            position: fixed; inset: 0; background: rgba(3, 5, 10, 0.95); z-index: 999999999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+        #aura-auth-overlay h1 { font-size: 4rem; color: var(--neon-blue); text-shadow: var(--glow-blue); margin-bottom: 2rem;}
+        #google-login-btn {
+            background: #fff; color: #000; font-size: 1.5rem; font-weight: 800; padding: 15px 40px;
+            border-radius: 30px; border: none; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 30px rgba(255,255,255,0.2);
+        }
+        #google-login-btn:hover { transform: scale(1.05); }
+
+        /* Hides OS entirely on Mobile and Remote entirely on Desktop */
+        body.is-mobile-remote > *:not(#mobile-remote-view):not(#aura-auth-overlay):not(#toast-layer):not(.bg-ambient):not(script) {
+            display: none !important;
+        }
+        body.is-desktop-os #mobile-remote-view { display: none !important; }
+
+        #mobile-remote-view {
+            position: fixed; inset: 0; background: var(--bg-dark); color: #fff; z-index: 9999999;
+            display: flex; flex-direction: column; padding: 20px;
+            overflow-y: auto;
+        }
+        .remote-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); margin-top: 20px;}
+        .remote-header h3 { color: var(--neon-purple); font-size: 2.5rem; font-weight: 800; text-shadow: var(--glow-purple); }
+        .remote-header div { color: var(--text-gray); font-size: 1rem; margin-top: 5px; }
+
+        .remote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; max-width: 500px; width: 100%; margin-left: auto; margin-right: auto;}
+        .remote-grid button {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 20px; color: #fff; font-size: 1.2rem; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer;
+        }
+        .remote-grid button:active { background: var(--neon-blue); color: #000; box-shadow: var(--glow-blue);}
+
+        .remote-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 350px; margin: 0 auto; width: 100%;}
+        .remote-numpad button {
+            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%; aspect-ratio: 1; color: var(--neon-blue); font-size: 2rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-family: 'Share Tech Mono', monospace; text-shadow: var(--glow-blue);
+        }
+        .remote-numpad button:active { background: var(--neon-blue); color: #000; text-shadow: none; transform: scale(0.95); }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+
+    <div id="aura-auth-overlay">
+        <h1>AURA OS</h1>
+        <button id="google-login-btn">
+            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Accedi per continuare
+        </button>
+    </div>
+
+    <div id="mobile-remote-view">
+        <div class="remote-header">
+            <h3>Aura Remote</h3>
+            <div id="remote-user-email">In attesa...</div>
+        </div>
+        
+        <div class="remote-grid">
+            <button onclick="sendRemoteCmd('GO_HOME', null)"><i data-lucide="home"></i> Home</button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'tv-view')"><i data-lucide="tv"></i> TV App</button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'music-view')"><i data-lucide="music"></i> Musica</button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')"><i data-lucide="calendar"></i> Guida TV</button>
+        </div>
+
+        <div class="remote-numpad">
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 1)">1</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 2)">2</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 3)">3</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 4)">4</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 5)">5</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 6)">6</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 7)">7</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 8)">8</button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 9)">9</button>
+            <button onclick="sendRemoteCmd('MEDIA_TOGGLE', null)" style="background: rgba(0,240,255,0.2);"><i data-lucide="play"></i></button>
+            <button onclick="sendRemoteCmd('CHANGE_CHANNEL', 0)">0</button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'settings-view')"><i data-lucide="settings"></i></button>
+        </div>
+    </div>
 
     <div id="orientation-blocker">
         <div class="blocker-icon">🔄</div>
@@ -1150,13 +1234,12 @@
         const palinsestoApp = firebase.initializeApp(palinsestoConfig, "palinsestoApp");
         const queueRef = palinsestoApp.database().ref('palinsesto_queue');
 
-        /* === VARIABILI GLOBALI WEBTV CLOUD === */
+        /* === VARIABILI GLOBALI WEBTV CLOUD E SISTEMA === */
         let webtvCurrentKey = null;
         let webtvCurrentQueueData = {};
         let webtvIsFirstBoot = true;
         let ytPlayerInstance = null;
 
-        /* === REGISTRO APPLICAZIONI === */
         const coreSystemApps = [
             { id: 'tv-view', name: 'Aura TV', icon: '📺' },
             { id: 'guidatv-view', name: 'Guida TV', icon: '📅' },
@@ -1182,8 +1265,49 @@
             isMobileDevice = true;
         }
 
-        /* === INIZIALIZZAZIONE APPLICAZIONE === */
+        /* === INIZIALIZZAZIONE APPLICAZIONE (MODIFICATA CON LOGIN E REMOTE) === */
+        let currentUser = null;
+        let lastCommandTimestamp = 0;
+
         window.onload = () => {
+            // Assegna classe CSS per isolare l'ambiente
+            if (isMobileDevice) {
+                document.body.classList.add('is-mobile-remote');
+            } else {
+                document.body.classList.add('is-desktop-os');
+            }
+
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            // Ascoltatore di Autenticazione Globale
+            firebase.auth().onAuthStateChanged((user) => {
+                const authOverlay = document.getElementById('aura-auth-overlay');
+                if (user) {
+                    currentUser = user;
+                    authOverlay.style.display = 'none';
+                    
+                    if (isMobileDevice) {
+                        document.getElementById('remote-user-email').innerText = user.email;
+                        if(window.lucide) lucide.createIcons();
+                    } else {
+                        bootDesktopOS();
+                        listenToRemoteCommands();
+                    }
+                } else {
+                    authOverlay.style.display = 'flex';
+                }
+            });
+
+            document.getElementById('google-login-btn').addEventListener('click', () => {
+                firebase.auth().signInWithPopup(provider).catch(error => alert("Errore di Login: " + error.message));
+            });
+        };
+
+        /* === LOGICA ORIGINAL BOOT DESKTOP OS === */
+        function bootDesktopOS() {
+            if (window.osBooted) return; 
+            window.osBooted = true;
+
             syncSystemClock();
             setInterval(syncSystemClock, 1000);
             renderSystemHomeTiles();
@@ -1200,7 +1324,54 @@
             if(!localStorage.getItem('aura_tutorial_done')) {
                 initTutorial();
             }
-        };
+        }
+
+        /* === SISTEMA BRIDGE TELECOMANDO MOBILE === */
+        function sendRemoteCmd(action, payload) {
+            if(!currentUser) return;
+            database.ref('aura_remotes/' + currentUser.uid).set({
+                action: action,
+                payload: payload,
+                timestamp: Date.now()
+            });
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function listenToRemoteCommands() {
+            database.ref('aura_remotes/' + currentUser.uid).on('value', (snapshot) => {
+                const cmd = snapshot.val();
+                if (!cmd || cmd.timestamp <= lastCommandTimestamp) return;
+                lastCommandTimestamp = cmd.timestamp;
+
+                switch(cmd.action) {
+                    case 'OPEN_APP':
+                        openTargetView(cmd.payload);
+                        break;
+                    case 'CHANGE_CHANNEL':
+                        if (currentActiveView !== 'tv-view') openTargetView('tv-view');
+                        selectTvChannel(parseInt(cmd.payload));
+                        break;
+                    case 'GO_HOME':
+                        goHome();
+                        break;
+                    case 'MEDIA_TOGGLE':
+                        if(currentActiveView === 'tv-view') {
+                            if(ytPlayerInstance && typeof ytPlayerInstance.getPlayerState === 'function') {
+                                if(ytPlayerInstance.getPlayerState() === 1) pauseWebTV();
+                                else ytPlayerInstance.playVideo();
+                            } else {
+                               const nativePlayer = document.getElementById('native-player');
+                               if(nativePlayer) {
+                                   if(nativePlayer.paused) nativePlayer.play(); else nativePlayer.pause();
+                               }
+                            }
+                        } else {
+                            triggerNotification("Media control attivato da Telecomando");
+                        }
+                        break;
+                }
+            });
+        }
 
         /* === MOTORE WEBTV CLOUD (Integrazione) === */
         function initWebTV() {
@@ -1210,7 +1381,6 @@
                 document.head.appendChild(tag);
             }
 
-            // Sblocco audio fallback: se il browser blocca l'unmute automatico, il primissimo touch autorizza l'audio
             const unlockAudioContext = () => {
                 if (ytPlayerInstance && typeof ytPlayerInstance.unMute === 'function') ytPlayerInstance.unMute();
                 const nativePlayer = document.getElementById('native-player');
@@ -1235,7 +1405,6 @@
                             const antennaOverlay = document.getElementById('antenna-overlay');
                             antennaOverlay.style.display = 'flex';
                             forceLiveSync();
-                            // Timing richiesto di 5 secondi esatti su ogni comparsa dell'antenna
                             setTimeout(() => { antennaOverlay.style.display = 'none'; }, 5000);
                         }
                     }
@@ -1276,26 +1445,25 @@
                         },
                         events: {
                             'onReady': (event) => {
-                                event.target.mute(); // Forza sempre il muto all'avvio per garantire l'autoplay mobile
+                                event.target.mute(); 
                                 event.target.setVolume(100);
                                 event.target.setPlaybackQuality('hd1080');
                                 event.target.playVideo();
                             },
                             'onStateChange': (event) => {
-                                if (event.data === 1) { // 1 = PLAYING
-                                    // Tenta lo sblocco automatico dell'audio non appena parte
+                                if (event.data === 1) { 
                                     setTimeout(() => { event.target.unMute(); }, 300);
 
                                     if (webtvIsFirstBoot) {
                                         setTimeout(() => {
                                             antennaOverlay.style.display = 'none';
                                             webtvIsFirstBoot = false;
-                                        }, 5000); // Timing chirurgico a 5 sec
+                                        }, 5000); 
                                     } else {
                                         setTimeout(() => {
                                             advOverlay.style.display = 'none';
                                             if(advVideo) advVideo.pause();
-                                        }, 5000); // 5 sec per pubblicità
+                                        }, 5000); 
                                     }
                                 }
                             }
@@ -1313,20 +1481,18 @@
                     }, 100);
                 }
             } else {
-                // Aggiunto playsinline e forzato muted all'avvio nel player nativo
                 document.getElementById('player-box').innerHTML = `<video id="native-player" src="${v.url}" autoplay playsinline muted></video>`;
                 const videoEl = document.getElementById('native-player');
                 videoEl.currentTime = elapsedSeconds;
                 
                 videoEl.onplaying = () => {
-                    // Tenta lo sblocco automatico dell'audio
                     setTimeout(() => { 
                         videoEl.muted = false; 
                         videoEl.volume = 1.0; 
                     }, 300);
 
                     if (webtvIsFirstBoot) {
-                        setTimeout(() => { antennaOverlay.style.display = 'none'; webtvIsFirstBoot = false; }, 5000); // 5 sec
+                        setTimeout(() => { antennaOverlay.style.display = 'none'; webtvIsFirstBoot = false; }, 5000);
                     } else {
                         setTimeout(() => { advOverlay.style.display = 'none'; if(advVideo) advVideo.pause(); }, 5000);
                     }
@@ -1578,7 +1744,6 @@
             currentActiveView = viewId;
             document.getElementById('tvSidebar').classList.remove('open');
             
-            // Forza il sync visivo della WebTV quando si riapre l'app TV (se è sul canale 1)
             if (viewId === 'tv-view' && currentChannelNum === 1) {
                 if (window.webtvInitialized) forceLiveSync();
             }
@@ -1650,7 +1815,6 @@
             const webTvContainer = document.getElementById('webtv-container');
 
             if(isAura) {
-                // Attiva WebTV Cloud sul canale 1
                 player.style.display = 'none';
                 webTvContainer.style.display = 'block';
                 
@@ -1661,7 +1825,6 @@
                     forceLiveSync();
                 }
             } else {
-                // Disattiva WebTV e mostra schermo fittizio
                 webTvContainer.style.display = 'none';
                 player.style.display = 'block';
                 player.innerHTML = `<div style="text-align:center; font-family:'Share Tech Mono'; font-size:3rem; color:rgba(255,255,255,0.1);">[ SEGNALE ASSENTE ]</div>`;
