@@ -176,6 +176,29 @@
         .ch-meta-title { font-weight: 800; font-size: 1.1rem; }
         @media (min-width: 1025px) { .ch-meta-title { font-size: 1.2rem; } }
 
+        /* === BROWSER WEB TV CLOUD CSS === */
+        #player-box iframe, #player-box video, #yt-player-element { 
+            position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; pointer-events: none; 
+        }
+        .antenna-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; z-index: 5; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Courier New', Courier, monospace; pointer-events: none;
+        }
+        .antenna-text { color: #00adb5; font-size: 1.4rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 8px; animation: blink 1s infinite; }
+        .antenna-subtext { color: #666; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .antenna-overlay::after { content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%); background-size: 100% 4px; z-index: 6; }
+        
+        .adv-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; z-index: 5; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; pointer-events: none;
+        }
+        .adv-overlay video { width: 100%; height: 100%; object-fit: cover; }
+        .adv-badge { position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.8); color: #ffcc00; padding: 6px 12px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; border: 1px solid #ffcc00; border-radius: 4px; z-index: 6; font-family: monospace; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
         /* === GUIDA TV VIEW - RESTYLING MODERNO ESTREMO === */
         .guide-grid { 
             display: grid; 
@@ -484,6 +507,19 @@
                 <h1 id="tvChTitle">01 - Aura1 HD</h1>
                 <p id="tvChStatus">Palinsesto Speciale</p>
             </div>
+            
+            <div id="webtv-container" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; overflow: hidden; background: #000;">
+                <div id="player-box" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+                <div id="antenna-overlay" class="antenna-overlay" style="display: none; z-index: 5;">
+                    <div class="antenna-text">📡 SINTONIZZAZIONE CANALE...</div>
+                    <div class="antenna-subtext">Attendere prego</div>
+                </div>
+                <div id="adv-overlay" class="adv-overlay" style="display: none; z-index: 5;">
+                    <div class="adv-badge">Pubblicità</div>
+                    <video id="adv-video-element" src="https://www.w3schools.com/html/mov_bbb.mp4" loop muted playsinline></video>
+                </div>
+            </div>
+
             <div id="tvPlayerCore"></div>
         </div>
     </div>
@@ -1101,7 +1137,26 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        /* === REGISTRO APPLICAZIONI (Inclusa Aura Music nativa) === */
+        /* === CONFIGURAZIONE FIREBASE WEBTV (CANALE 1) === */
+        const palinsestoConfig = {
+          apiKey: "AIzaSyBOAf7-sE1GoyJkkmywWV3K5nZO_VDy5GU",
+          authDomain: "palinsesto-75399.firebaseapp.com",
+          databaseURL: "https://palinsesto-75399-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "palinsesto-75399",
+          storageBucket: "palinsesto-75399.firebasestorage.app",
+          messagingSenderId: "1033591071601",
+          appId: "1:1033591071601:web:d3812a387de05bc93dccd0"
+        };
+        const palinsestoApp = firebase.initializeApp(palinsestoConfig, "palinsestoApp");
+        const queueRef = palinsestoApp.database().ref('palinsesto_queue');
+
+        /* === VARIABILI GLOBALI WEBTV CLOUD === */
+        let webtvCurrentKey = null;
+        let webtvCurrentQueueData = {};
+        let webtvIsFirstBoot = true;
+        let ytPlayerInstance = null;
+
+        /* === REGISTRO APPLICAZIONI === */
         const coreSystemApps = [
             { id: 'tv-view', name: 'Aura TV', icon: '📺' },
             { id: 'guidatv-view', name: 'Guida TV', icon: '📅' },
@@ -1136,12 +1191,10 @@
             buildTvChannels();
             renderMeteoHours("☀️", "22°");
             
-            // Inizializza il database e la guida TV
             initializeFirebaseGuide();
             setupMobileGestures();
             switchSettingsTab('theme', document.querySelector('.settings-opt-btn.active'));
             
-            // Generazione infallibile del Blob per l'App Aura Music
             injectAuraMusicApp();
 
             if(!localStorage.getItem('aura_tutorial_done')) {
@@ -1149,9 +1202,185 @@
             }
         };
 
+        /* === MOTORE WEBTV CLOUD (Integrazione) === */
+        function initWebTV() {
+            if (!window.YT) {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(tag);
+            }
+
+            queueRef.on('value', (snapshot) => {
+                webtvCurrentQueueData = snapshot.val() || {};
+                if(currentChannelNum === 1) renderWebTVPlayer();
+            });
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) {
+                    pauseWebTV();
+                } else {
+                    if (currentChannelNum === 1) {
+                        if (webtvIsFirstBoot) {
+                            forceLiveSync();
+                        } else {
+                            const antennaOverlay = document.getElementById('antenna-overlay');
+                            antennaOverlay.style.display = 'flex';
+                            forceLiveSync();
+                            // Timing richiesto di 5 secondi esatti su ogni comparsa dell'antenna
+                            setTimeout(() => { antennaOverlay.style.display = 'none'; }, 5000);
+                        }
+                    }
+                }
+            });
+
+            setInterval(() => {
+                if (!document.hidden && currentChannelNum === 1) {
+                    forceLiveSync(); 
+                }
+            }, 10000);
+        }
+
+        function startLiveContent(v, elapsedSeconds) {
+            const advOverlay = document.getElementById('adv-overlay');
+            const advVideo = document.getElementById('adv-video-element');
+            const antennaOverlay = document.getElementById('antenna-overlay');
+
+            if (webtvIsFirstBoot) {
+                antennaOverlay.style.display = 'flex';
+            } else {
+                advOverlay.style.display = 'flex';
+                if(advVideo) { advVideo.currentTime = 0; advVideo.play().catch(() => {}); }
+            }
+
+            if (v.url.includes('youtu')) {
+                const match = v.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+                const videoId = (match && match[2].length === 11) ? match[2] : '';
+                
+                const initYTPlayer = () => {
+                    document.getElementById('player-box').innerHTML = '<div id="yt-player-element"></div>';
+                    
+                    ytPlayerInstance = new window.YT.Player('yt-player-element', {
+                        videoId: videoId,
+                        playerVars: {
+                            'autoplay': 1, 'controls': 0, 'disablekb': 1, 'fs': 0, 'modestbranding': 1, 'rel': 0,
+                            'start': elapsedSeconds, 'iv_load_policy': 3, 'vq': 'hd1080'
+                        },
+                        events: {
+                            'onReady': (event) => {
+                                if (webtvIsFirstBoot) event.target.mute(); else event.target.unMute();
+                                event.target.setVolume(100);
+                                event.target.setPlaybackQuality('hd1080');
+                                event.target.playVideo();
+                            },
+                            'onStateChange': (event) => {
+                                if (event.data === 1) {
+                                    if (webtvIsFirstBoot) {
+                                        setTimeout(() => {
+                                            antennaOverlay.style.display = 'none';
+                                            webtvIsFirstBoot = false;
+                                        }, 5000); // Timing chirurgico a 5 sec
+                                    } else {
+                                        setTimeout(() => {
+                                            advOverlay.style.display = 'none';
+                                            if(advVideo) advVideo.pause();
+                                        }, 5000); // 5 sec per pubblicità
+                                    }
+                                }
+                            }
+                        }
+                    });
+                };
+
+                if (typeof window.YT !== 'undefined' && window.YT.Player) {
+                    initYTPlayer();
+                } else {
+                    const checkReady = setInterval(() => {
+                        if (typeof window.YT !== 'undefined' && window.YT.Player) {
+                            clearInterval(checkReady); initYTPlayer();
+                        }
+                    }, 100);
+                }
+            } else {
+                document.getElementById('player-box').innerHTML = `<video id="native-player" src="${v.url}" autoplay></video>`;
+                const videoEl = document.getElementById('native-player');
+                videoEl.currentTime = elapsedSeconds;
+                
+                if (webtvIsFirstBoot) { videoEl.muted = true; } else { videoEl.muted = false; videoEl.volume = 1.0; }
+                
+                videoEl.onplaying = () => {
+                    if (webtvIsFirstBoot) {
+                        setTimeout(() => { antennaOverlay.style.display = 'none'; webtvIsFirstBoot = false; }, 5000); // 5 sec
+                    } else {
+                        setTimeout(() => { advOverlay.style.display = 'none'; if(advVideo) advVideo.pause(); }, 5000);
+                    }
+                };
+            }
+        }
+
+        function renderWebTVPlayer() {
+            const now = Date.now();
+            let found = false;
+            
+            Object.entries(webtvCurrentQueueData).forEach(([key, v]) => {
+                const end = v.startTime + (v.durata * 1000);
+                if(now >= v.startTime && now < end) {
+                    found = true;
+                    if(webtvCurrentKey !== key) {
+                        webtvCurrentKey = key;
+                        const elapsedSeconds = Math.floor((now - v.startTime) / 1000);
+                        startLiveContent(v, elapsedSeconds);
+                    }
+                }
+            });
+
+            if(!found) {
+                document.getElementById('player-box').innerHTML = `<div style="text-align:center; padding-top:20%; font-family: 'Share Tech Mono', monospace; font-size:3rem; color:rgba(255,255,255,0.2);">[ NESSUN PROGRAMMA IN ONDA ]</div>`;
+                webtvCurrentKey = null;
+            }
+        }
+
+        function forceLiveSync() {
+            if (!webtvCurrentKey || !webtvCurrentQueueData[webtvCurrentKey]) return;
+            
+            const now = Date.now();
+            const v = webtvCurrentQueueData[webtvCurrentKey];
+            const end = v.startTime + (v.durata * 1000);
+            
+            if (now >= end) {
+                renderWebTVPlayer();
+                return;
+            }
+
+            const exactElapsedSeconds = Math.floor((now - v.startTime) / 1000);
+
+            if (ytPlayerInstance && typeof ytPlayerInstance.getCurrentTime === 'function' && v.url.includes('youtu')) {
+                const ytTime = ytPlayerInstance.getCurrentTime();
+                if (Math.abs(exactElapsedSeconds - ytTime) > 2) {
+                    ytPlayerInstance.seekTo(exactElapsedSeconds, true);
+                    ytPlayerInstance.playVideo();
+                }
+            } else {
+                const nativePlayer = document.getElementById('native-player');
+                if (nativePlayer) {
+                    const nativeTime = nativePlayer.currentTime;
+                    if (Math.abs(exactElapsedSeconds - nativeTime) > 2) {
+                        nativePlayer.currentTime = exactElapsedSeconds;
+                        nativePlayer.play().catch(()=>{});
+                    }
+                }
+            }
+        }
+
+        function pauseWebTV() {
+            if (ytPlayerInstance && typeof ytPlayerInstance.pauseVideo === 'function') {
+                ytPlayerInstance.pauseVideo();
+            }
+            const nativePlayer = document.getElementById('native-player');
+            if (nativePlayer) nativePlayer.pause();
+        }
+
         /* === INIEZIONE ISOLATA ED INFALLIBILE DI AURA MUSIC === */
         function injectAuraMusicApp() {
-            // Estrae il testo grezzo dal template e decodifica le chiusure script che avevamo mascherato
             let rawCode = document.getElementById('aura-music-app-source').textContent;
             rawCode = rawCode.replace(/<\\\/script>/g, '</' + 'script>');
             
@@ -1164,7 +1393,6 @@
             const guideRef = database.ref('guida_tv_channels');
             const container = document.getElementById('firebaseGuideGrid');
 
-            // Impostiamo l'ascoltatore di rete per leggere sempre. Se il DB è vuoto, lo creiamo!
             guideRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
@@ -1176,19 +1404,17 @@
                         initialSetupData[chKey] = {
                             numero: i,
                             titoloCanale: i === 1 ? "Aura1 HD" : `Canale Digitale ${i.toString().padStart(2, '0')}`,
-                            programmaInOnda: i === 1 ? "Aura Live Stream: Pre-Show" : "Palinsesto Standard",
-                            prossimoProgramma: i === 1 ? "Live Concert Special" : "Contenuto d'Archivio",
+                            programmaInOnda: i === 1 ? "Palinsesto WebTV Cloud" : "Palinsesto Standard",
+                            prossimoProgramma: i === 1 ? "Aggiornamento in corso" : "Contenuto d'Archivio",
                             orarioInizio: "19:00",
-                            durata: "120 min" // <-- NUOVO CAMPO DURATA MODIFICABILE DA SERVER
+                            durata: "120 min"
                         };
                     }
                     guideRef.set(initialSetupData);
                 } else {
-                    // Dati ricevuti: Costruiamo l'interfaccia
                     container.innerHTML = '';
                     Object.keys(data).forEach((key) => {
                         const channel = data[key];
-                        // Simulazione di una barra di scorrimento viva
                         const progress = Math.floor(Math.random() * 70 + 15);
 
                         container.innerHTML += `
@@ -1216,7 +1442,6 @@
                             </div>`;
                     });
                     
-                    // Renderizza le icone Lucide all'interno della guida
                     if(window.lucide) lucide.createIcons();
                 }
             }, (error) => {
@@ -1251,7 +1476,6 @@
         let tutorialStep = 0;
         let isTutorialActive = false;
 
-        // Inietto una piccola animazione CSS per simulare lo swipe su mobile
         const style = document.createElement('style');
         style.innerHTML = `
             @keyframes swipeAnim {
@@ -1261,109 +1485,54 @@
                 100% { opacity: 0; }
             }
             .swipe-icon { display: inline-block; animation: swipeAnim 1.5s infinite; font-size: 1.5rem; margin-top: 10px; }
-            
-            /* Rendo l'overlay più trasparente per far vedere bene l'interfaccia sotto */
             #tutorial-overlay.interactive-mode { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(4px) !important; }
         `;
         document.head.appendChild(style);
 
-        // Definizione degli step dinamici
         function getTutorialSteps() {
             return [
-                { 
-                    title: "Benvenuto su AuraTV OS", 
-                    desc: "Questo è il tuo nuovo ecosistema digitale. Clicca su 'Avanti' per un rapido tour interattivo delle funzioni principali.", 
-                    targetId: null, 
-                    btn: "Avanti" 
-                },
-                { 
-                    title: "Il Cuore del Sistema", 
-                    desc: "Questo pulsante intelligente nell'angolo in basso a sinistra è la tua ancora. Premilo in qualsiasi momento per tornare a questa schermata Home.", 
-                    targetId: "homeDotElement", 
-                    btn: "Capito" 
-                },
-                { 
-                    title: "Le Tue Applicazioni", 
-                    desc: "Qui trovi l'accesso rapido a tutto l'ecosistema: Aura Music, Meteo, Browser e le app che scaricherai dallo Store.", 
-                    targetId: "homeGrid", 
-                    btn: "Ottimo" 
-                },
-                { 
-                    title: "Controlli Aura TV", 
-                    // Il testo cambia dinamicamente in base al dispositivo
-                    desc: isMobileDevice 
-                        ? "Sull'app TV usa i gesti:<br>• <b>Scorri Su/Giù</b> per cambiare canale.<br>• <b>Scorri Destra/Sinistra</b> per il menu.<br><div class='swipe-icon'>👆</div>"
-                        : "Sull'app TV sei al comando con la tastiera:<br>• <b>Tasti 0-9</b> per digitare il canale.<br>• <b>Tasto CTRL</b> per aprire o chiudere la lista canali.", 
-                    targetId: "tile-tv-view", 
-                    btn: "Tutto Chiaro" 
-                },
-                { 
-                    title: "Sei Pronto", 
-                    desc: "Il setup iniziale è completato. Goditi la potenza e il design fluido di AuraTV OS.", 
-                    targetId: null, 
-                    btn: "Inizia a usare Aura" 
-                }
+                { title: "Benvenuto su AuraTV OS", desc: "Questo è il tuo nuovo ecosistema digitale. Clicca su 'Avanti' per un rapido tour interattivo delle funzioni principali.", targetId: null, btn: "Avanti" },
+                { title: "Il Cuore del Sistema", desc: "Questo pulsante intelligente nell'angolo in basso a sinistra è la tua ancora. Premilo in qualsiasi momento per tornare a questa schermata Home.", targetId: "homeDotElement", btn: "Capito" },
+                { title: "Le Tue Applicazioni", desc: "Qui trovi l'accesso rapido a tutto l'ecosistema: Aura Music, Meteo, Browser e le app che scaricherai dallo Store.", targetId: "homeGrid", btn: "Ottimo" },
+                { title: "Controlli Aura TV", desc: isMobileDevice ? "Sull'app TV usa i gesti:<br>• <b>Scorri Su/Giù</b> per cambiare canale.<br>• <b>Scorri Destra/Sinistra</b> per il menu.<br><div class='swipe-icon'>👆</div>" : "Sull'app TV sei al comando con la tastiera:<br>• <b>Tasti 0-9</b> per digitare il canale.<br>• <b>Tasto CTRL</b> per aprire o chiudere la lista canali.", targetId: "tile-tv-view", btn: "Tutto Chiaro" },
+                { title: "Sei Pronto", desc: "Il setup iniziale è completato. Goditi la potenza e il design fluido di AuraTV OS.", targetId: null, btn: "Inizia a usare Aura" }
             ];
         }
 
         function initTutorial() { 
-            // Controllo Cache: se è già stato fatto, ignora.
             if(localStorage.getItem('aura_tutorial_done') === 'true') return;
-
             isTutorialActive = true; 
             const overlay = document.getElementById('tutorial-overlay');
             overlay.classList.add('visible', 'interactive-mode'); 
-            
-            // Mi assicuro che la home sia visibile per il tutorial
             openTargetView('home-view');
-            
             tutorialStep = 0;
             updateTutorialUI(); 
         }
 
         function updateTutorialUI() { 
-            // 1. Rimuovo l'evidenziazione precedente
-            document.querySelectorAll('.highlight-element').forEach(el => {
-                el.classList.remove('highlight-element');
-            });
-
+            document.querySelectorAll('.highlight-element').forEach(el => { el.classList.remove('highlight-element'); });
             const steps = getTutorialSteps();
             const step = steps[tutorialStep]; 
-            
-            // 2. Aggiorno i testi
             document.getElementById('tutTitle').innerHTML = step.title; 
             document.getElementById('tutDesc').innerHTML = step.desc; 
             document.getElementById('tutBtn').innerText = step.btn; 
 
-            // 3. Applica l'evidenziazione al nuovo target (se presente)
             if (step.targetId) {
                 const targetEl = document.getElementById(step.targetId);
-                if (targetEl) {
-                    targetEl.classList.add('highlight-element');
-                    // Scrolla dolcemente verso l'elemento se è fuori dallo schermo
-                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                if (targetEl) { targetEl.classList.add('highlight-element'); targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
             }
         }
 
         function nextTutorialStep() { 
             tutorialStep++; 
-            if(tutorialStep >= getTutorialSteps().length) {
-                endTutorial(); 
-            } else {
-                updateTutorialUI(); 
-            }
+            if(tutorialStep >= getTutorialSteps().length) endTutorial(); else updateTutorialUI(); 
         }
 
         function endTutorial() { 
             isTutorialActive = false; 
-            
-            // Rimuovo l'overlay e le evidenziazioni
             const overlay = document.getElementById('tutorial-overlay');
             overlay.classList.remove('visible', 'interactive-mode'); 
             document.querySelectorAll('.highlight-element').forEach(el => el.classList.remove('highlight-element'));
-            
-            // Salvo in cache per non ripeterlo più
             localStorage.setItem('aura_tutorial_done', 'true'); 
             triggerNotification("Sistema pronto e configurato."); 
         }
@@ -1377,7 +1546,6 @@
                 document.getElementById('centerTime').innerText = timeFormatted.substring(0, 5);
                 document.getElementById('centerDate').innerText = dateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             }
-            updateAuraCountdown();
         }
 
         function triggerNotification(text) {
@@ -1392,6 +1560,11 @@
             if(target) target.classList.add('active');
             currentActiveView = viewId;
             document.getElementById('tvSidebar').classList.remove('open');
+            
+            // Forza il sync visivo della WebTV quando si riapre l'app TV (se è sul canale 1)
+            if (viewId === 'tv-view' && currentChannelNum === 1) {
+                if (window.webtvInitialized) forceLiveSync();
+            }
         }
 
         function goHome() { openTargetView('home-view'); }
@@ -1444,27 +1617,39 @@
             selectTvChannel(1);
         }
 
+        /* === GESTIONE CAMBIO CANALE E WEB TV === */
         function selectTvChannel(num) {
             currentChannelNum = num; document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
             const activeRow = document.getElementById(`sidebar-ch-${num}`); if(activeRow) { activeRow.classList.add('active'); activeRow.scrollIntoView({ behavior: "smooth", block: "center" }); }
             const isAura = num === 1;
-            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTS';
+            
+            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; 
+            document.getElementById('tvChStatus').innerText = isAura ? 'Palinsesto WebTV Cloud' : 'Nessun Segnale DTS';
+            
             const overlay = document.querySelector('.tv-channel-overlay'); overlay.classList.add('visible');
             clearTimeout(channelOverlayTimeout); channelOverlayTimeout = setTimeout(() => { overlay.classList.remove('visible'); }, 1000);
+            
             const player = document.getElementById('tvPlayerCore');
-            if(isAura) {
-                player.innerHTML = `<div style="text-align:center; padding: 40px; background: rgba(0,0,0,0.5); border-radius:40px; border: 2px solid var(--neon-blue);"><h2 style="color:var(--neon-blue); font-size: 2rem;">AURA LIVE STREAM: PRE-SHOW</h2><div id="auraCountdownTimer" style="font-size:4rem; font-weight:bold; color:#fff;">--:--:--</div></div>`; updateAuraCountdown();
-            } else {
-                player.innerHTML = `<div style="text-align:center; font-family:'Share Tech Mono'; font-size:3rem; color:rgba(255,255,255,0.1);">[ SEGNALE ASSENTE ]</div>`;
-            }
-        }
+            const webTvContainer = document.getElementById('webtv-container');
 
-        function updateAuraCountdown() {
-            const countdownEl = document.getElementById('auraCountdownTimer'); if(!countdownEl) return;
-            const now = new Date(), target = new Date(); target.setHours(19, 0, 0, 0); let diff = target - now;
-            if(diff <= 0) { countdownEl.innerHTML = "<span style='color: var(--neon-green);'>L'EVENTO È INIZIATO!</span>"; return; }
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24), m = Math.floor((diff / 1000 / 60) % 60), s = Math.floor((diff / 1000) % 60);
-            countdownEl.innerHTML = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if(isAura) {
+                // Attiva WebTV Cloud sul canale 1
+                player.style.display = 'none';
+                webTvContainer.style.display = 'block';
+                
+                if (!window.webtvInitialized) {
+                    initWebTV();
+                    window.webtvInitialized = true;
+                } else {
+                    forceLiveSync();
+                }
+            } else {
+                // Disattiva WebTV e mostra schermo fittizio
+                webTvContainer.style.display = 'none';
+                player.style.display = 'block';
+                player.innerHTML = `<div style="text-align:center; font-family:'Share Tech Mono'; font-size:3rem; color:rgba(255,255,255,0.1);">[ SEGNALE ASSENTE ]</div>`;
+                pauseWebTV();
+            }
         }
 
         let tvInputBuffer = ""; let tvInputTimeout;
