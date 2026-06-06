@@ -1854,7 +1854,7 @@
             currentChannelNum = num; document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
             const activeRow = document.getElementById(`sidebar-ch-${num}`); if(activeRow) { activeRow.classList.add('active'); activeRow.scrollIntoView({ behavior: "smooth", block: "center" }); }
             const isAura = num === 1;
-            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTT';
+            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTs';
             const overlay = document.querySelector('.tv-channel-overlay'); overlay.classList.add('visible');
             clearTimeout(channelOverlayTimeout); channelOverlayTimeout = setTimeout(() => { overlay.classList.remove('visible'); }, 1000);
             const player = document.getElementById('tvPlayerCore');
