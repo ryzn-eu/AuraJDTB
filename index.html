@@ -362,6 +362,60 @@
         .highlight-element.smart-home-dot {
             opacity: 1 !important; transform: scale(1) !important; width: 60px !important; height: 60px !important; border-radius: 20px !important; display: flex !important; align-items: center !important; justify-content: center !important;
         }
+
+        /* === FIX MOBILE 100% (Senza intaccare Desktop) === */
+        @media (max-width: 768px) {
+            /* Rimuove il blocco d'orientamento per permettere l'uso su mobile */
+            #orientation-blocker { display: none !important; }
+            
+            /* Riorganizza la Top Bar in modo che non si sovrapponga */
+            .system-top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; background: rgba(3,5,10,0.95); }
+            .sys-meta { font-size: 1rem; gap: 15px; }
+            
+            /* Notifiche adattate */
+            #toast-layer { top: 110px; width: 95vw; }
+            
+            /* Orologio e icone Home sistemati */
+            .tv-clock-center { margin-top: 110px; margin-bottom: 20px; }
+            .tv-clock-time { font-size: 4.5rem; }
+            .shelf-container { width: 95%; }
+            .tile { width: 130px; height: 140px; margin-bottom: 10px; }
+            .tile-icon { font-size: 2.5rem; }
+            
+            /* App TV Mobile: Sidebar a tutto schermo e input OSD piccolo */
+            .tv-sidebar-channels { width: 100%; left: -100%; padding: 100px 15px 20px 15px; }
+            .tv-osd-input { font-size: 2.5rem; top: 10px; right: 10px; padding: 5px 15px; }
+            .tv-channel-overlay { left: 20px; top: 80px; }
+            .tv-channel-overlay h1 { font-size: 2.5rem; }
+            
+            /* Guida TV a colonna singola pulita */
+            .guide-grid { grid-template-columns: 1fr; gap: 15px; padding-bottom: 80px; }
+            
+            /* Paddings generali per app */
+            .full-app-padding { padding: 120px 20px 30px 20px; }
+            .app-view-title { font-size: 1.8rem; }
+            
+            /* Meteo: Stack verticale e margini corretti */
+            .meteo-search-bar { flex-direction: column; }
+            .meteo-search-bar button { padding: 12px; margin-top: 5px; }
+            .meteo-main-card { padding: 20px; }
+            .meteo-main-card h2 { font-size: 2.5rem !important; }
+            .meteo-main-card #meteoTemp { font-size: 4rem !important; }
+            .meteo-row-stats { grid-template-columns: 1fr; gap: 10px; }
+            
+            /* Store: Card verticali ben impaginate */
+            .store-catalog-grid { grid-template-columns: 1fr; }
+            .store-promo-banner h2 { font-size: 1.5rem; }
+            
+            /* Settings e Tutorial ottimizzati per spazio ridotto */
+            .settings-layout { padding: 15px; }
+            .tutorial-box { padding: 25px; margin: 15px; }
+            
+            /* Barra navigazione browser fix */
+            .browser-nav-bar { flex-direction: column; padding: 15px; }
+            .browser-nav-bar input { width: 100%; }
+            .browser-action-btn { width: 100%; }
+        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
