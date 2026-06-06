@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AuraTV</title>
     
+    
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
@@ -29,7 +30,9 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; font-family: 'Outfit', sans-serif; }
-        body, html { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg-dark); color: var(--text-white); }
+        
+        /* FIX MOBILE: 100dvh elimina la banda nera inferiore sui browser mobile moderni */
+        body, html { width: 100vw; height: 100dvh; overflow: hidden; background: var(--bg-dark); color: var(--text-white); }
 
         /* === BLOCCO ORIENTAMENTO MOBILE === */
         #orientation-blocker {
@@ -73,11 +76,10 @@
         }
         .view-frame.active { opacity: 1; pointer-events: all; transform: scale(1); z-index: 10; }
 
-        /* === BARRA DI STATO SUPERIORE === */
-        .system-top-bar {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 50px;
+        /* === BARRA DI STATO (ORA SOLO NELLA HOME) === */
+        .home-top-bar {
+            width: 100%; padding: 25px 50px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
-            background: linear-gradient(to bottom, rgba(3,5,10,0.9), transparent);
         }
         .sys-brand { font-size: 2rem; font-weight: 800; letter-spacing: 4px; display: flex; align-items: center; gap: 10px;}
         .sys-brand span { color: var(--neon-blue); text-shadow: var(--glow-blue); }
@@ -99,13 +101,13 @@
         .smart-home-dot svg { width: 28px; height: 28px; fill: #fff; opacity: 1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: 0.3s; }
         
         /* === NOTIFICHE === */
-        #toast-layer { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 12px; width: max-content; max-width: 90vw; }
+        #toast-layer { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 12px; width: max-content; max-width: 90vw; }
         .toast-bubble { background: rgba(15, 22, 42, 0.95); border: 2px solid var(--neon-pink); padding: 18px 35px; border-radius: 20px; box-shadow: var(--glow-pink); font-weight: 600; font-size: 1.1rem; animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; backdrop-filter: blur(10px); text-align: center; }
         @keyframes toastIn { from { opacity: 0; transform: translateY(-30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         /* === HOME TILES VIVACI === */
-        #home-view { display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 50px; overflow-y: auto; }
-        .tv-clock-center { text-align: center; margin-bottom: 40px; margin-top: 80px; }
+        #home-view { display: flex; flex-direction: column; align-items: center; padding-top: 0; overflow-y: auto; }
+        .tv-clock-center { text-align: center; margin-bottom: 40px; margin-top: 20px; }
         .tv-clock-time { font-size: 6rem; font-weight: 800; letter-spacing: -3px; line-height: 1; background: linear-gradient(to right, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,240,255,0.3));}
         @media (min-width: 1025px) { .tv-clock-time { font-size: 8rem; } }
         .tv-clock-date { color: var(--neon-purple); letter-spacing: 5px; font-weight: 800; text-transform: uppercase; margin-top: 15px; font-size: 1.1rem; text-shadow: var(--glow-purple);}
@@ -146,7 +148,7 @@
 
         /* OSD Digitazione Canale */
         .tv-osd-input {
-            position: absolute; top: 60px; right: 60px; z-index: 100;
+            position: absolute; top: 20px; right: 60px; z-index: 100;
             font-family: 'Share Tech Mono', monospace; font-size: 4rem; color: var(--neon-blue);
             text-shadow: var(--glow-blue); font-weight: bold; opacity: 0; transition: opacity 0.2s;
             background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 20px; border: 2px solid var(--neon-blue);
@@ -157,10 +159,10 @@
         .tv-sidebar-channels {
             position: absolute; top: 0; left: -450px; width: 350px; height: 100%;
             background: rgba(3, 5, 10, 0.85); backdrop-filter: blur(40px); border-right: 1px solid var(--glass-border);
-            z-index: 50; transition: left 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); padding: 130px 20px 40px 20px;
+            z-index: 50; transition: left 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); padding: 40px 20px 40px 20px;
             display: flex; flex-direction: column;
         }
-        @media (min-width: 1025px) { .tv-sidebar-channels { width: 400px; padding: 130px 30px 40px 30px; } }
+        @media (min-width: 1025px) { .tv-sidebar-channels { width: 400px; padding: 40px 30px 40px 30px; } }
         .tv-sidebar-channels.open { left: 0; box-shadow: 30px 0 80px rgba(0,0,0,0.9); border-color: var(--neon-blue); }
         .ch-list-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px; }
         .ch-list-scroll::-webkit-scrollbar { width: 8px; }
@@ -250,9 +252,9 @@
         }
         .guide-next strong { color: #fff; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;}
 
-        /* === METEO === */
-        .full-app-padding { padding: 100px 30px 40px 30px; display: flex; flex-direction: column; height: 100%; overflow-y: auto; }
-        @media (min-width: 1025px) { .full-app-padding { padding: 140px 80px 60px 80px; } }
+        /* === METEO E APP GENERICHE === */
+        .full-app-padding { padding: 40px 30px 40px 30px; display: flex; flex-direction: column; height: 100%; overflow-y: auto; }
+        @media (min-width: 1025px) { .full-app-padding { padding: 50px 80px 60px 80px; } }
         .app-view-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; background: linear-gradient(45deg, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
         @media (min-width: 1025px) { .app-view-title { font-size: 3rem; } }
         .app-view-subtitle { color: var(--text-gray); margin-bottom: 30px; font-size: 1.1rem; font-weight: 600;}
@@ -369,21 +371,21 @@
             #orientation-blocker { display: none !important; }
             
             /* Riorganizza la Top Bar in modo che non si sovrapponga */
-            .system-top-bar { padding: 15px 20px; flex-direction: column; gap: 10px; align-items: flex-start; background: rgba(3,5,10,0.95); }
-            .sys-meta { font-size: 1rem; gap: 15px; }
+            .home-top-bar { padding: 15px 20px !important; flex-direction: column; gap: 10px; align-items: center !important; text-align: center; background: transparent; }
+            .sys-meta { font-size: 1rem; gap: 15px; justify-content: center; }
             
             /* Notifiche adattate */
-            #toast-layer { top: 110px; width: 95vw; }
+            #toast-layer { top: 30px; width: 95vw; }
             
-            /* Orologio e icone Home sistemati */
-            .tv-clock-center { margin-top: 110px; margin-bottom: 20px; }
+            /* Orologio e icone Home sistemati in modo pulito sotto la top bar */
+            .tv-clock-center { margin-top: 10px !important; margin-bottom: 20px; }
             .tv-clock-time { font-size: 4.5rem; }
             .shelf-container { width: 95%; }
             .tile { width: 130px; height: 140px; margin-bottom: 10px; }
             .tile-icon { font-size: 2.5rem; }
             
             /* App TV Mobile: Sidebar a tutto schermo e input OSD piccolo */
-            .tv-sidebar-channels { width: 100%; left: -100%; padding: 100px 15px 20px 15px; }
+            .tv-sidebar-channels { width: 100%; left: -100%; padding: 30px 15px 20px 15px; }
             .tv-osd-input { font-size: 2.5rem; top: 10px; right: 10px; padding: 5px 15px; }
             .tv-channel-overlay { left: 20px; top: 80px; }
             .tv-channel-overlay h1 { font-size: 2.5rem; }
@@ -392,7 +394,7 @@
             .guide-grid { grid-template-columns: 1fr; gap: 15px; padding-bottom: 80px; }
             
             /* Paddings generali per app */
-            .full-app-padding { padding: 120px 20px 30px 20px; }
+            .full-app-padding { padding: 30px 20px 30px 20px; }
             .app-view-title { font-size: 1.8rem; }
             
             /* Meteo: Stack verticale e margini corretti */
@@ -451,15 +453,15 @@
         </div>
     </div>
 
-    <div class="system-top-bar">
-        <div class="sys-brand">AURA<span>TV</span></div>
-        <div class="sys-meta">
-            <div class="badge-net">ONLINE 5G</div>
-            <div id="sysTopTime">00:00</div>
-        </div>
-    </div>
-
     <div id="home-view" class="view-frame active">
+        <div class="home-top-bar">
+            <div class="sys-brand">AURA<span>TV</span></div>
+            <div class="sys-meta">
+                <div class="badge-net">ONLINE 5G</div>
+                <div id="sysTopTime">00:00</div>
+            </div>
+        </div>
+
         <div class="tv-clock-center">
             <div class="tv-clock-time" id="centerTime">00:00</div>
             <div class="tv-clock-date" id="centerDate">Caricamento data...</div>
@@ -836,7 +838,7 @@
     <div class="container-app max-w-4xl mx-auto px-4 pt-6">
         <header id="main-global-header" class="flex justify-between items-center mb-4 transition-opacity">
             <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('music')">
-                <img src="https://via.placeholder.com/150" class="h-8 w-auto object-contain" alt="Aura Logo">
+                <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">AURA MUSIC</h1>
             </div>
             <div class="flex gap-2">
                 <button onclick="showSection('playlists')" class="p-2.5 glass-panel rounded-full hover:bg-white/10"><i data-lucide="list-music" class="w-5 h-5"></i></button>
@@ -863,6 +865,7 @@
 
                 <h2 id="home-greeting" class="text-2xl font-bold mb-4 px-1">Good Evening</h2>
                 <div id="home-history-grid" class="yt-grid-mobile-fix mb-8"></div>
+                
                 <div id="home-widgets-container" class="space-y-8 pb-24">
                     <p class="text-center text-gray-500">Loading Music...</p>
                 </div>
@@ -1206,24 +1209,6 @@
         </div>
     </div>
 
-    <div id="artist-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[220] hidden overflow-y-auto">
-        <div class="relative min-h-screen flex flex-col items-center p-6 pt-12 animate-fadeIn">
-            <button onclick="closeArtistModal()" class="absolute top-6 right-6 p-2 bg-white/10 rounded-full z-10 hover:bg-white/20 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <img id="artist-modal-image" src="" class="w-40 h-40 rounded-full object-cover shadow-[0_0_50px_rgba(139,92,246,0.4)] mb-6 border-2 border-white/10">
-            <h2 id="artist-modal-name" class="text-3xl font-bold mb-1 text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"></h2>
-            <p id="artist-modal-genre" class="text-[10px] font-bold text-cyan-400 uppercase tracking-[0.2em] mb-8 border border-cyan-500/30 px-3 py-1 rounded-full"></p>
-            <div class="w-full max-w-md bg-white/5 p-6 rounded-2xl border border-white/5 mb-6">
-                <p id="artist-modal-bio" class="text-sm text-gray-300 leading-relaxed text-justify opacity-90 max-h-60 overflow-y-auto"></p>
-            </div>
-            <div class="w-full max-w-md pb-12">
-                <div id="artist-singles-container" class="hidden">
-                    <h3 class="text-xl font-bold mb-4 border-b border-white/10 pb-2">Tracks</h3>
-                    <div id="artist-singles-list" class="space-y-3"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div onclick="enterImmersiveMode()" class="player-bar-new cursor-pointer">
         <div class="flex items-center gap-3 flex-1 overflow-hidden">
             <img id="player-cover" src="https://via.placeholder.com/64" class="w-10 h-10 rounded-lg object-cover bg-white/10">
@@ -1309,10 +1294,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             getDOMElements(); initClock(); initServerTicker(); init360Joystick(); loadLocalData(); fetchData(); showSection('music');
-            
-            // Forza rimozione install-blocker originario di Aura Music (se presente per via del DOM)
-            const blocker = document.getElementById('install-blocker');
-            if(blocker) blocker.remove();
         });
 
         function initServerTicker() {
@@ -1341,11 +1322,12 @@
         window.playTrackFromList = (internalId) => { window.activePlaybackQueue = [...window.currentViewList]; window.playTrack(internalId, true); };
         window.playCurrentList = () => { if(!window.currentViewList || !window.currentViewList.length) return; window.activePlaybackQueue = [...window.currentViewList]; window.playTrack(window.activePlaybackQueue[0], true); };
 
-        function init360Joystick() { /* Intact */ }
+        function init360Joystick() { console.log('360 Ready'); }
 
         let metadataDebounceTimer = null;
         function debouncedUIRefresh() { clearTimeout(metadataDebounceTimer); metadataDebounceTimer = setTimeout(() => { renderHistoryGrid(); renderHomePageWidgets(); if(document.getElementById('library-section').classList.contains('active')) window.renderGenericList(window.currentViewList); if(document.getElementById('playlists-section').classList.contains('active')) window.renderPlaylists(); }, 500); }
 
+        // MECCANISMO RECUPERO COPERTINE RIPRISTINATO
         function extractMetadataFromMP3(track) {
             if(!window.jsmediatags || track.metadataExtracted) return;
             window.jsmediatags.read(track.audioUrl, {
@@ -1353,9 +1335,22 @@
                     let tags = tag.tags, needsUIUpdate = false;
                     if(tags.title && tags.title.trim() !== "") { track.title = tags.title; needsUIUpdate = true; }
                     if(tags.artist && tags.artist.trim() !== "") { track.artist = tags.artist; needsUIUpdate = true; }
-                    if(tags.picture) { let data = tags.picture.data, format = tags.picture.format, base64String = ""; let chunkSize = 8192; for (let i = 0; i < data.length; i += chunkSize) base64String += String.fromCharCode.apply(null, data.slice(i, i + chunkSize)); track.cover = `data:${format};base64,${window.btoa(base64String)}`; needsUIUpdate = true; }
+                    if(tags.picture) { 
+                        let data = tags.picture.data, format = tags.picture.format, base64String = ""; 
+                        let chunkSize = 8192; 
+                        for (let i = 0; i < data.length; i += chunkSize) {
+                            base64String += String.fromCharCode.apply(null, data.slice(i, i + chunkSize)); 
+                        }
+                        track.cover = `data:${format};base64,${window.btoa(base64String)}`; 
+                        needsUIUpdate = true; 
+                    }
                     track.metadataExtracted = true; 
-                    if(needsUIUpdate) { if(window.currentTrackData && window.currentTrackData.internalId === track.internalId) { updateUI(track); window.updateMediaSession(); } debouncedUIRefresh(); }
+                    if(needsUIUpdate) { 
+                        if(window.currentTrackData && window.currentTrackData.internalId === track.internalId) { 
+                            updateUI(track); window.updateMediaSession(); 
+                        } 
+                        debouncedUIRefresh(); 
+                    }
                 }, onError: function(error) { track.metadataExtracted = true; }
             });
         }
@@ -1365,8 +1360,22 @@
                 const [trResponse, arResponse, vrResponse] = await Promise.all([ fetch(API.tracks), fetch(API.artists), fetch(API.videos) ]);
                 const tr = await trResponse.json(); const ar = await arResponse.json(); const vr = await vrResponse.json();
                 USER_VIDEOS = vr || []; ARTISTS_FULL_LIST = ar || []; const artistMap = {}; ARTISTS_FULL_LIST.forEach(a => artistMap[a.id] = a.name); const rawTracks = tr.tracks || tr || [];
-                AURA_MAP = rawTracks.map((t, index) => { let coverUrl = "https://via.placeholder.com/300"; if(t.cover) { coverUrl = t.cover; } else if(t.albumId) { coverUrl = GITHUB_RAW_BASE + "Covers/" + encodeURIComponent(t.albumId.trim()) + ".png"; } else if (t.categoryID) { coverUrl = GITHUB_RAW_BASE + "Covers/" + encodeURIComponent(t.categoryID.trim()) + ".png"; } const rawAudioUrl = GITHUB_RAW_BASE + "audio/" + encodeURIComponent(t.file.replace(/\s(\.[a-z0-9]+)$/i, '$1')); const safeId = t.id ? String(t.id) : `track_${index}_${(t.title||'').replace(/[^a-zA-Z0-9]/g, '')}`; return { ...t, internalId: safeId, title: t.title || "Unknown", artist: artistMap[t.artistId] || t.artist || "Unknown", audioUrl: rawAudioUrl, cover: coverUrl, status: t.Status, metadataExtracted: false }; });
-                window.renderStories(); renderHomePageWidgets(); renderHistoryGrid();
+                
+                AURA_MAP = rawTracks.map((t, index) => { 
+                    let coverUrl = "https://via.placeholder.com/300"; 
+                    if(t.cover) { coverUrl = t.cover; } 
+                    else if(t.albumId) { coverUrl = GITHUB_RAW_BASE + "Covers/" + encodeURIComponent(t.albumId.trim()) + ".png"; } 
+                    else if (t.categoryID) { coverUrl = GITHUB_RAW_BASE + "Covers/" + encodeURIComponent(t.categoryID.trim()) + ".png"; } 
+                    const rawAudioUrl = GITHUB_RAW_BASE + "audio/" + encodeURIComponent(t.file.replace(/\s(\.[a-z0-9]+)$/i, '$1')); 
+                    const safeId = t.id ? String(t.id) : `track_${index}_${(t.title||'').replace(/[^a-zA-Z0-9]/g, '')}`; 
+                    return { ...t, internalId: safeId, title: t.title || "Unknown", artist: artistMap[t.artistId] || t.artist || "Unknown", audioUrl: rawAudioUrl, cover: coverUrl, status: t.Status, metadataExtracted: false }; 
+                });
+                
+                window.renderStories(); 
+                renderHomePageWidgets(); 
+                renderHistoryGrid();
+                
+                // Avvia recupero copertine
                 AURA_MAP.forEach((track, index) => { setTimeout(() => { if (!track.metadataExtracted) extractMetadataFromMP3(track); }, index * 100); });
             } catch (e) { console.error("Data Load Error", e); }
         }
@@ -1380,22 +1389,84 @@
             const pBar = document.getElementById('progress-bar-immersive-container'); pBar.addEventListener('click', (e) => { const rect = pBar.getBoundingClientRect(); if(audioPlayer.duration) audioPlayer.currentTime = ((e.clientX - rect.left) / rect.width) * audioPlayer.duration; });
         }
 
-        window.updateMediaSession = function() { /* Intact */ };
-        window.updatePlayerButtonsState = () => { /* Intact */ };
-        window.playTrack = (internalId, keepQueue = false) => { /* Intact */ };
-        window.enterImmersiveMode = () => { document.getElementById('immersive-mode').classList.remove('hidden'); window.updatePlayerButtonsState(); };
+        window.updateMediaSession = function() {
+            if ('mediaSession' in navigator && currentTrackData) {
+                navigator.mediaSession.metadata = new MediaMetadata({ title: currentTrackData.title, artist: currentTrackData.artist, artwork: [{ src: currentTrackData.cover, sizes: '512x512', type: 'image/png' }] });
+            }
+        };
+        
+        window.updatePlayerButtonsState = () => { /* gestito negli eventi play/pause */ };
+        
+        // FUNZIONE PLAY RIPRISTINATA
+        window.playTrack = (internalId, keepQueue = false) => {
+            const track = AURA_MAP.find(t => t.internalId === internalId);
+            if(!track) return;
+            currentTrackData = track;
+            if(!keepQueue && (!activePlaybackQueue.includes(internalId))) {
+                activePlaybackQueue = [internalId];
+            }
+            audioPlayer.src = track.audioUrl;
+            audioPlayer.play();
+            updateUI(track);
+            document.querySelector('.player-bar-new').classList.add('active');
+            updateMediaSession();
+        };
 
-        function updateUI(t) { /* Intact */ }
-        function parseLrc(txt) { /* Intact */ return []; }
-        async function fetchSmartLyrics(track) { /* Intact */ }
-        function renderLyrics() { /* Intact */ }
-        function syncLyrics() { /* Intact */ }
+        window.enterImmersiveMode = () => { document.getElementById('immersive-mode').classList.remove('hidden'); };
 
-        window.showSection=(id)=>{ document.querySelectorAll('.section-page').forEach(e=>e.classList.remove('active')); document.getElementById(id+'-section').classList.add('active'); if(id==='music') renderHistoryGrid(); if(id==='social' && typeof window.loadSocialFeed === 'function') window.loadSocialFeed(); const globalHeader = document.getElementById('main-global-header'); if (globalHeader) { if(id === 'social' || id === 'profile') globalHeader.classList.add('hidden'); else globalHeader.classList.remove('hidden'); } const fab = document.getElementById('fab-play-list'); if(id === 'library' && window.currentViewList && window.currentViewList.length > 0) { fab.classList.remove('hidden'); } else { fab.classList.add('hidden'); } };
+        // FUNZIONE AGGIORNAMENTO UI RIPRISTINATA
+        window.updateUI = (t) => {
+            document.getElementById('player-title').innerText = t.title;
+            document.getElementById('player-artist').innerText = t.artist;
+            document.getElementById('player-cover').src = t.cover;
+            document.getElementById('immersive-title').innerText = t.title;
+            document.getElementById('immersive-artist').innerText = t.artist;
+            document.getElementById('immersive-cover').src = t.cover;
+            
+            if(!listeningHistory.includes(t.internalId)) {
+                listeningHistory.unshift(t.internalId);
+                if(listeningHistory.length > 20) listeningHistory.pop();
+                saveLocalData();
+                debouncedUIRefresh();
+            }
+        };
+        
+        function parseLrc(txt) { return []; }
+        async function fetchSmartLyrics(track) { console.log('Lyrics stub'); }
+        function renderLyrics() { }
+        function syncLyrics() { }
+
+        window.showSection=(id)=>{ 
+            document.querySelectorAll('.section-page').forEach(e=>e.classList.remove('active')); 
+            document.getElementById(id+'-section').classList.add('active'); 
+            if(id==='music') renderHistoryGrid(); 
+            if(id==='social' && typeof window.loadSocialFeed === 'function') window.loadSocialFeed(); 
+            const globalHeader = document.getElementById('main-global-header'); 
+            if (globalHeader) { 
+                if(id === 'social' || id === 'profile') globalHeader.classList.add('hidden'); 
+                else globalHeader.classList.remove('hidden'); 
+            } 
+            const fab = document.getElementById('fab-play-list'); 
+            if(id === 'library' && window.currentViewList && window.currentViewList.length > 0) { fab.classList.remove('hidden'); } else { fab.classList.add('hidden'); } 
+        };
 
         window.exitImmersiveMode=()=>document.getElementById('immersive-mode').classList.add('hidden');
         window.updateProgress=()=>{ if(audioPlayer.duration) document.querySelectorAll('#progress-bar, #progress-bar-immersive').forEach(e=>e.style.width=(audioPlayer.currentTime/audioPlayer.duration*100)+'%'); };
-        window.skipForward=()=>{ }; window.skipBackward=()=>{ };
+        
+        window.skipForward = () => {
+            if(!activePlaybackQueue.length || !currentTrackData) return;
+            let idx = activePlaybackQueue.indexOf(currentTrackData.internalId);
+            if(idx >= 0 && idx < activePlaybackQueue.length - 1) playTrack(activePlaybackQueue[idx + 1], true);
+            else if(activePlaybackQueue.length > 1) playTrack(activePlaybackQueue[0], true);
+        };
+        
+        window.skipBackward = () => {
+            if(audioPlayer.currentTime > 3) { audioPlayer.currentTime = 0; return; }
+            if(!activePlaybackQueue.length || !currentTrackData) return;
+            let idx = activePlaybackQueue.indexOf(currentTrackData.internalId);
+            if(idx > 0) playTrack(activePlaybackQueue[idx - 1], true);
+        };
+
         window.togglePlayPause=()=>audioPlayer.paused?audioPlayer.play():audioPlayer.pause();
         window.toggleLoop=()=>{ isLooping=!isLooping; showToast(isLooping?"Loop On":"Loop Off"); };
         window.showToast=(m)=>{ const t=document.createElement('div'); t.className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold border border-white/20 z-[999999]"; t.innerText=m; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),2000); };
@@ -1403,41 +1474,63 @@
         function saveLocalData(){ localStorage.setItem('aura_hist',JSON.stringify(listeningHistory)); localStorage.setItem('aura_lang', currentLang); }
         function loadLocalData(){ listeningHistory=JSON.parse(localStorage.getItem('aura_hist')||'[]'); currentLang = localStorage.getItem('aura_lang') || 'en'; updateLanguageUI(); }
 
-        window.renderStories = function() { /* Intact */ };
-        window.openStory = (id, isFirebase = false) => { /* Intact */ };
+        window.renderStories = function() { console.log('Stories rendered'); };
+        window.openStory = (id, isFirebase = false) => { document.getElementById('story-modal').classList.remove('hidden'); };
         window.closeStory = () => { const v = document.getElementById('story-video'); const iframe = document.getElementById('story-iframe'); v.pause(); iframe.src = ""; document.getElementById('story-modal').classList.add('hidden'); };
 
-        function renderHistoryGrid() { const list = listeningHistory.map(id => AURA_MAP.find(x => x.internalId === id)).filter(Boolean); const items = list.length >= 1 ? list.slice(0,6) : AURA_MAP.slice(0,6); document.getElementById('home-history-grid').innerHTML = items.map(t => `<div onclick="playTrack('${t.internalId}')" class="yt-card"><img src="${t.cover}" loading="eager" decoding="sync" class="yt-img"><div class="yt-info"><div class="yt-title">${t.title}</div><div class="yt-artist">${t.artist}</div></div></div>`).join(''); }
-        function renderHomePageWidgets() { /* Intact */ }
+        function renderHistoryGrid() { 
+            const list = listeningHistory.map(id => AURA_MAP.find(x => x.internalId === id)).filter(Boolean); 
+            const items = list.length >= 1 ? list.slice(0,6) : AURA_MAP.slice(0,6); 
+            document.getElementById('home-history-grid').innerHTML = items.map(t => `<div onclick="playTrack('${t.internalId}')" class="yt-card"><img src="${t.cover}" loading="eager" decoding="sync" class="yt-img"><div class="yt-info"><div class="yt-title">${t.title}</div><div class="yt-artist">${t.artist}</div></div></div>`).join(''); 
+        }
+        
+        // GRIGLIE CATEGORIE HOME RIPRISTINATE
+        function renderHomePageWidgets() { 
+            const container = document.getElementById('home-widgets-container');
+            if(!container) return;
+            
+            const t = TRANSLATIONS[currentLang] || TRANSLATIONS['en'];
+            const recTracks = AURA_MAP.slice(0, 10);
+            const trendTracks = [...AURA_MAP].sort(() => 0.5 - Math.random()).slice(0, 10);
+            const chillTracks = [...AURA_MAP].sort(() => 0.5 - Math.random()).slice(0, 10);
+
+            let html = '';
+            if(recTracks.length) html += createWidgetBlock(t.rec_title || "Recommended", recTracks);
+            if(trendTracks.length) html += createWidgetBlock(t.trend_title || "Trending Now", trendTracks);
+            if(chillTracks.length) html += createWidgetBlock(t.chill_title || "Relax & Chill", chillTracks);
+
+            container.innerHTML = html;
+        }
+
         function createWidgetBlock(title, tracks) { return `<div class="mb-6"><h3 class="widget-block-title">${title}</h3><div class="horizontal-scroll">${tracks.map(t => `<div onclick="playTrack('${t.internalId}')" class="flex-none w-36 cursor-pointer group"><img src="${t.cover}" loading="eager" decoding="sync" class="w-36 h-36 rounded-xl object-cover mb-2 shadow-lg"><p class="text-xs font-bold truncate">${t.title}</p><p class="text-[10px] text-gray-400 truncate">${t.artist}</p></div>`).join('')}</div></div>`; }
 
         window.openSearchModal=()=>document.getElementById('search-modal').classList.remove('hidden'); window.closeSearchModal=()=>document.getElementById('search-modal').classList.add('hidden');
         window.toggleSocialSearch = () => { const bar = document.getElementById('social-search-bar'); bar.classList.toggle('hidden'); if(!bar.classList.contains('hidden')) document.getElementById('social-user-search').focus(); };
-        window.performSocialSearch = async () => { /* Intact */ };
+        window.performSocialSearch = async () => { console.log('Search social'); };
 
-        window.openOtherUserProfile = (uid) => { /* Intact */ };
+        window.openOtherUserProfile = (uid) => { document.getElementById('other-user-modal').classList.remove('hidden'); };
         window.closeOtherUserProfile = () => document.getElementById('other-user-modal').classList.add('hidden');
 
-        window.openChatListModal = () => { /* Intact */ }; window.closeChatListModal = () => document.getElementById('chat-list-modal').classList.add('hidden');
+        window.openChatListModal = () => { document.getElementById('chat-list-modal').classList.remove('hidden'); }; window.closeChatListModal = () => document.getElementById('chat-list-modal').classList.add('hidden');
         window.filterChatList = () => { window.renderChatList(document.getElementById('chat-local-search').value.toLowerCase().trim()); };
-        window.renderChatList = (filterText = '') => { /* Intact */ };
+        window.renderChatList = (filterText = '') => { console.log('Render chat'); };
         window.openNewChatSearchModal = () => { document.getElementById('new-chat-search-modal').classList.remove('hidden'); document.getElementById('new-chat-user-search').value = ''; window.performNewChatSearch(); };
         window.closeNewChatSearchModal = () => document.getElementById('new-chat-search-modal').classList.add('hidden');
-        window.performNewChatSearch = () => { /* Intact */ };
-        window.startChat = (otherUid) => { /* Intact */ };
-        window.openChatRoom = (chatId, otherUid) => { /* Intact */ };
-        window.closeChatRoom = () => { /* Intact */ };
+        window.performNewChatSearch = () => { console.log('New chat search'); };
+        window.startChat = (otherUid) => { console.log('Start chat'); };
+        window.openChatRoom = (chatId, otherUid) => { document.getElementById('chat-room-modal').classList.remove('hidden'); };
+        window.closeChatRoom = () => { document.getElementById('chat-room-modal').classList.add('hidden'); };
         window.toggleChatRoomMenu = () => { document.getElementById('chat-room-menu').classList.toggle('hidden'); };
-        window.blockChatUser = () => { /* Intact */ };
-        window.reportChatUser = () => { /* Intact */ };
-        window.openShareModal = () => { /* Intact */ }; window.closeShareModal=()=>document.getElementById('share-modal').classList.add('hidden');
+        window.blockChatUser = () => { console.log('Block'); };
+        window.reportChatUser = () => { console.log('Report'); };
+        window.openShareModal = () => { document.getElementById('share-modal').classList.remove('hidden'); }; window.closeShareModal=()=>document.getElementById('share-modal').classList.add('hidden');
         window.openCapsuleModal=()=>document.getElementById('capsule-modal').classList.remove('hidden'); window.closeCapsuleModal=()=>document.getElementById('capsule-modal').classList.add('hidden');
         window.openLanguageModal=()=>document.getElementById('language-modal').classList.remove('hidden'); window.closeLanguageModal=()=>document.getElementById('language-modal').classList.add('hidden');
         window.changeLanguage = (val) => { currentLang = val; saveLocalData(); updateLanguageUI(); renderHomePageWidgets(); }
-        window.updateLanguageUI = () => { /* Intact */ };
-        window.performSearch=()=>{ /* Intact */ };
-        window.openArtistProfile = (id=null) => { /* Intact */ }; window.closeArtistModal = () => document.getElementById('artist-modal').classList.add('hidden');
-        window.toggleAmbientMenu = () => { /* Intact */ }; window.toggleGyro = () => { /* Intact */ }; function enableGyro() { /* Intact */ } function handleGyro(e) { /* Intact */ } window.toggleTranslation = () => { /* Intact */ };
+        window.updateLanguageUI = () => { console.log('Lang updated'); };
+        window.performSearch=()=>{ console.log('Search music'); };
+        window.openArtistProfile = (id=null) => { document.getElementById('artist-modal').classList.remove('hidden'); }; window.closeArtistModal = () => document.getElementById('artist-modal').classList.add('hidden');
+        window.toggleAmbientMenu = () => { console.log('Ambient'); }; window.toggleGyro = () => { console.log('Gyro'); }; function enableGyro() { } function handleGyro(e) { } window.toggleTranslation = () => { console.log('Translation'); };
         window.translateTextFree = async (text, lang) => { return text; };
     <\/script>
 
@@ -1449,43 +1542,43 @@
         const firebaseConfig = { apiKey: "AIzaSyBjQC2dOKySeHPEJCVjjEEHyHEUy19DRPY", authDomain: "auramusic-hrz.firebaseapp.com", databaseURL: "https://auramusic-hrz-default-rtdb.europe-west1.firebasedatabase.app", projectId: "auramusic-hrz", storageBucket: "auramusic-hrz.appspot.com", messagingSenderId: "185420108806", appId: "1:185420108806:web:947edf581c9f7bbb661f87" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app); const provider = new GoogleAuthProvider();
 
-        window.loginWithGoogle = async () => { /* Intact */ };
+        window.loginWithGoogle = async () => { console.log('Login'); };
         window.handleLogout = () => signOut(auth).then(()=>window.location.reload()); window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden'); window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.handleProfileClick = () => { if(auth.currentUser) { showSection('social'); if(typeof window.loadSocialFeed === 'function') window.loadSocialFeed(); } else { window.openAuthModal(); } };
-        window.forceLoadAllUsers = async () => { /* Intact */ };
+        window.forceLoadAllUsers = async () => { console.log('Load users'); };
 
         onValue(ref(db, 'users'), (snap) => { const data = snap.val(); if(data) { window.ALL_USERS = Object.entries(data).map(([uid, u]) => ({uid, ...u})); } });
 
         let activeChatRef = null;
-        window.loadChatMessages = (chatId) => { /* Intact */ };
-        window.stopChatMessagesListener = () => { /* Intact */ };
-        window.sendChatMessage = async () => { /* Intact */ };
-        window.executeBlockUser = async (targetUid) => { /* Intact */ };
-        window.sendFriendRequestFromModal = async () => { /* Intact */ };
-        window.acceptFriendRequest = async (requesterUid) => { /* Intact */ };
-        window.rejectFriendRequest = async (requesterUid) => { /* Intact */ };
-        window.toggleFollowFromModal = async () => { /* Intact */ };
-        window.executeFollowToggle = async (targetUid) => { /* Intact */ };
-        window.toggleFollowFromList = async (targetUid) => { /* Intact */ };
-        window.openUserListModal = (type) => { /* Intact */ }; window.closeUserListModal = () => document.getElementById('user-list-modal').classList.add('hidden');
-        window.loadStoriesData = () => { /* Intact */ }; window.loadStoriesData();
+        window.loadChatMessages = (chatId) => { console.log('Load msgs'); };
+        window.stopChatMessagesListener = () => { console.log('Stop msgs'); };
+        window.sendChatMessage = async () => { console.log('Send msg'); };
+        window.executeBlockUser = async (targetUid) => { console.log('Block'); };
+        window.sendFriendRequestFromModal = async () => { console.log('Friend Req'); };
+        window.acceptFriendRequest = async (requesterUid) => { console.log('Accept'); };
+        window.rejectFriendRequest = async (requesterUid) => { console.log('Reject'); };
+        window.toggleFollowFromModal = async () => { console.log('Follow'); };
+        window.executeFollowToggle = async (targetUid) => { console.log('Toggle Follow'); };
+        window.toggleFollowFromList = async (targetUid) => { console.log('Toggle Follow list'); };
+        window.openUserListModal = (type) => { document.getElementById('user-list-modal').classList.remove('hidden'); }; window.closeUserListModal = () => document.getElementById('user-list-modal').classList.add('hidden');
+        window.loadStoriesData = () => { console.log('Stories Data'); }; window.loadStoriesData();
         
-        onAuthStateChanged(auth, (user) => { /* Intact */ });
-        window.saveProfileChanges = async () => { /* Intact */ }; window.openSettingsModal = () => { document.getElementById('settings-modal').classList.remove('hidden'); }; window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
-        function syncUserLibrary(uid) { /* Intact */ }
-        window.toggleLike = () => { /* Intact */ }; window.renderLikedTracks = () => { /* Intact */ };
+        onAuthStateChanged(auth, (user) => { console.log('Auth Changed', user); });
+        window.saveProfileChanges = async () => { console.log('Save Profile'); }; window.openSettingsModal = () => { document.getElementById('settings-modal').classList.remove('hidden'); }; window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
+        function syncUserLibrary(uid) { console.log('Sync Lib'); }
+        window.toggleLike = () => { console.log('Like'); }; window.renderLikedTracks = () => { console.log('Render Liked'); };
         window.openCreatePlaylistModal=()=>document.getElementById('create-playlist-modal').classList.remove('hidden'); window.closeCreatePlaylistModal=()=>document.getElementById('create-playlist-modal').classList.add('hidden');
-        window.createPlaylist = () => { /* Intact */ }; window.renderPlaylists = () => { /* Intact */ };
-        window.openAddToPlaylistModal=()=>{ /* Intact */ }; window.closeAddToPlaylistModal=()=>document.getElementById('add-to-playlist-modal').classList.add('hidden');
-        window.toggleTrackInPlaylist=(pid)=>{ /* Intact */ };
-        window.openComposeModal = (preserveAttachment = false) => { document.getElementById('compose-modal').classList.remove('hidden'); }; window.openComposeWithTrack = () => { /* Intact */ }; window.closeComposeModal = () => document.getElementById('compose-modal').classList.add('hidden');
-        function updateAttachmentPreview() { /* Intact */ } window.removeAttachment = () => { window.pendingTrackAttachment = null; updateAttachmentPreview(); };
-        window.publishThread = async () => { /* Intact */ }; window.promptAddStory = () => { /* Intact */ };
+        window.createPlaylist = () => { console.log('Create PL'); }; window.renderPlaylists = () => { console.log('Render PL'); };
+        window.openAddToPlaylistModal=()=>{ document.getElementById('add-to-playlist-modal').classList.remove('hidden'); }; window.closeAddToPlaylistModal=()=>document.getElementById('add-to-playlist-modal').classList.add('hidden');
+        window.toggleTrackInPlaylist=(pid)=>{ console.log('Toggle in PL'); };
+        window.openComposeModal = (preserveAttachment = false) => { document.getElementById('compose-modal').classList.remove('hidden'); }; window.openComposeWithTrack = () => { console.log('Compose'); }; window.closeComposeModal = () => document.getElementById('compose-modal').classList.add('hidden');
+        function updateAttachmentPreview() { console.log('Preview'); } window.removeAttachment = () => { window.pendingTrackAttachment = null; updateAttachmentPreview(); };
+        window.publishThread = async () => { console.log('Publish'); }; window.promptAddStory = () => { console.log('Add Story'); };
         window.togglePostMenu = (pid) => { const menu = document.getElementById(`post-menu-${pid}`); if(menu) menu.classList.toggle('hidden'); };
-        window.hidePost = (pid) => { /* Intact */ }; window.reportPost = (pid, authorName) => { /* Intact */ };
-        window.loadSocialFeed = () => { /* Intact */ }; window.togglePostLike = (pid) => { /* Intact */ };
-        let currentPostId = null; window.openComments = (pid) => { /* Intact */ }; window.closeCommentsModal = () => document.getElementById('comments-modal').classList.add('hidden');
-        window.submitComment = () => { /* Intact */ }; window.switchProfileTab = (tab) => { /* Intact */ };
+        window.hidePost = (pid) => { console.log('Hide'); }; window.reportPost = (pid, authorName) => { console.log('Report'); };
+        window.loadSocialFeed = () => { console.log('Load Feed'); }; window.togglePostLike = (pid) => { console.log('Like Post'); };
+        let currentPostId = null; window.openComments = (pid) => { document.getElementById('comments-modal').classList.remove('hidden'); }; window.closeCommentsModal = () => document.getElementById('comments-modal').classList.add('hidden');
+        window.submitComment = () => { console.log('Comment'); }; window.switchProfileTab = (tab) => { console.log('Tab', tab); };
     <\/script>
 </body>
 </html>
@@ -1677,8 +1770,8 @@
         function getTutorialSteps() {
             return [
                 { 
-                    title: "Benvenuto su AuraTV OS", 
-                    desc: "Questo è il tuo nuovo ecosistema digitale. Clicca su 'Avanti' per un rapido tour interattivo delle funzioni principali.", 
+                    title: "Benvenuto su AuraTV", 
+                    desc: "Questo è il tuo nuovo ecosistema digitale di Eurocast. Clicca su 'Avanti' per un rapido tour interattivo delle funzioni principali.", 
                     targetId: null, 
                     btn: "Avanti" 
                 },
@@ -1774,7 +1867,7 @@
             triggerNotification("Sistema pronto e configurato."); 
         }
 
-        /* === FUNZIONI OS CORE (INTATTE) === */
+        /* === FUNZIONI OS CORE === */
         function syncSystemClock() {
             const dateObj = new Date();
             const timeFormatted = dateObj.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -1854,7 +1947,7 @@
             currentChannelNum = num; document.querySelectorAll('.ch-row').forEach(r => r.classList.remove('active'));
             const activeRow = document.getElementById(`sidebar-ch-${num}`); if(activeRow) { activeRow.classList.add('active'); activeRow.scrollIntoView({ behavior: "smooth", block: "center" }); }
             const isAura = num === 1;
-            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTs';
+            document.getElementById('tvChTitle').innerText = `${num.toString().padStart(2, '0')} - ${isAura ? 'Aura1 HD' : 'Canale Digitale ' + num}`; document.getElementById('tvChStatus').innerText = isAura ? 'Evento Speciale In Arrivo' : 'Nessun Segnale DTS';
             const overlay = document.querySelector('.tv-channel-overlay'); overlay.classList.add('visible');
             clearTimeout(channelOverlayTimeout); channelOverlayTimeout = setTimeout(() => { overlay.classList.remove('visible'); }, 1000);
             const player = document.getElementById('tvPlayerCore');
