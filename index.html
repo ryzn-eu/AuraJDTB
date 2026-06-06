@@ -1599,34 +1599,125 @@
             } 
         }
 
-        /* === SISTEMA TUTORIAL (INTATTO) === */
-        let tutorialStep = 0, isTutorialActive = false;
-        const tutorialDataDesktop = [ 
-            { title: "Benvenuto", desc: "Esplora AuraTV.", requireAction: false }, 
-            { title: "Fine", desc: "Sei pronto per esplorare l'ecosistema.", requireAction: false } 
-        ];
-        const tutorialDataMobile = [ 
-            { title: "Benvenuto", desc: "Esplora AuraTV.", requireAction: false }, 
-            { title: "Fine", desc: "Sei pronto per esplorare l'ecosistema.", requireAction: false } 
-        ];
-        function getActiveTutorialSteps() { return isMobileDevice ? tutorialDataMobile : tutorialDataDesktop; }
-        function initTutorial() { isTutorialActive = true; document.getElementById('tutorial-overlay').classList.add('visible'); updateTutorialUI(); }
-        function updateTutorialUI() { 
-            const step = getActiveTutorialSteps()[tutorialStep]; 
-            document.getElementById('tutTitle').innerText = step.title; 
-            document.getElementById('tutDesc').innerText = step.desc; 
-            document.getElementById('tutBtn').innerText = tutorialStep === 0 ? "Inizia" : "Avanti"; 
+        /* === SISTEMA TUTORIAL INTERATTIVO === */
+        let tutorialStep = 0;
+        let isTutorialActive = false;
+
+        // Inietto una piccola animazione CSS per simulare lo swipe su mobile
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes swipeAnim {
+                0% { transform: translate(0, 0); opacity: 0; }
+                20% { opacity: 1; }
+                80% { transform: translate(0, -20px); opacity: 1; }
+                100% { opacity: 0; }
+            }
+            .swipe-icon { display: inline-block; animation: swipeAnim 1.5s infinite; font-size: 1.5rem; margin-top: 10px; }
+            
+            /* Rendo l'overlay più trasparente per far vedere bene l'interfaccia sotto */
+            #tutorial-overlay.interactive-mode { background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(4px) !important; }
+        `;
+        document.head.appendChild(style);
+
+        // Definizione degli step dinamici
+        function getTutorialSteps() {
+            return [
+                { 
+                    title: "Benvenuto su AuraTV OS", 
+                    desc: "Questo è il tuo nuovo ecosistema digitale. Clicca su 'Avanti' per un rapido tour interattivo delle funzioni principali.", 
+                    targetId: null, 
+                    btn: "Avanti" 
+                },
+                { 
+                    title: "Il Cuore del Sistema", 
+                    desc: "Questo pulsante intelligente nell'angolo in basso a sinistra è la tua ancora. Premilo in qualsiasi momento per tornare a questa schermata Home.", 
+                    targetId: "homeDotElement", 
+                    btn: "Capito" 
+                },
+                { 
+                    title: "Le Tue Applicazioni", 
+                    desc: "Qui trovi l'accesso rapido a tutto l'ecosistema: Aura Music, Meteo, Browser e le app che scaricherai dallo Store.", 
+                    targetId: "homeGrid", 
+                    btn: "Ottimo" 
+                },
+                { 
+                    title: "Controlli Aura TV", 
+                    // Il testo cambia dinamicamente in base al dispositivo
+                    desc: isMobileDevice 
+                        ? "Sull'app TV usa i gesti:<br>• <b>Scorri Su/Giù</b> per cambiare canale.<br>• <b>Scorri Destra/Sinistra</b> per il menu.<br><div class='swipe-icon'>👆</div>"
+                        : "Sull'app TV sei al comando con la tastiera:<br>• <b>Tasti 0-9</b> per digitare il canale.<br>• <b>Tasto CTRL</b> per aprire o chiudere la lista canali.", 
+                    targetId: "tile-tv-view", 
+                    btn: "Tutto Chiaro" 
+                },
+                { 
+                    title: "Sei Pronto", 
+                    desc: "Il setup iniziale è completato. Goditi la potenza e il design fluido di AuraTV OS.", 
+                    targetId: null, 
+                    btn: "Inizia a usare Aura" 
+                }
+            ];
         }
+
+        function initTutorial() { 
+            // Controllo Cache: se è già stato fatto, ignora.
+            if(localStorage.getItem('aura_tutorial_done') === 'true') return;
+
+            isTutorialActive = true; 
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.classList.add('visible', 'interactive-mode'); 
+            
+            // Mi assicuro che la home sia visibile per il tutorial
+            openTargetView('home-view');
+            
+            tutorialStep = 0;
+            updateTutorialUI(); 
+        }
+
+        function updateTutorialUI() { 
+            // 1. Rimuovo l'evidenziazione precedente
+            document.querySelectorAll('.highlight-element').forEach(el => {
+                el.classList.remove('highlight-element');
+            });
+
+            const steps = getTutorialSteps();
+            const step = steps[tutorialStep]; 
+            
+            // 2. Aggiorno i testi
+            document.getElementById('tutTitle').innerHTML = step.title; 
+            document.getElementById('tutDesc').innerHTML = step.desc; 
+            document.getElementById('tutBtn').innerText = step.btn; 
+
+            // 3. Applica l'evidenziazione al nuovo target (se presente)
+            if (step.targetId) {
+                const targetEl = document.getElementById(step.targetId);
+                if (targetEl) {
+                    targetEl.classList.add('highlight-element');
+                    // Scrolla dolcemente verso l'elemento se è fuori dallo schermo
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
         function nextTutorialStep() { 
             tutorialStep++; 
-            if(tutorialStep >= getActiveTutorialSteps().length) endTutorial(); 
-            else updateTutorialUI(); 
+            if(tutorialStep >= getTutorialSteps().length) {
+                endTutorial(); 
+            } else {
+                updateTutorialUI(); 
+            }
         }
+
         function endTutorial() { 
             isTutorialActive = false; 
-            document.getElementById('tutorial-overlay').classList.remove('visible'); 
+            
+            // Rimuovo l'overlay e le evidenziazioni
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.classList.remove('visible', 'interactive-mode'); 
+            document.querySelectorAll('.highlight-element').forEach(el => el.classList.remove('highlight-element'));
+            
+            // Salvo in cache per non ripeterlo più
             localStorage.setItem('aura_tutorial_done', 'true'); 
-            triggerNotification("Sistema pronto."); 
+            triggerNotification("Sistema pronto e configurato."); 
         }
 
         /* === FUNZIONI OS CORE (INTATTE) === */
