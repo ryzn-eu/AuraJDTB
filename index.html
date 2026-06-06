@@ -1210,6 +1210,15 @@
                 document.head.appendChild(tag);
             }
 
+            // Sblocco audio fallback: se il browser blocca l'unmute automatico, il primissimo touch autorizza l'audio
+            const unlockAudioContext = () => {
+                if (ytPlayerInstance && typeof ytPlayerInstance.unMute === 'function') ytPlayerInstance.unMute();
+                const nativePlayer = document.getElementById('native-player');
+                if (nativePlayer) { nativePlayer.muted = false; nativePlayer.volume = 1.0; }
+            };
+            document.addEventListener('touchstart', unlockAudioContext, { passive: true, once: true });
+            document.addEventListener('click', unlockAudioContext, { passive: true, once: true });
+
             queueRef.on('value', (snapshot) => {
                 webtvCurrentQueueData = snapshot.val() || {};
                 if(currentChannelNum === 1) renderWebTVPlayer();
@@ -1267,13 +1276,16 @@
                         },
                         events: {
                             'onReady': (event) => {
-                                if (webtvIsFirstBoot) event.target.mute(); else event.target.unMute();
+                                event.target.mute(); // Forza sempre il muto all'avvio per garantire l'autoplay mobile
                                 event.target.setVolume(100);
                                 event.target.setPlaybackQuality('hd1080');
                                 event.target.playVideo();
                             },
                             'onStateChange': (event) => {
-                                if (event.data === 1) {
+                                if (event.data === 1) { // 1 = PLAYING
+                                    // Tenta lo sblocco automatico dell'audio non appena parte
+                                    setTimeout(() => { event.target.unMute(); }, 300);
+
                                     if (webtvIsFirstBoot) {
                                         setTimeout(() => {
                                             antennaOverlay.style.display = 'none';
@@ -1301,13 +1313,18 @@
                     }, 100);
                 }
             } else {
-                document.getElementById('player-box').innerHTML = `<video id="native-player" src="${v.url}" autoplay></video>`;
+                // Aggiunto playsinline e forzato muted all'avvio nel player nativo
+                document.getElementById('player-box').innerHTML = `<video id="native-player" src="${v.url}" autoplay playsinline muted></video>`;
                 const videoEl = document.getElementById('native-player');
                 videoEl.currentTime = elapsedSeconds;
                 
-                if (webtvIsFirstBoot) { videoEl.muted = true; } else { videoEl.muted = false; videoEl.volume = 1.0; }
-                
                 videoEl.onplaying = () => {
+                    // Tenta lo sblocco automatico dell'audio
+                    setTimeout(() => { 
+                        videoEl.muted = false; 
+                        videoEl.volume = 1.0; 
+                    }, 300);
+
                     if (webtvIsFirstBoot) {
                         setTimeout(() => { antennaOverlay.style.display = 'none'; webtvIsFirstBoot = false; }, 5000); // 5 sec
                     } else {
