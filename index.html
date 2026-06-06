@@ -1283,8 +1283,15 @@
                     currentUser = user;
                     authOverlay.style.display = 'none';
                     
-                    // MOSTRA IL PROMPT PER IL FULLSCREEN PRIMA DI AVVIARE
-                    document.getElementById('fullscreen-prompt').style.display = 'flex';
+                    if (isMobileDevice) {
+                        // Salta il prompt fullscreen su mobile e inizializza il telecomando
+                        const emailDiv = document.getElementById('remote-user-email');
+                        if(emailDiv) emailDiv.innerText = currentUser.email;
+                        if(window.lucide) lucide.createIcons();
+                    } else {
+                        // MOSTRA IL PROMPT PER IL FULLSCREEN SOLO SU DESKTOP
+                        document.getElementById('fullscreen-prompt').style.display = 'flex';
+                    }
                 } else {
                     authOverlay.style.display = 'flex';
                 }
