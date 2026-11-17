@@ -1418,149 +1418,6 @@ body.tvp .corner-trigger{display:none}
         };
     <\/script>
 
-<script>
-/* ===== AuraTV · canali guidati dalla lista M3U + interfaccia tvOS + fix Staff ===== */
-var tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}], tvPlaying=false, tvHls=null, tvUiT, tvQuery='', tvMore={}, tvQt;
-const tvArt=c=>{const i=esc2((c.name||'?').trim().slice(0,2).toUpperCase());return c.logo?`<img src="${esc2(c.logo)}" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.outerHTML='<em>${i}</em>'">`:`<em>${i}</em>`;};
-const tvNn=n=>String(n).padStart(2,'0');
-
-function tvBuild(){
-    tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}].concat((sbChs||[]).map((c,i)=>({num:i+2,name:c.name,logo:c.logo,group:c.group||'Altri',url:c.url})));
-    if(currentChannelNum>tvLineup.length) currentChannelNum=1;
-    const box=$s('chListContainer'); if(!box) return;
-    box.innerHTML=tvLineup.map(c=>`<div class="ch-row ${c.num===currentChannelNum&&tvPlaying?'active':''}" id="sidebar-ch-${c.num}" data-n="${c.num}"><div class="ch-logo">${c.web?'<em>📡</em>':tvArt(c)}</div><div class="ch-idx">${tvNn(c.num)}</div><div class="ch-meta-title">${esc2(c.name)}</div></div>`).join('');
-    tvRenderBrowse(); tvRenderHome();
-}
-function buildTvChannels(){ tvBuild(); }
-
-function tvCard(c,extra){return `<button class="atv-card ${extra||''}" data-n="${c.num}"><div class="atv-art">${c.web?'📡':tvArt(c)}</div><div class="atv-cap"><i>${tvNn(c.num)}</i><b>${esc2(c.name)}</b></div></button>`;}
-function tvRenderBrowse(){
-    const L=$s('tvLists'), R=$s('tvRows'); if(!L||!R) return;
-    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('');
-    const q=tvQuery.trim().toLowerCase(); let h='';
-    if(!q) h+=`<div class="atv-row"><h3>In evidenza</h3><div class="rail"><button class="atv-card hero" data-n="1"><div class="atv-art">📡</div><div class="atv-cap"><i>01</i><b>Aura1 HD · WebTV Cloud</b></div></button></div></div>`;
-    const chs=tvLineup.slice(1).filter(c=>!q||c.name.toLowerCase().includes(q));
-    if(!chs.length) h+=`<div class="atv-empty">${q?'Nessun canale trovato.':(sbCurList?'Caricamento canali…':'Nessuna lista M3U disponibile. Lo staff può aggiungerla dal pannello Staff.')}</div>`;
-    else if(q) h+=`<div class="atv-row"><h3>Risultati (${chs.length})</h3><div class="rail" style="flex-wrap:wrap!important;overflow:visible">${chs.slice(0,120).map(c=>tvCard(c)).join('')}</div></div>`;
-    else{
-        const g=new Map(); chs.forEach(c=>{if(!g.has(c.group))g.set(c.group,[]);g.get(c.group).push(c);});
-        [...g].slice(0,40).forEach(([name,arr])=>{const lim=tvMore[name]?300:30;
-            h+=`<div class="atv-row"><h3>${esc2(name)} <span style="opacity:.5;font-weight:500">${arr.length}</span></h3><div class="rail">${arr.slice(0,lim).map(c=>tvCard(c)).join('')}${arr.length>lim?`<button class="atv-card more" data-more="${esc2(name)}"><div class="atv-art">Altri ${arr.length-lim} ›</div></button>`:''}</div></div>`;});
-    }
-    R.innerHTML=h;
-}
-function tvRenderHome(){
-    let s=$s('homeChShelf');
-    if(!s){s=document.createElement('div');s.id='homeChShelf';s.className='shelf-container';$s('home-view').appendChild(s);}
-    s.innerHTML=`<div class="shelf-title">Canali in diretta</div><div class="rail">${tvLineup.slice(0,40).map(c=>tvCard(c)).join('')}${tvLineup.length>40?'<button class="atv-card more" data-all="1"><div class="atv-art">Tutti ›</div></button>':''}</div>`;
-}
-document.addEventListener('click',e=>{
-    const c=e.target.closest('.atv-card'); if(!c) return;
-    if(c.dataset.more){tvMore[c.dataset.more]=true;tvRenderBrowse();return;}
-    if(c.dataset.all){openTargetView('tv-view');return;}
-    if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
-});
-$s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b){tvMore={};sbSelectList(b.dataset.l);}};
-$s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
-$s('tvSearch').oninput=e=>{clearTimeout(tvQt);tvQt=setTimeout(()=>{tvQuery=e.target.value;tvRenderBrowse();},180);};
-
-/* dati: ogni volta che cambiano liste o canali, il palinsesto si rigenera da solo */
-function sbSetChs(a){ sbChs=a; sbApply(); tvBuild(); }
-const _sbRL=sbRenderLists; sbRenderLists=function(){ _sbRL(); tvBuild(); };
-
-/* player */
-function tvShow(p){ tvPlaying=p; $s('tv-view').classList.toggle('tv-playing',p); document.body.classList.toggle('tvp',p&&currentActiveView==='tv-view'); }
-function tvKill(){ if(tvHls){tvHls.destroy();tvHls=null;} const v=$s('tvVideo'); if(v){v.pause();v.removeAttribute('src');v.load();} }
-function tvStop(){ tvKill(); pauseWebTV(); $s('tvPlayerCore').innerHTML=''; $s('tvMsg').textContent=''; tvShow(false); }
-function tvBackToBrowse(){ tvStop(); document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active')); }
-function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
-$s('tvPlayer').addEventListener('mousemove',tvUi); $s('tvPlayer').addEventListener('touchstart',tvUi,{passive:true});
-function tvMsg(t){ const m=$s('tvMsg'); m.textContent=t||''; m.className=/ASSENTE/.test(t||'')?'err':''; }
-function tvPlayUrl(ch){
-    tvKill(); const box=$s('tvPlayerCore'); box.innerHTML='<video id="tvVideo" playsinline autoplay style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
-    const v=$s('tvVideo'); tvMsg('📡 SINTONIZZAZIONE…'); v.onplaying=()=>tvMsg(''); v.onwaiting=()=>tvMsg('BUFFERING…'); v.onerror=()=>{ if(!tvHls) tvMsg('SEGNALE ASSENTE'); };
-    const direct=()=>{ v.src=ch.url; v.play().catch(()=>{}); };
-    if(/\.(mp4|webm|ogv|mp3|aac)(\?|$)/i.test(ch.url)||!(window.Hls&&Hls.isSupported())){ direct(); return; }
-    tvHls=new Hls({lowLatencyMode:true}); tvHls.loadSource(ch.url); tvHls.attachMedia(v);
-    tvHls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));
-    tvHls.on(Hls.Events.ERROR,(_,d)=>{ if(!d.fatal) return;
-        if(d.type===Hls.ErrorTypes.NETWORK_ERROR&&d.details!=='manifestLoadError') tvHls.startLoad();
-        else{ tvHls.destroy(); tvHls=null; direct(); } });
-}
-function selectTvChannel(num){
-    num=parseInt(num,10);
-    if(!(num>=1&&num<=tvLineup.length)){ triggerNotification('Canale non disponibile'); return; }
-    currentChannelNum=num; const ch=tvLineup[num-1];
-    tvShow(true); document.body.classList.toggle('tvp',currentActiveView==='tv-view');
-    document.querySelectorAll('.ch-row').forEach(r=>r.classList.remove('active'));
-    const row=$s('sidebar-ch-'+num); if(row){ row.classList.add('active'); row.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
-    $s('tvChTitle').innerText=tvNn(num)+' - '+ch.name; $s('tvChStatus').innerText=ch.web?'Palinsesto WebTV Cloud':(ch.group||'');
-    const ov=document.querySelector('.tv-channel-overlay'); ov.classList.add('visible'); clearTimeout(channelOverlayTimeout); channelOverlayTimeout=setTimeout(()=>ov.classList.remove('visible'),2500);
-    const web=$s('webtv-container'); tvUi();
-    if(ch.web){ tvKill(); $s('tvPlayerCore').innerHTML=''; tvMsg(''); web.style.display='block';
-        if(!window.webtvInitialized){ initWebTV(); window.webtvInitialized=true; } else forceLiveSync(); }
-    else{ web.style.display='none'; pauseWebTV(); tvPlayUrl(ch); }
-}
-function tvStep(d){ let n=currentChannelNum+d; if(n<1) n=tvLineup.length; if(n>tvLineup.length) n=1; selectTvChannel(n); }
-window.tvToggleM3u=function(){ const v=$s('tvVideo'); if(currentChannelNum===1||!v) return false; v.paused?v.play():v.pause(); return true; };
-const _sbStepOld=window.sbStep;
-sbStep=function(d){ if(currentActiveView==='tv-view'||currentActiveView==='home-view'){ if(currentActiveView!=='tv-view') openTargetView('tv-view'); if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
-window.sbStep=sbStep;
-
-/* navigazione viste (Staff = schermata a sé, sempre visibile) */
-function openTargetView(id){
-    const leaving=currentActiveView==='tv-view'&&id!=='tv-view';
-    document.querySelectorAll('.view-frame').forEach(v=>v.classList.remove('active'));
-    $s('staff-view').classList.toggle('open',id==='staff-view');
-    const t=document.getElementById(id); if(t&&t.classList.contains('view-frame')) t.classList.add('active');
-    currentActiveView=id; $s('tvSidebar').classList.remove('open');
-    if(leaving) tvStop();
-    if(id==='tv-view'&&!tvPlaying) tvShow(false);
-    if(id==='tv-view'&&tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync();
-    document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
-}
-function goHome(){ openTargetView('home-view'); }
-document.addEventListener('keydown',e=>{
-    if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
-        if(tvPlaying){
-            const k=e.key; let h=true;
-            if(k==='Escape'||k==='Backspace') tvBackToBrowse();
-            else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
-            else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
-            else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
-            if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
-        } else if(e.key.startsWith('Arrow')){
-            const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
-            if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
-            const r=a.getBoundingClientRect();let t=null;
-            if(e.key==='ArrowRight')t=all[i+1];else if(e.key==='ArrowLeft')t=all[i-1];
-            else{const dir=e.key==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
-            if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
-        }
-    }
-},true);
-
-/* ---------- STAFF: lettura robusta + errori visibili ---------- */
-const _stR=sbStaffRender;
-sbStaffRender=function(){ try{ _stR(); }catch(err){ console.error(err); $s('stBody').innerHTML='<div class="st-box"><h3>Errore</h3><p style="color:var(--neon-pink)">'+esc2(err.message)+'</p></div>'; } };
-window.sbStaffRender=sbStaffRender;
-function sbOpenStaff(){ openTargetView('staff-view'); sbStaffRender(); }
-window.sbOpenStaff=sbOpenStaff;
-/* download della lista: diretto, poi tramite proxy CORS se il server la blocca */
-async function sbFetchText(url){
-    const tries=[url,'https://corsproxy.io/?url='+encodeURIComponent(url),'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
-    let last=null;
-    for(const u of tries){
-        try{ const r=await fetch(u); if(!r.ok) throw new Error('Il server ha risposto con errore '+r.status+'.'); const t=await r.text();
-            if(/#EXT/i.test(t)) return t; throw new Error('Il contenuto scaricato non è una lista M3U.'); }
-        catch(e){ last=e; }
-    }
-    throw new Error(((last&&last.message)||'Download non riuscito')+' Prova con “File” o “Incolla”.');
-}
-tvBuild();
-</script>
-</body>
-</html>
     </script>
 
     <script>
@@ -2903,6 +2760,149 @@ body.is-mobile-remote #orientation-blocker{display:none!important}
     /* in verticale i tasti non devono comandare l'app che sta sotto al banner */
     addEventListener('keydown', e => { if (document.body.classList.contains('is-portrait')) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
 })();
+</script>
+
+<script>
+/* ===== AuraTV · canali guidati dalla lista M3U + interfaccia tvOS + fix Staff ===== */
+var tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}], tvPlaying=false, tvHls=null, tvUiT, tvQuery='', tvMore={}, tvQt;
+const tvArt=c=>{const i=esc2((c.name||'?').trim().slice(0,2).toUpperCase());return c.logo?`<img src="${esc2(c.logo)}" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.outerHTML='<em>${i}</em>'">`:`<em>${i}</em>`;};
+const tvNn=n=>String(n).padStart(2,'0');
+
+function tvBuild(){
+    tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}].concat((sbChs||[]).map((c,i)=>({num:i+2,name:c.name,logo:c.logo,group:c.group||'Altri',url:c.url})));
+    if(currentChannelNum>tvLineup.length) currentChannelNum=1;
+    const box=$s('chListContainer'); if(!box) return;
+    box.innerHTML=tvLineup.map(c=>`<div class="ch-row ${c.num===currentChannelNum&&tvPlaying?'active':''}" id="sidebar-ch-${c.num}" data-n="${c.num}"><div class="ch-logo">${c.web?'<em>📡</em>':tvArt(c)}</div><div class="ch-idx">${tvNn(c.num)}</div><div class="ch-meta-title">${esc2(c.name)}</div></div>`).join('');
+    tvRenderBrowse(); tvRenderHome();
+}
+function buildTvChannels(){ tvBuild(); }
+
+function tvCard(c,extra){return `<button class="atv-card ${extra||''}" data-n="${c.num}"><div class="atv-art">${c.web?'📡':tvArt(c)}</div><div class="atv-cap"><i>${tvNn(c.num)}</i><b>${esc2(c.name)}</b></div></button>`;}
+function tvRenderBrowse(){
+    const L=$s('tvLists'), R=$s('tvRows'); if(!L||!R) return;
+    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('');
+    const q=tvQuery.trim().toLowerCase(); let h='';
+    if(!q) h+=`<div class="atv-row"><h3>In evidenza</h3><div class="rail"><button class="atv-card hero" data-n="1"><div class="atv-art">📡</div><div class="atv-cap"><i>01</i><b>Aura1 HD · WebTV Cloud</b></div></button></div></div>`;
+    const chs=tvLineup.slice(1).filter(c=>!q||c.name.toLowerCase().includes(q));
+    if(!chs.length) h+=`<div class="atv-empty">${q?'Nessun canale trovato.':(sbCurList?'Caricamento canali…':'Nessuna lista M3U disponibile. Lo staff può aggiungerla dal pannello Staff.')}</div>`;
+    else if(q) h+=`<div class="atv-row"><h3>Risultati (${chs.length})</h3><div class="rail" style="flex-wrap:wrap!important;overflow:visible">${chs.slice(0,120).map(c=>tvCard(c)).join('')}</div></div>`;
+    else{
+        const g=new Map(); chs.forEach(c=>{if(!g.has(c.group))g.set(c.group,[]);g.get(c.group).push(c);});
+        [...g].slice(0,40).forEach(([name,arr])=>{const lim=tvMore[name]?300:30;
+            h+=`<div class="atv-row"><h3>${esc2(name)} <span style="opacity:.5;font-weight:500">${arr.length}</span></h3><div class="rail">${arr.slice(0,lim).map(c=>tvCard(c)).join('')}${arr.length>lim?`<button class="atv-card more" data-more="${esc2(name)}"><div class="atv-art">Altri ${arr.length-lim} ›</div></button>`:''}</div></div>`;});
+    }
+    R.innerHTML=h;
+}
+function tvRenderHome(){
+    if(typeof hmLive==='function'){ hmLive(); return; }
+    let s=$s('homeChShelf');
+    if(!s){s=document.createElement('div');s.id='homeChShelf';s.className='shelf-container';$s('home-view').appendChild(s);}
+    s.innerHTML=`<div class="shelf-title">Canali in diretta</div><div class="rail">${tvLineup.slice(0,40).map(c=>tvCard(c)).join('')}${tvLineup.length>40?'<button class="atv-card more" data-all="1"><div class="atv-art">Tutti ›</div></button>':''}</div>`;
+}
+document.addEventListener('click',e=>{
+    const c=e.target.closest('.atv-card'); if(!c) return;
+    if(c.dataset.more){tvMore[c.dataset.more]=true;tvRenderBrowse();return;}
+    if(c.dataset.all){openTargetView('tv-view');return;}
+    if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
+});
+$s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b){tvMore={};sbSelectList(b.dataset.l);}};
+$s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
+$s('tvSearch').oninput=e=>{clearTimeout(tvQt);tvQt=setTimeout(()=>{tvQuery=e.target.value;tvRenderBrowse();},180);};
+
+/* dati: ogni volta che cambiano liste o canali, il palinsesto si rigenera da solo */
+function sbSetChs(a){ sbChs=a; sbApply(); tvBuild(); }
+const _sbRL=sbRenderLists; sbRenderLists=function(){ _sbRL(); tvBuild(); };
+
+/* player */
+function tvShow(p){ tvPlaying=p; $s('tv-view').classList.toggle('tv-playing',p); document.body.classList.toggle('tvp',p&&currentActiveView==='tv-view'); }
+function tvKill(){ if(tvHls){tvHls.destroy();tvHls=null;} const v=$s('tvVideo'); if(v){v.pause();v.removeAttribute('src');v.load();} }
+function tvStop(){ tvKill(); pauseWebTV(); $s('tvPlayerCore').innerHTML=''; $s('tvMsg').textContent=''; tvShow(false); }
+function tvBackToBrowse(){ tvStop(); document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active')); }
+function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
+$s('tvPlayer').addEventListener('mousemove',tvUi); $s('tvPlayer').addEventListener('touchstart',tvUi,{passive:true});
+function tvMsg(t){ const m=$s('tvMsg'); m.textContent=t||''; m.className=/ASSENTE/.test(t||'')?'err':''; }
+function tvPlayUrl(ch){
+    tvKill(); const box=$s('tvPlayerCore'); box.innerHTML='<video id="tvVideo" playsinline autoplay style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
+    const v=$s('tvVideo'); tvMsg('📡 SINTONIZZAZIONE…'); v.onplaying=()=>tvMsg(''); v.onwaiting=()=>tvMsg('BUFFERING…'); v.onerror=()=>{ if(!tvHls) tvMsg('SEGNALE ASSENTE'); };
+    const direct=()=>{ v.src=ch.url; v.play().catch(()=>{}); };
+    if(/\.(mp4|webm|ogv|mp3|aac)(\?|$)/i.test(ch.url)||!(window.Hls&&Hls.isSupported())){ direct(); return; }
+    tvHls=new Hls({lowLatencyMode:true}); tvHls.loadSource(ch.url); tvHls.attachMedia(v);
+    tvHls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));
+    tvHls.on(Hls.Events.ERROR,(_,d)=>{ if(!d.fatal) return;
+        if(d.type===Hls.ErrorTypes.NETWORK_ERROR&&d.details!=='manifestLoadError') tvHls.startLoad();
+        else{ tvHls.destroy(); tvHls=null; direct(); } });
+}
+function selectTvChannel(num){
+    num=parseInt(num,10);
+    if(!(num>=1&&num<=tvLineup.length)){ triggerNotification('Canale non disponibile'); return; }
+    currentChannelNum=num; const ch=tvLineup[num-1];
+    tvShow(true); document.body.classList.toggle('tvp',currentActiveView==='tv-view');
+    document.querySelectorAll('.ch-row').forEach(r=>r.classList.remove('active'));
+    const row=$s('sidebar-ch-'+num); if(row){ row.classList.add('active'); row.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
+    $s('tvChTitle').innerText=tvNn(num)+' - '+ch.name; $s('tvChStatus').innerText=ch.web?'Palinsesto WebTV Cloud':(ch.group||'');
+    const ov=document.querySelector('.tv-channel-overlay'); ov.classList.add('visible'); clearTimeout(channelOverlayTimeout); channelOverlayTimeout=setTimeout(()=>ov.classList.remove('visible'),2500);
+    const web=$s('webtv-container'); tvUi();
+    if(ch.web){ tvKill(); $s('tvPlayerCore').innerHTML=''; tvMsg(''); web.style.display='block';
+        if(!window.webtvInitialized){ initWebTV(); window.webtvInitialized=true; } else forceLiveSync(); }
+    else{ web.style.display='none'; pauseWebTV(); tvPlayUrl(ch); }
+}
+function tvStep(d){ let n=currentChannelNum+d; if(n<1) n=tvLineup.length; if(n>tvLineup.length) n=1; selectTvChannel(n); }
+window.tvToggleM3u=function(){ const v=$s('tvVideo'); if(currentChannelNum===1||!v) return false; v.paused?v.play():v.pause(); return true; };
+const _sbStepOld=window.sbStep;
+sbStep=function(d){ if(currentActiveView==='tv-view'||currentActiveView==='home-view'){ if(currentActiveView!=='tv-view') openTargetView('tv-view'); if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
+window.sbStep=sbStep;
+
+/* navigazione viste (Staff = schermata a sé, sempre visibile) */
+function openTargetView(id){
+    const leaving=currentActiveView==='tv-view'&&id!=='tv-view';
+    document.querySelectorAll('.view-frame').forEach(v=>v.classList.remove('active'));
+    $s('staff-view').classList.toggle('open',id==='staff-view');
+    const t=document.getElementById(id); if(t&&t.classList.contains('view-frame')) t.classList.add('active');
+    currentActiveView=id; $s('tvSidebar').classList.remove('open');
+    if(leaving) tvStop();
+    if(id==='tv-view'&&!tvPlaying) tvShow(false);
+    if(id==='tv-view'&&tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync();
+    document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
+}
+function goHome(){ openTargetView('home-view'); }
+document.addEventListener('keydown',e=>{
+    if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
+        if(tvPlaying){
+            const k=e.key; let h=true;
+            if(k==='Escape'||k==='Backspace') tvBackToBrowse();
+            else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
+            else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
+            else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
+            if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
+        } else if(e.key.startsWith('Arrow')){
+            const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
+            if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
+            const r=a.getBoundingClientRect();let t=null;
+            if(e.key==='ArrowRight')t=all[i+1];else if(e.key==='ArrowLeft')t=all[i-1];
+            else{const dir=e.key==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
+            if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
+        }
+    }
+},true);
+
+/* ---------- STAFF: lettura robusta + errori visibili ---------- */
+const _stR=window.sbStaffRender;
+sbStaffRender=function(){ try{ _stR(); if(typeof hmAdmin==='function') hmAdmin(); }catch(err){ console.error(err); $s('stBody').innerHTML='<div class="st-box"><h3>Errore</h3><p style="color:var(--neon-pink)">'+esc2(err.message)+'</p></div>'; } };
+window.sbStaffRender=sbStaffRender;
+function sbOpenStaff(){ openTargetView('staff-view'); sbStaffRender(); }
+window.sbOpenStaff=sbOpenStaff;
+/* download della lista: diretto, poi tramite proxy CORS se il server la blocca */
+async function sbFetchText(url){
+    const tries=[url,'https://corsproxy.io/?url='+encodeURIComponent(url),'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+    let last=null;
+    for(const u of tries){
+        try{ const r=await fetch(u); if(!r.ok) throw new Error('Il server ha risposto con errore '+r.status+'.'); const t=await r.text();
+            if(/#EXT/i.test(t)) return t; throw new Error('Il contenuto scaricato non è una lista M3U.'); }
+        catch(e){ last=e; }
+    }
+    throw new Error(((last&&last.message)||'Download non riuscito')+' Prova con “File” o “Incolla”.');
+}
+tvBuild();
 </script>
 </body>
 </html>
