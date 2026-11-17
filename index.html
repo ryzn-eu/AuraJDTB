@@ -583,6 +583,74 @@
     #authMsg{min-height:20px;margin-top:12px;color:var(--neon-pink);font-size:.9rem}
     .auth-card .go:disabled{opacity:.6}
     </style>
+
+<style id="atv-style">
+/* ===== AURATV · look tvOS ===== */
+body{background:#05070d}.bg-orb{opacity:.25}.bg-ambient{opacity:1}
+#home-view{align-items:stretch!important;overflow-y:auto;overflow-x:hidden;padding-bottom:90px}
+.home-top-bar{padding:26px 6vw!important}.sys-brand{font-weight:700;letter-spacing:2px}.sys-brand span{color:#fff;opacity:.55;text-shadow:none}
+.badge-net{box-shadow:none;background:rgba(255,255,255,.1);border:0;color:#fff}
+.tv-clock-center{text-align:left!important;padding:6px 6vw 34px;margin:0!important}
+.tv-clock-time{font-size:clamp(4rem,9vw,8rem)!important;font-weight:700!important;letter-spacing:-3px;background:none!important;-webkit-text-fill-color:#fff!important;filter:none!important}
+.tv-clock-date{color:rgba(255,255,255,.6)!important;text-shadow:none!important;letter-spacing:3px!important;font-size:1rem!important}
+.shelf-container{width:100%!important;max-width:none!important;margin-bottom:18px!important}
+.shelf-title{padding:0 6vw;text-align:left!important;font-size:1.25rem!important;font-weight:700!important;letter-spacing:.3px!important;text-transform:none!important;color:#fff!important;margin-bottom:0!important}
+.grid-tiles,.sb-rail,.rail{display:flex;flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;gap:26px!important;padding:26px 6vw 38px!important;scrollbar-width:none;scroll-snap-type:x proximity}
+.grid-tiles::-webkit-scrollbar,.sb-rail::-webkit-scrollbar,.rail::-webkit-scrollbar,#chListContainer::-webkit-scrollbar{display:none}
+#home-view .tile{flex:none;width:220px!important;height:150px!important;margin:0!important;border:0;border-radius:26px!important;scroll-snap-align:start;
+ background:linear-gradient(145deg,var(--c1,#3b4f8f),var(--c2,#1b2347));box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:none;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+#home-view .tile:nth-child(6n+2){--c1:#8a3fd1;--c2:#3a1a6b}#home-view .tile:nth-child(6n+3){--c1:#1f9d8b;--c2:#0c3d4d}
+#home-view .tile:nth-child(6n+4){--c1:#d6457a;--c2:#5a1636}#home-view .tile:nth-child(6n+5){--c1:#e89a2f;--c2:#6b3a0c}#home-view .tile:nth-child(6n+6){--c1:#3a7bd5;--c2:#10265c}
+#home-view .tile-icon{font-size:3rem!important;margin-bottom:8px}.tile-label{font-weight:700;letter-spacing:.3px;font-size:1.05rem}
+#home-view .tile:hover,#home-view .tile:focus-visible{transform:scale(1.1) translateY(-6px)!important;outline:3px solid #fff;outline-offset:4px;box-shadow:0 30px 60px rgba(0,0,0,.65)}
+.tile::before{display:none}
+.sb-lcard{flex:none;width:280px!important;border-radius:26px!important;border:0!important;scroll-snap-align:start}
+.sb-lcard:hover,.sb-lcard:focus-visible{transform:scale(1.07)!important;outline:3px solid #fff;outline-offset:4px}
+/* card canale */
+.atv-card{flex:none;width:230px;border:0;background:none;color:#fff;text-align:left;cursor:pointer;outline:none;scroll-snap-align:start;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.atv-art{aspect-ratio:16/9;border-radius:20px;display:grid;place-items:center;background:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.04)),#121a33;box-shadow:0 12px 28px rgba(0,0,0,.45);overflow:hidden;transition:.3s}
+.atv-art img{max-width:62%;max-height:62%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+.atv-art em{font:normal 800 2.2rem 'Share Tech Mono',monospace;color:#fff;opacity:.85}
+.atv-cap{display:flex;gap:8px;align-items:baseline;padding:10px 4px 0}.atv-cap i{font:normal 700 .85rem 'Share Tech Mono',monospace;color:var(--neon-blue)}
+.atv-cap b{font-weight:600;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atv-card:hover,.atv-card:focus-visible{transform:scale(1.08) translateY(-5px)}
+.atv-card:hover .atv-art,.atv-card:focus-visible .atv-art{outline:3px solid #fff;outline-offset:3px;box-shadow:0 26px 50px rgba(0,0,0,.65)}
+.atv-card.hero{width:min(460px,80vw)}.atv-card.hero .atv-art{background:linear-gradient(135deg,#8a3fd1,#1b2d73 60%,#0e8fa8);font-size:3.4rem}
+.atv-card.more .atv-art{font-size:1.1rem;font-weight:700}
+/* Aura TV browse */
+#tv-view{background:#05070d}#tvBrowse{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:34px 0 90px}
+.tvb-head{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:0 6vw;flex-wrap:wrap}
+.tvb-head h1{font-size:2.6rem;font-weight:800;letter-spacing:-1px}
+.tvb-head input,#tvSearch{width:min(340px,100%);padding:13px 20px;border-radius:999px;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:1rem;outline:none;user-select:text}
+.chips{display:flex;gap:10px;padding:18px 6vw 0;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;border:0;border-radius:999px;padding:10px 20px;background:rgba(255,255,255,.1);color:#fff;font-weight:600;cursor:pointer;outline:none}
+.chip.on{background:#fff;color:#000}.chip:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.atv-row h3{padding:26px 6vw 0;font-size:1.25rem;font-weight:700}.atv-empty{padding:12vh 6vw;color:var(--text-gray);font-size:1.2rem;text-align:center}
+#tvPlayer{position:absolute;inset:0;display:none;background:#000}
+#tv-view.tv-playing #tvPlayer{display:block}#tv-view.tv-playing #tvBrowse{display:none}
+body.tvp .corner-trigger{display:none}
+#tvPlayerCore{position:absolute;inset:0}#tvMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:15;font:1.5rem 'Share Tech Mono',monospace;color:var(--text-gray);text-align:center;pointer-events:none}#tvMsg.err{color:var(--neon-pink)}
+#tvBack{position:absolute;top:24px;left:24px;z-index:60;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:1rem;color:#fff;background:rgba(20,24,40,.6);backdrop-filter:blur(18px);cursor:pointer;opacity:0;transition:.4s}
+#tvPlayer.ui #tvBack{opacity:1}
+.tv-channel-overlay{top:auto!important;bottom:200px;left:40px!important}.tv-channel-overlay h1{font-size:clamp(1.8rem,4vw,3.2rem)!important}
+#tvPlayer.ui .tv-channel-overlay,.tv-channel-overlay.visible{opacity:1}
+#tvSidebar{left:0!important;right:0;top:auto!important;bottom:0;width:100%!important;height:auto!important;padding:16px 0 20px!important;border:0!important;border-radius:28px 28px 0 0;background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.55))!important;transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.8,.2,1)!important;box-shadow:none!important}
+#tvSidebar.open{transform:translateY(0)}
+#chListContainer{flex:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:14px;padding:6px 24px 6px!important;scroll-snap-type:x proximity}
+#chListContainer .ch-row{flex:none;width:150px;flex-direction:column;align-items:stretch;gap:6px;padding:10px;border-radius:20px;border:0;background:rgba(255,255,255,.08);transform:none;scroll-snap-align:center}
+#chListContainer .ch-row:hover{transform:none;background:rgba(255,255,255,.16)}
+#chListContainer .ch-row.active{background:#fff;color:#000;border:0}#chListContainer .ch-row.active .ch-idx{color:#000;text-shadow:none}
+.ch-logo{aspect-ratio:16/10;display:grid;place-items:center;border-radius:12px;background:rgba(0,0,0,.35);overflow:hidden}.ch-logo img{max-width:70%;max-height:70%;object-fit:contain}.ch-logo em{font:normal 800 1.4rem 'Share Tech Mono',monospace;opacity:.8}
+#chListContainer .ch-idx{width:auto;font-size:.95rem;text-shadow:none}#chListContainer .ch-meta-title{font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Aura Play */
+.m3u-side{background:rgba(8,11,22,.8)}.m3u-card{border:0;border-radius:22px;background:rgba(255,255,255,.06)}.m3u-g.on{background:#fff;color:#000}
+/* altre app */
+.guide-card-modern,.store-product-card,.meteo-main-card,.meteo-mini-box{border-radius:28px!important;border-color:transparent!important}
+/* Staff: schermo intero indipendente */
+#staff-view{position:fixed;inset:0;z-index:2147483000;display:none;background:#05070d}#staff-view.open{display:block}
+#staff-view .st-wrap{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:#05070d}
+@media(max-width:768px){#home-view .tile{width:150px!important;height:112px!important}#home-view .tile-icon{font-size:2.2rem!important}.atv-card{width:170px}#chListContainer .ch-row{width:120px}.tv-channel-overlay{bottom:170px}}
+</style>
 </head>
 <body>
 
@@ -705,31 +773,25 @@
     </div>
 
     <div id="tv-view" class="view-frame">
-        <div class="tv-sidebar-channels" id="tvSidebar">
-            <h2 style="margin-bottom: 30px; color: var(--neon-blue); font-size: 2rem;">Canali</h2>
-            <div class="ch-list-scroll" id="chListContainer"></div>
+        <div id="tvBrowse">
+            <div class="tvb-head"><h1>Aura TV</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"></div>
+            <div id="tvLists" class="chips"></div>
+            <div id="tvRows"></div>
         </div>
-        <div class="tv-screen-wrapper">
-            <div class="tv-osd-input" id="tvOsdDisplay"></div>
-
-            <div class="tv-channel-overlay">
-                <h1 id="tvChTitle">01 - Aura1 HD</h1>
-                <p id="tvChStatus">Palinsesto Speciale</p>
-            </div>
-            
-            <div id="webtv-container" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; overflow: hidden; background: #000;">
-                <div id="player-box" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
-                <div id="antenna-overlay" class="antenna-overlay" style="display: none; z-index: 5;">
-                    <div class="antenna-text">📡 SINTONIZZAZIONE CANALE...</div>
-                    <div class="antenna-subtext">Attendere prego</div>
+        <div id="tvPlayer">
+            <div class="tv-screen-wrapper">
+                <div class="tv-osd-input" id="tvOsdDisplay"></div>
+                <div class="tv-channel-overlay"><h1 id="tvChTitle"></h1><p id="tvChStatus"></p></div>
+                <div id="webtv-container" style="display:none;position:absolute;inset:0;z-index:10;overflow:hidden;background:#000;">
+                    <div id="player-box" style="position:absolute;inset:0;z-index:1;"></div>
+                    <div id="antenna-overlay" class="antenna-overlay" style="display:none;z-index:5;"><div class="antenna-text">📡 SINTONIZZAZIONE CANALE...</div><div class="antenna-subtext">Attendere prego</div></div>
+                    <div id="adv-overlay" class="adv-overlay" style="display:none;z-index:5;"><div class="adv-badge">Pubblicità</div><video id="adv-video-element" src="https://www.w3schools.com/html/mov_bbb.mp4" loop muted playsinline></video></div>
                 </div>
-                <div id="adv-overlay" class="adv-overlay" style="display: none; z-index: 5;">
-                    <div class="adv-badge">Pubblicità</div>
-                    <video id="adv-video-element" src="https://www.w3schools.com/html/mov_bbb.mp4" loop muted playsinline></video>
-                </div>
+                <div id="tvPlayerCore"></div>
+                <div id="tvMsg"></div>
             </div>
-
-            <div id="tvPlayerCore"></div>
+            <button id="tvBack" onclick="tvBackToBrowse()">‹ Canali</button>
+            <div class="tv-sidebar-channels" id="tvSidebar"><div class="ch-list-scroll" id="chListContainer"></div></div>
         </div>
     </div>
 
@@ -839,7 +901,7 @@
         </div>
     </div>
 
-    <div id="staff-view" class="view-frame sb-keep">
+    <div id="staff-view" class="sb-keep">
         <div class="st-wrap">
             <div class="st-head">
                 <h2>Pannello Staff</h2>
@@ -847,7 +909,7 @@
                 <button class="st-btn" onclick="sbLogout()">Esci</button>
                 <button class="st-btn pri" onclick="goHome()">Chiudi</button>
             </div>
-            <div id="stBody"></div>
+            <div id="stBody"><p style="color:var(--text-gray)">Caricamento…</p></div>
         </div>
     </div>
 
@@ -1362,6 +1424,148 @@
             document.getElementById(id+'-section').classList.add('active'); 
         };
     <\/script>
+
+<script>
+/* ===== AuraTV · canali guidati dalla lista M3U + interfaccia tvOS + fix Staff ===== */
+var tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}], tvPlaying=false, tvHls=null, tvUiT, tvQuery='', tvMore={}, tvQt;
+const tvArt=c=>{const i=esc2((c.name||'?').trim().slice(0,2).toUpperCase());return c.logo?`<img src="${esc2(c.logo)}" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.outerHTML='<em>${i}</em>'">`:`<em>${i}</em>`;};
+const tvNn=n=>String(n).padStart(2,'0');
+
+function tvBuild(){
+    tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}].concat((sbChs||[]).map((c,i)=>({num:i+2,name:c.name,logo:c.logo,group:c.group||'Altri',url:c.url})));
+    if(currentChannelNum>tvLineup.length) currentChannelNum=1;
+    const box=$s('chListContainer'); if(!box) return;
+    box.innerHTML=tvLineup.map(c=>`<div class="ch-row ${c.num===currentChannelNum&&tvPlaying?'active':''}" id="sidebar-ch-${c.num}" data-n="${c.num}"><div class="ch-logo">${c.web?'<em>📡</em>':tvArt(c)}</div><div class="ch-idx">${tvNn(c.num)}</div><div class="ch-meta-title">${esc2(c.name)}</div></div>`).join('');
+    tvRenderBrowse(); tvRenderHome();
+}
+function buildTvChannels(){ tvBuild(); }
+
+function tvCard(c,extra){return `<button class="atv-card ${extra||''}" data-n="${c.num}"><div class="atv-art">${c.web?'📡':tvArt(c)}</div><div class="atv-cap"><i>${tvNn(c.num)}</i><b>${esc2(c.name)}</b></div></button>`;}
+function tvRenderBrowse(){
+    const L=$s('tvLists'), R=$s('tvRows'); if(!L||!R) return;
+    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('');
+    const q=tvQuery.trim().toLowerCase(); let h='';
+    if(!q) h+=`<div class="atv-row"><h3>In evidenza</h3><div class="rail"><button class="atv-card hero" data-n="1"><div class="atv-art">📡</div><div class="atv-cap"><i>01</i><b>Aura1 HD · WebTV Cloud</b></div></button></div></div>`;
+    const chs=tvLineup.slice(1).filter(c=>!q||c.name.toLowerCase().includes(q));
+    if(!chs.length) h+=`<div class="atv-empty">${q?'Nessun canale trovato.':(sbCurList?'Caricamento canali…':'Nessuna lista M3U disponibile. Lo staff può aggiungerla dal pannello Staff.')}</div>`;
+    else if(q) h+=`<div class="atv-row"><h3>Risultati (${chs.length})</h3><div class="rail" style="flex-wrap:wrap!important;overflow:visible">${chs.slice(0,120).map(c=>tvCard(c)).join('')}</div></div>`;
+    else{
+        const g=new Map(); chs.forEach(c=>{if(!g.has(c.group))g.set(c.group,[]);g.get(c.group).push(c);});
+        [...g].slice(0,40).forEach(([name,arr])=>{const lim=tvMore[name]?300:30;
+            h+=`<div class="atv-row"><h3>${esc2(name)} <span style="opacity:.5;font-weight:500">${arr.length}</span></h3><div class="rail">${arr.slice(0,lim).map(c=>tvCard(c)).join('')}${arr.length>lim?`<button class="atv-card more" data-more="${esc2(name)}"><div class="atv-art">Altri ${arr.length-lim} ›</div></button>`:''}</div></div>`;});
+    }
+    R.innerHTML=h;
+}
+function tvRenderHome(){
+    let s=$s('homeChShelf');
+    if(!s){s=document.createElement('div');s.id='homeChShelf';s.className='shelf-container';$s('home-view').appendChild(s);}
+    s.innerHTML=`<div class="shelf-title">Canali in diretta</div><div class="rail">${tvLineup.slice(0,40).map(c=>tvCard(c)).join('')}${tvLineup.length>40?'<button class="atv-card more" data-all="1"><div class="atv-art">Tutti ›</div></button>':''}</div>`;
+}
+document.addEventListener('click',e=>{
+    const c=e.target.closest('.atv-card'); if(!c) return;
+    if(c.dataset.more){tvMore[c.dataset.more]=true;tvRenderBrowse();return;}
+    if(c.dataset.all){openTargetView('tv-view');return;}
+    if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
+});
+$s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b){tvMore={};sbSelectList(b.dataset.l);}};
+$s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
+$s('tvSearch').oninput=e=>{clearTimeout(tvQt);tvQt=setTimeout(()=>{tvQuery=e.target.value;tvRenderBrowse();},180);};
+
+/* dati: ogni volta che cambiano liste o canali, il palinsesto si rigenera da solo */
+function sbSetChs(a){ sbChs=a; sbApply(); tvBuild(); }
+const _sbRL=sbRenderLists; sbRenderLists=function(){ _sbRL(); tvBuild(); };
+
+/* player */
+function tvShow(p){ tvPlaying=p; $s('tv-view').classList.toggle('tv-playing',p); document.body.classList.toggle('tvp',p&&currentActiveView==='tv-view'); }
+function tvKill(){ if(tvHls){tvHls.destroy();tvHls=null;} const v=$s('tvVideo'); if(v){v.pause();v.removeAttribute('src');v.load();} }
+function tvStop(){ tvKill(); pauseWebTV(); $s('tvPlayerCore').innerHTML=''; $s('tvMsg').textContent=''; tvShow(false); }
+function tvBackToBrowse(){ tvStop(); document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active')); }
+function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
+$s('tvPlayer').addEventListener('mousemove',tvUi); $s('tvPlayer').addEventListener('touchstart',tvUi,{passive:true});
+function tvMsg(t){ const m=$s('tvMsg'); m.textContent=t||''; m.className=/ASSENTE/.test(t||'')?'err':''; }
+function tvPlayUrl(ch){
+    tvKill(); const box=$s('tvPlayerCore'); box.innerHTML='<video id="tvVideo" playsinline autoplay style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
+    const v=$s('tvVideo'); tvMsg('📡 SINTONIZZAZIONE…'); v.onplaying=()=>tvMsg(''); v.onwaiting=()=>tvMsg('BUFFERING…'); v.onerror=()=>{ if(!tvHls) tvMsg('SEGNALE ASSENTE'); };
+    const direct=()=>{ v.src=ch.url; v.play().catch(()=>{}); };
+    if(/\.(mp4|webm|ogv|mp3|aac)(\?|$)/i.test(ch.url)||!(window.Hls&&Hls.isSupported())){ direct(); return; }
+    tvHls=new Hls({lowLatencyMode:true}); tvHls.loadSource(ch.url); tvHls.attachMedia(v);
+    tvHls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));
+    tvHls.on(Hls.Events.ERROR,(_,d)=>{ if(!d.fatal) return;
+        if(d.type===Hls.ErrorTypes.NETWORK_ERROR&&d.details!=='manifestLoadError') tvHls.startLoad();
+        else{ tvHls.destroy(); tvHls=null; direct(); } });
+}
+function selectTvChannel(num){
+    num=parseInt(num,10);
+    if(!(num>=1&&num<=tvLineup.length)){ triggerNotification('Canale non disponibile'); return; }
+    currentChannelNum=num; const ch=tvLineup[num-1];
+    tvShow(true); document.body.classList.toggle('tvp',currentActiveView==='tv-view');
+    document.querySelectorAll('.ch-row').forEach(r=>r.classList.remove('active'));
+    const row=$s('sidebar-ch-'+num); if(row){ row.classList.add('active'); row.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
+    $s('tvChTitle').innerText=tvNn(num)+' - '+ch.name; $s('tvChStatus').innerText=ch.web?'Palinsesto WebTV Cloud':(ch.group||'');
+    const ov=document.querySelector('.tv-channel-overlay'); ov.classList.add('visible'); clearTimeout(channelOverlayTimeout); channelOverlayTimeout=setTimeout(()=>ov.classList.remove('visible'),2500);
+    const web=$s('webtv-container'); tvUi();
+    if(ch.web){ tvKill(); $s('tvPlayerCore').innerHTML=''; tvMsg(''); web.style.display='block';
+        if(!window.webtvInitialized){ initWebTV(); window.webtvInitialized=true; } else forceLiveSync(); }
+    else{ web.style.display='none'; pauseWebTV(); tvPlayUrl(ch); }
+}
+function tvStep(d){ let n=currentChannelNum+d; if(n<1) n=tvLineup.length; if(n>tvLineup.length) n=1; selectTvChannel(n); }
+window.tvToggleM3u=function(){ const v=$s('tvVideo'); if(currentChannelNum===1||!v) return false; v.paused?v.play():v.pause(); return true; };
+const _sbStepOld=window.sbStep;
+sbStep=function(d){ if(currentActiveView==='tv-view'||currentActiveView==='home-view'){ if(currentActiveView!=='tv-view') openTargetView('tv-view'); if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
+window.sbStep=sbStep;
+
+/* navigazione viste (Staff = schermata a sé, sempre visibile) */
+function openTargetView(id){
+    const leaving=currentActiveView==='tv-view'&&id!=='tv-view';
+    document.querySelectorAll('.view-frame').forEach(v=>v.classList.remove('active'));
+    $s('staff-view').classList.toggle('open',id==='staff-view');
+    const t=document.getElementById(id); if(t&&t.classList.contains('view-frame')) t.classList.add('active');
+    currentActiveView=id; $s('tvSidebar').classList.remove('open');
+    if(leaving) tvStop();
+    if(id==='tv-view'&&!tvPlaying) tvShow(false);
+    if(id==='tv-view'&&tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync();
+    document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
+}
+function goHome(){ openTargetView('home-view'); }
+document.addEventListener('keydown',e=>{
+    if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
+        if(tvPlaying){
+            const k=e.key; let h=true;
+            if(k==='Escape'||k==='Backspace') tvBackToBrowse();
+            else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
+            else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
+            else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
+            if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
+        } else if(e.key.startsWith('Arrow')){
+            const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
+            if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
+            const r=a.getBoundingClientRect();let t=null;
+            if(e.key==='ArrowRight')t=all[i+1];else if(e.key==='ArrowLeft')t=all[i-1];
+            else{const dir=e.key==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
+            if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
+        }
+    }
+},true);
+
+/* ---------- STAFF: lettura robusta + errori visibili ---------- */
+const _stR=sbStaffRender;
+sbStaffRender=function(){ try{ _stR(); }catch(err){ console.error(err); $s('stBody').innerHTML='<div class="st-box"><h3>Errore</h3><p style="color:var(--neon-pink)">'+esc2(err.message)+'</p></div>'; } };
+window.sbStaffRender=sbStaffRender;
+function sbOpenStaff(){ openTargetView('staff-view'); sbStaffRender(); }
+window.sbOpenStaff=sbOpenStaff;
+/* download della lista: diretto, poi tramite proxy CORS se il server la blocca */
+async function sbFetchText(url){
+    const tries=[url,'https://corsproxy.io/?url='+encodeURIComponent(url),'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+    let last=null;
+    for(const u of tries){
+        try{ const r=await fetch(u); if(!r.ok) throw new Error('Il server ha risposto con errore '+r.status+'.'); const t=await r.text();
+            if(/#EXT/i.test(t)) return t; throw new Error('Il contenuto scaricato non è una lista M3U.'); }
+        catch(e){ last=e; }
+    }
+    throw new Error(((last&&last.message)||'Download non riuscito')+' Prova con “File” o “Incolla”.');
+}
+tvBuild();
+</script>
 </body>
 </html>
     </script>
@@ -1546,8 +1750,8 @@
                         goHome();
                         break;
                     case 'MEDIA_TOGGLE':
-                        if(currentActiveView === 'tv-view') {
-                            if(ytPlayerInstance && typeof ytPlayerInstance.getPlayerState === 'function') {
+                        if(currentActiveView === 'tv-view' && window.tvToggleM3u && tvToggleM3u()) {} else if(currentActiveView === 'tv-view') {
+ if(ytPlayerInstance && typeof ytPlayerInstance.getPlayerState === 'function') {
                                 if(ytPlayerInstance.getPlayerState() === 1) pauseWebTV();
                                 else ytPlayerInstance.playVideo();
                             } else {
@@ -1831,7 +2035,7 @@
             tvView.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, { passive: true }); 
             tvView.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; evaluateTvSwipeGesture(); }, { passive: true }); 
         }
-        function evaluateTvSwipeGesture() { 
+        function evaluateTvSwipeGesture() { if(!window.tvPlaying) return; 
             const diffX = touchEndX - touchStartX; const diffY = touchEndY - touchStartY; 
             const sidebar = document.getElementById('tvSidebar'); 
             if (Math.abs(diffX) > Math.abs(diffY)) { 
@@ -1839,9 +2043,9 @@
                 else if (diffX < -70) sidebar.classList.remove('open'); 
             } else { 
                 if (diffY > 70) { 
-                    let prevCh = currentChannelNum - 1; if(prevCh < 1) prevCh = 99; selectTvChannel(prevCh); 
+                    let prevCh = currentChannelNum - 1; if(prevCh < 1) prevCh = tvLineup.length; selectTvChannel(prevCh); 
                 } else if (diffY < -70) { 
-                    let nextCh = currentChannelNum + 1; if(nextCh > 99) nextCh = 1; selectTvChannel(nextCh); 
+                    let nextCh = currentChannelNum + 1; if(nextCh > tvLineup.length) nextCh = 1; selectTvChannel(nextCh); 
                 } 
             } 
         }
@@ -2025,12 +2229,12 @@
 
         let tvInputBuffer = ""; let tvInputTimeout;
         document.addEventListener('keydown', (e) => {
-            if(currentActiveView === 'tv-view' && !isMobileDevice) {
+            if(currentActiveView === 'tv-view' && !isMobileDevice && !/INPUT|TEXTAREA/.test(e.target.tagName)) {
                 if(e.key >= '0' && e.key <= '9') {
                     tvInputBuffer += e.key; if(tvInputBuffer.length > 3) tvInputBuffer = tvInputBuffer.slice(-3);
                     const osd = document.getElementById('tvOsdDisplay'); osd.innerText = tvInputBuffer; osd.classList.add('visible');
                     clearTimeout(tvInputTimeout); tvInputTimeout = setTimeout(() => {
-                        const channelNum = parseInt(tvInputBuffer, 10); if(channelNum > 0 && channelNum <= 99) selectTvChannel(channelNum); else triggerNotification("non disponibile");
+                        const channelNum = parseInt(tvInputBuffer, 10); if(channelNum > 0 && channelNum <= tvLineup.length) selectTvChannel(channelNum); else triggerNotification("non disponibile");
                         tvInputBuffer = ""; osd.classList.remove('visible');
                     }, 1200);
                 }
