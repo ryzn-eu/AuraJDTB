@@ -628,6 +628,8 @@ body.tvp .corner-trigger{display:none}
 #tvPlayerCore{position:absolute;inset:0}#tvMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:15;font:1.5rem 'Share Tech Mono',monospace;color:var(--text-gray);text-align:center;pointer-events:none}#tvMsg.err{color:var(--neon-pink)}
 #tvBack{position:absolute;top:24px;left:24px;z-index:60;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:1rem;color:#fff;background:rgba(20,24,40,.6);backdrop-filter:blur(18px);cursor:pointer;opacity:0;transition:.4s}
 #tvPlayer.ui #tvBack{opacity:1}
+#tvHome{position:absolute;top:24px;left:170px;z-index:60;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:1rem;color:#fff;background:rgba(20,24,40,.6);backdrop-filter:blur(18px);cursor:pointer;opacity:0;transition:.4s}
+#tvPlayer.ui #tvHome{opacity:1}
 .tv-channel-overlay{top:auto!important;bottom:200px;left:40px!important}.tv-channel-overlay h1{font-size:clamp(1.8rem,4vw,3.2rem)!important}
 #tvPlayer.ui .tv-channel-overlay,.tv-channel-overlay.visible{opacity:1}
 #tvSidebar{left:0!important;right:0;top:auto!important;bottom:0;width:100%!important;height:auto!important;padding:16px 0 20px!important;border:0!important;border-radius:28px 28px 0 0;background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.55))!important;transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.8,.2,1)!important;box-shadow:none!important}
@@ -647,179 +649,6 @@ body.tvp .corner-trigger{display:none}
 #staff-view .st-wrap{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:#05070d}
 @media(max-width:768px){#home-view .tile{width:150px!important;height:112px!important}#home-view .tile-icon{font-size:2.2rem!important}.atv-card{width:170px}#chListContainer .ch-row{width:120px}.tv-channel-overlay{bottom:170px}}
 </style>
-
-<style id="aura-tv-drawer-upgrade">
-/* ===== MENU LATERALE AD ELENCO & HEALTH-CHECK CANALI ===== */
-#tvBrowse { display: none !important; }
-#tvPlayer { display: block !important; }
-
-#tvMenuBtn {
-    position: absolute; top: 24px; left: 24px; z-index: 65;
-    display: flex; align-items: center; gap: 10px;
-    border: 1px solid rgba(0, 240, 255, 0.45); border-radius: 999px;
-    padding: 12px 22px; font-weight: 800; font-size: 1rem; color: #fff;
-    background: rgba(8, 12, 26, 0.78); backdrop-filter: blur(18px);
-    cursor: pointer; transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-}
-#tvMenuBtn:hover {
-    background: var(--neon-blue); color: #000; box-shadow: var(--glow-blue); transform: scale(1.04);
-}
-#tvBack { display: none !important; }
-
-#tvSidebar {
-    position: absolute !important;
-    top: 0 !important; left: 0 !important; bottom: 0 !important; right: auto !important;
-    width: min(410px, 88vw) !important; height: 100% !important;
-    padding: 22px 18px 22px 18px !important;
-    border-radius: 0 28px 28px 0 !important;
-    border-right: 1px solid rgba(0, 240, 255, 0.35) !important;
-    border-top: 0 !important; border-bottom: 0 !important; border-left: 0 !important;
-    background: linear-gradient(165deg, rgba(8, 12, 28, 0.96), rgba(4, 6, 16, 0.94)) !important;
-    backdrop-filter: blur(32px) !important;
-    transform: translateX(-105%) !important;
-    transition: transform 0.38s cubic-bezier(0.2, 0.85, 0.25, 1) !important;
-    z-index: 75 !important;
-    display: flex !important; flex-direction: column !important; gap: 12px !important;
-    box-shadow: 25px 0 70px rgba(0, 0, 0, 0.85) !important;
-}
-#tvSidebar.open {
-    transform: translateX(0) !important;
-}
-
-.tv-sb-header {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.tv-sb-header h3 {
-    font-size: 1.35rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0;
-}
-.tv-sb-badge {
-    font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;
-    background: rgba(0, 255, 136, 0.15); border: 1px solid rgba(0, 255, 136, 0.5); color: var(--neon-green);
-}
-.tv-sb-close {
-    width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.08); color: #fff; font-size: 1.1rem; cursor: pointer;
-    display: grid; place-items: center; transition: 0.2s;
-}
-.tv-sb-close:hover { background: var(--neon-pink); border-color: var(--neon-pink); }
-
-.tv-sb-controls {
-    display: flex; flex-direction: column; gap: 8px;
-}
-.tv-sb-row-tools {
-    display: flex; gap: 8px; align-items: center;
-}
-#tvSidebarListSel {
-    flex: 1; padding: 9px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.08); color: #fff; font-size: 0.88rem; outline: none;
-}
-#tvSidebarListSel option { background: #0b1020; }
-#tvFilterWorkingBtn {
-    padding: 9px 12px; border-radius: 12px; border: 1px solid rgba(0, 240, 255, 0.4);
-    background: rgba(0, 240, 255, 0.14); color: var(--neon-blue); font-size: 0.8rem;
-    font-weight: 800; cursor: pointer; white-space: nowrap; transition: 0.2s;
-}
-#tvFilterWorkingBtn.off {
-    border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: var(--text-gray);
-}
-#tvSidebarSearch {
-    width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(255,255,255,0.07); color: #fff; font-size: 0.95rem; outline: none; user-select: text;
-}
-#tvSidebarSearch:focus { border-color: var(--neon-blue); }
-
-#tvSidebarCats {
-    display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; flex: none;
-}
-#tvSidebarCats::-webkit-scrollbar { display: none; }
-.tv-cat-pill {
-    flex: none; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.05); color: var(--text-gray); font-size: 0.8rem; font-weight: 700; cursor: pointer;
-}
-.tv-cat-pill.on { background: var(--neon-blue); color: #000; border-color: var(--neon-blue); }
-
-#tvHealthStatus {
-    font-size: 0.78rem; color: var(--text-gray); display: flex; justify-content: space-between; align-items: center;
-    padding: 4px 8px; border-radius: 8px; background: rgba(255,255,255,0.03);
-}
-
-#chListContainer {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    gap: 8px !important;
-    padding: 4px 4px 20px 0 !important;
-}
-#chListContainer::-webkit-scrollbar { width: 6px; display: block !important; }
-#chListContainer::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.35); border-radius: 10px; }
-
-#chListContainer .ch-row {
-    flex: none !important;
-    width: 100% !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 10px 14px !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer;
-}
-#chListContainer .ch-row:hover,
-#chListContainer .ch-row.focused {
-    background: rgba(0, 240, 255, 0.16) !important;
-    border-color: rgba(0, 240, 255, 0.6) !important;
-    transform: translateX(4px) !important;
-}
-#chListContainer .ch-row.active {
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.28), rgba(177, 0, 255, 0.22)) !important;
-    border-color: var(--neon-blue) !important;
-    border-left: 4px solid var(--neon-blue) !important;
-    color: #fff !important;
-}
-#chListContainer .ch-idx {
-    width: 34px !important; flex: none;
-    font-family: 'Share Tech Mono', monospace !important;
-    font-size: 1.05rem !important; font-weight: 800 !important;
-    color: var(--neon-blue) !important; text-align: center;
-}
-#chListContainer .ch-logo {
-    width: 44px !important; height: 32px !important; flex: none;
-    aspect-ratio: auto !important; border-radius: 8px !important;
-    background: rgba(0, 0, 0, 0.45) !important; display: grid; place-items: center; overflow: hidden;
-}
-#chListContainer .ch-logo img { max-width: 82%; max-height: 82%; object-fit: contain; }
-#chListContainer .ch-logo em { font-size: 0.9rem !important; font-style: normal; font-weight: 800; color: #fff; }
-.ch-info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-#chListContainer .ch-meta-title {
-    font-size: 0.98rem !important; font-weight: 700 !important; color: #fff !important;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.ch-meta-sub {
-    font-size: 0.75rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.ch-dot-status {
-    width: 9px; height: 9px; border-radius: 50%; flex: none;
-    background: #ffaa00; box-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
-}
-.ch-dot-status.ok { background: var(--neon-green); box-shadow: 0 0 8px rgba(0, 255, 136, 0.7); }
-.ch-dot-status.dead { background: var(--neon-pink); box-shadow: 0 0 8px rgba(255, 0, 127, 0.7); }
-
-.tv-channel-overlay {
-    top: auto !important; bottom: 38px !important; left: 40px !important;
-    transition: left 0.38s ease, opacity 0.4s ease !important;
-}
-#tvSidebar.open ~ .tv-channel-overlay,
-#tvPlayer.drawer-open .tv-channel-overlay {
-    left: min(440px, 92vw) !important;
-}
-</style>
-
 </head>
 <body>
 
@@ -854,16 +683,16 @@ body.tvp .corner-trigger{display:none}
         </div>
         
         <div class="remote-grid">
-            <button onclick="sendRemoteCmd('GO_HOME', null)" title="Home"><i data-lucide="home"></i></button>
-            <button onclick="sendRemoteCmd('OPEN_APP', 'tv-view')" title="Aura TV"><i data-lucide="tv"></i></button>
-            <button onclick="sendRemoteCmd('TOGGLE_TV_LIST', null)" title="Elenco Canali" style="border-color:rgba(0,240,255,0.45);color:var(--neon-blue);"><i data-lucide="list"></i></button>
-            <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')" title="Guida TV"><i data-lucide="calendar"></i></button>
+            <button onclick="sendRemoteCmd('GO_HOME', null)"><i data-lucide="home"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'tv-view')"><i data-lucide="tv"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'music-view')"><i data-lucide="music"></i></button>
+            <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')"><i data-lucide="calendar"></i></button>
         </div>
 
-        <div class="remote-grid" style="margin-top:-20px">
-            <button onclick="sendRemoteCmd('TV_UP', null)" title="Su / Canale -"><i data-lucide="chevron-up"></i></button>
-            <button onclick="sendRemoteCmd('TV_DOWN', null)" title="Giù / Canale +"><i data-lucide="chevron-down"></i></button>
-            <button onclick="sendRemoteCmd('TV_OK', null)" title="Conferma OK" style="font-weight:800;font-family:'Share Tech Mono',monospace;color:var(--neon-green);border-color:rgba(0,255,136,0.4);">OK</button>
+                <div class="remote-grid" style="margin-top:-20px">
+            <button onclick="sendRemoteCmd('OPEN_APP', 'm3u-view')" title="Aura Play"><i data-lucide="play-circle"></i></button>
+            <button onclick="sendRemoteCmd('M3U_PREV', null)" title="Canale precedente"><i data-lucide="skip-back"></i></button>
+            <button onclick="sendRemoteCmd('M3U_NEXT', null)" title="Canale successivo"><i data-lucide="skip-forward"></i></button>
             <button id="sbRemoteStaff" class="sb-staff-only" onclick="sbOpenStaff()" title="Pannello staff" style="display:none"><i data-lucide="shield"></i></button>
         </div>
 
@@ -938,12 +767,12 @@ body.tvp .corner-trigger{display:none}
     </div>
 
     <div id="tv-view" class="view-frame">
-        <div id="tvBrowse" style="display:none">
+        <div id="tvBrowse">
             <div class="tvb-head"><h1>Aura TV</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"></div>
             <div id="tvLists" class="chips"></div>
             <div id="tvRows"></div>
         </div>
-        <div id="tvPlayer" class="drawer-open">
+        <div id="tvPlayer">
             <div class="tv-screen-wrapper">
                 <div class="tv-osd-input" id="tvOsdDisplay"></div>
                 <div class="tv-channel-overlay"><h1 id="tvChTitle"></h1><p id="tvChStatus"></p></div>
@@ -955,24 +784,9 @@ body.tvp .corner-trigger{display:none}
                 <div id="tvPlayerCore"></div>
                 <div id="tvMsg"></div>
             </div>
-            <button id="tvMenuBtn" onclick="tvToggleSidebar()">☰ Lista Canali</button>
-            <button id="tvBack" onclick="tvToggleSidebar()">☰ Canali</button>
-            <aside class="tv-sidebar-channels open" id="tvSidebar">
-                <div class="tv-sb-header">
-                    <h3>📺 Canali <span class="tv-sb-badge" id="tvWorkingCount">0 attivi</span></h3>
-                    <button class="tv-sb-close" onclick="tvToggleSidebar(false)" title="Chiudi elenco">✕</button>
-                </div>
-                <div class="tv-sb-controls">
-                    <div class="tv-sb-row-tools">
-                        <select id="tvSidebarListSel" aria-label="Sorgente M3U"></select>
-                        <button id="tvFilterWorkingBtn" onclick="tvToggleOnlyWorking()" title="Filtra solo canali verificati funzionanti">✓ Solo Attivi</button>
-                    </div>
-                    <input id="tvSidebarSearch" type="search" placeholder="Filtra per nome o categoria..." autocomplete="off">
-                    <div id="tvSidebarCats"></div>
-                    <div id="tvHealthStatus"><span id="tvHealthText">Verifica flussi M3U pronta</span><button onclick="tvRunHealthCheck(true)" style="background:none;border:0;color:var(--neon-blue);font-weight:700;cursor:pointer;font-size:0.78rem;">↻ Ritesta</button></div>
-                </div>
-                <div class="ch-list-scroll" id="chListContainer"></div>
-            </aside>
+            <button id="tvBack" onclick="tvBackToBrowse()">‹ Canali</button>
+            <button id="tvHome" onclick="goHome()">⌂ Home</button>
+            <div class="tv-sidebar-channels" id="tvSidebar"><div class="ch-list-scroll" id="chListContainer"></div></div>
         </div>
     </div>
 
@@ -2416,6 +2230,17 @@ firebase.auth().onAuthStateChanged(user => {
     }
 });
 
+/* ---------- Filtro doppioni: scarta i canali con lo stesso indirizzo (tiene il primo) ---------- */
+function sbDedupe(arr) {
+    const seen = new Set(), out = [];
+    for (const c of arr) {
+        const k = String((c && c.url) || '').trim();
+        if (!k || seen.has(k)) continue;
+        seen.add(k); out.push(c);
+    }
+    return out;
+}
+
 /* ---------- Parser M3U ---------- */
 function sbParse(txt) {
     const out = []; let info = null;
@@ -2430,7 +2255,7 @@ function sbParse(txt) {
             out.push({ name: info ? info.name : l.split('/').pop(), logo: info ? info.logo : '', group: (info && info.group) || 'Altri', url: l }); info = null;
         }
     }
-    return out;
+    return sbDedupe(out);
 }
 
 /* ---------- Liste su Firebase (lettura per tutti, scrittura solo staff) ---------- */
@@ -2467,7 +2292,7 @@ function sbSelectList(id) {
     if (sbCache[id] && sbCacheV[id] === v) return sbSetChs(sbCache[id]);
     $s('m3uGrid').innerHTML = ''; $s('m3uEmpty').style.display = ''; $s('m3uEmpty').textContent = 'Caricamento lista…';
     database.ref('aura_m3u/data/' + id).once('value').then(s => {
-        const arr = JSON.parse(s.val() || '[]').map(a => ({ name: a[0], logo: a[1], group: a[2], url: a[3] }));
+        const arr = sbDedupe(JSON.parse(s.val() || '[]').map(a => ({ name: a[0], logo: a[1], group: a[2], url: a[3] })));
         sbCache[id] = arr; sbCacheV[id] = v; if (sbCurList === id) sbSetChs(arr);
     }).catch(() => { $s('m3uEmpty').textContent = 'Impossibile caricare la lista.'; });
 }
@@ -3054,15 +2879,18 @@ function openTargetView(id){
     document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
 }
 function goHome(){ openTargetView('home-view'); }
+const tvIsBack=e=>/^(Escape|Backspace|GoBack|BrowserBack|XF86Back)$/.test(e.key)||e.keyCode===10009||e.keyCode===461;
 document.addEventListener('keydown',e=>{
     if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
         if(tvPlaying){
             const k=e.key; let h=true;
-            if(k==='Escape'||k==='Backspace') tvBackToBrowse();
+            if(tvIsBack(e)) tvBackToBrowse();
             else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
             else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
             else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
             if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
+        } else if(tvIsBack(e)){
+            e.preventDefault(); e.stopImmediatePropagation(); goHome();
         } else if(e.key.startsWith('Arrow')){
             const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
             if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
@@ -3093,417 +2921,5 @@ async function sbFetchText(url){
 }
 tvBuild();
 </script>
-
-<script id="aura-tv-engine-upgrade">
-/* ===== AURATV UPGRADE: MENU LATERALE AD ELENCO, TELECOMANDO & HEALTH-CHECK M3U ===== */
-(function() {
-    let tvOnlyWorking = true;
-    let tvSbCat = 'Tutti';
-    let tvSbSearch = '';
-    let tvFocusedIdx = 0;
-    let tvHealthAbort = null;
-    const tvHealthCache = new Map(); // url -> 'ok' | 'dead' | 'testing'
-
-    // Riconosce canali Pluto TV / flussi noti non funzionanti
-    window.tvIsBlockedPluto = function(name, group, url) {
-        const hay = ((name || '') + ' ' + (group || '') + ' ' + (url || '')).toLowerCase();
-        return hay.includes('pluto.tv') || hay.includes('plutotv') || hay.includes('pluto tv') || hay.includes('service-stitcher');
-    };
-
-    // Sovrascrive il parser M3U per escludere automaticamente Pluto TV e link corrotti
-    const _origSbParse = window.sbParse;
-    window.sbParse = function(txt) {
-        const rawList = _origSbParse(txt);
-        return rawList.filter(c => {
-            if (!c || !c.url || !/^https?:\/\//i.test(c.url)) return false;
-            if (window.tvIsBlockedPluto(c.name, c.group, c.url)) return false;
-            return true;
-        });
-    };
-
-    // Apertura/chiusura sicura del menu laterale
-    window.tvToggleSidebar = function(forceState) {
-        const sb = $s('tvSidebar');
-        const pl = $s('tvPlayer');
-        if (!sb) return;
-        const next = typeof forceState === 'boolean' ? forceState : !sb.classList.contains('open');
-        sb.classList.toggle('open', next);
-        if (pl) pl.classList.toggle('drawer-open', next);
-        if (next) {
-            const activeIdx = tvGetFilteredLineup().findIndex(c => c.num === currentChannelNum);
-            if (activeIdx >= 0) tvFocusedIdx = activeIdx;
-            tvHighlightFocusedRow();
-        }
-    };
-
-    window.tvToggleOnlyWorking = function() {
-        tvOnlyWorking = !tvOnlyWorking;
-        const btn = $s('tvFilterWorkingBtn');
-        if (btn) {
-            btn.classList.toggle('off', !tvOnlyWorking);
-            btn.textContent = tvOnlyWorking ? '✓ Solo Attivi' : 'Tutti i Flussi';
-        }
-        tvRenderSidebarList();
-    };
-
-    // Restituisce i canali filtrati per stato (solo funzionanti), categoria e ricerca
-    window.tvGetFilteredLineup = function() {
-        const q = tvSbSearch.trim().toLowerCase();
-        return (window.tvLineup || []).filter(c => {
-            if (c.web) return true; // Aura1 HD sempre disponibile
-            if (window.tvIsBlockedPluto(c.name, c.group, c.url)) return false;
-            const st = tvHealthCache.get(c.url) || c.health || 'testing';
-            if (tvOnlyWorking && st === 'dead') return false;
-            if (tvSbCat !== 'Tutti' && (c.group || 'Altri') !== tvSbCat) return false;
-            if (q && !(c.name || '').toLowerCase().includes(q) && !(c.group || '').toLowerCase().includes(q)) return false;
-            return true;
-        });
-    };
-
-    function tvUpdateHealthStats() {
-        const allM3u = (window.tvLineup || []).filter(c => !c.web);
-        let ok = 0, dead = 0, testing = 0;
-        allM3u.forEach(c => {
-            const st = tvHealthCache.get(c.url) || 'testing';
-            if (st === 'ok') ok++;
-            else if (st === 'dead') dead++;
-            else testing++;
-        });
-        const badge = $s('tvWorkingCount');
-        if (badge) badge.textContent = `${ok + 1} attivi`;
-        const ht = $s('tvHealthText');
-        if (ht) {
-            if (testing > 0) ht.textContent = `Test flussi: ${ok} ok, ${dead} scartati (${testing} in coda...)`;
-            else if (allM3u.length === 0) ht.textContent = 'Nessuna lista M3U caricata';
-            else ht.textContent = `Verifica completata: ${ok} funzionanti · ${dead} nascosti`;
-        }
-    }
-
-    // Rendering dell'elenco laterale verticale
-    window.tvRenderSidebarList = function() {
-        const box = $s('chListContainer');
-        if (!box) return;
-
-        // Aggiorna selettore liste
-        const sel = $s('tvSidebarListSel');
-        if (sel && typeof sbVisible === 'function') {
-            const vis = sbVisible();
-            sel.innerHTML = vis.length
-                ? vis.map(([id, m]) => `<option value="${id}" ${id === sbCurList ? 'selected' : ''}>${esc2(m.name)}</option>`).join('')
-                : '<option value="">Nessuna lista</option>';
-        }
-
-        // Aggiorna pillole categorie
-        const catsEl = $s('tvSidebarCats');
-        if (catsEl) {
-            const groups = new Set(['Tutti']);
-            (window.tvLineup || []).forEach(c => {
-                if (!c.web && (!tvOnlyWorking || (tvHealthCache.get(c.url) !== 'dead'))) {
-                    groups.add(c.group || 'Altri');
-                }
-            });
-            if (!groups.has(tvSbCat)) tvSbCat = 'Tutti';
-            catsEl.innerHTML = [...groups].slice(0, 25).map(g =>
-                `<button class="tv-cat-pill ${g === tvSbCat ? 'on' : ''}" data-cat="${esc2(g)}">${esc2(g)}</button>`
-            ).join('');
-        }
-
-        const list = tvGetFilteredLineup();
-        if (tvFocusedIdx >= list.length) tvFocusedIdx = Math.max(0, list.length - 1);
-
-        if (!list.length) {
-            box.innerHTML = `<div style="padding:24px 12px;text-align:center;color:var(--text-gray);font-size:0.9rem;">
-                Nessun canale funzionante trovato con questi filtri.<br>
-                <button onclick="tvToggleOnlyWorking()" style="margin-top:10px;padding:8px 14px;border-radius:10px;border:1px solid var(--neon-blue);background:rgba(0,240,255,0.12);color:var(--neon-blue);cursor:pointer;font-weight:700;">Mostra anche i non verificati</button>
-            </div>`;
-            tvUpdateHealthStats();
-            return;
-        }
-
-        box.innerHTML = list.map((c, idx) => {
-            const st = c.web ? 'ok' : (tvHealthCache.get(c.url) || 'testing');
-            const isAct = c.num === currentChannelNum;
-            const isFoc = idx === tvFocusedIdx;
-            const dotTitle = st === 'ok' ? 'Flusso attivo' : (st === 'dead' ? 'Flusso offline' : 'Verifica in corso');
-            return `<div class="ch-row ${isAct ? 'active' : ''} ${isFoc ? 'focused' : ''}" id="sidebar-ch-${c.num}" data-n="${c.num}" data-idx="${idx}">
-                <div class="ch-idx">${tvNn(c.num)}</div>
-                <div class="ch-logo">${c.web ? '<em>📡</em>' : tvArt(c)}</div>
-                <div class="ch-info-col">
-                    <div class="ch-meta-title">${esc2(c.name)}</div>
-                    <div class="ch-meta-sub">${esc2(c.group || 'Digitale')}</div>
-                </div>
-                <span class="ch-dot-status ${st}" title="${dotTitle}"></span>
-            </div>`;
-        }).join('');
-
-        tvUpdateHealthStats();
-    };
-
-    function tvHighlightFocusedRow() {
-        const rows = document.querySelectorAll('#chListContainer .ch-row');
-        rows.forEach((r, i) => {
-            r.classList.toggle('focused', i === tvFocusedIdx);
-            if (i === tvFocusedIdx) r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        });
-    }
-
-    // Testa un singolo URL M3U8/stream per verificare che risponda con un manifest valido
-    async function probeStreamUrl(url, signal) {
-        if (!url || !/^https?:\/\//i.test(url)) return 'dead';
-        // Blocca HTTP misto su pagina HTTPS
-        if (location.protocol === 'https:' && url.startsWith('http://')) return 'dead';
-
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 4500);
-        if (signal) signal.addEventListener('abort', () => ctrl.abort(), { once: true });
-
-        try {
-            const res = await fetch(url, { method: 'GET', signal: ctrl.signal, cache: 'no-store' });
-            clearTimeout(timer);
-            if (!res.ok) return 'dead';
-            const ct = (res.headers.get('content-type') || '').toLowerCase();
-            if (ct.includes('video/') || ct.includes('audio/') || ct.includes('mpegurl') || ct.includes('mp2t')) {
-                return 'ok';
-            }
-            const reader = res.body ? res.body.getReader() : null;
-            if (reader) {
-                const { value } = await reader.read();
-                reader.cancel().catch(() => {});
-                const snippet = new TextDecoder().decode(value || new Uint8Array());
-                if (/#EXTM3U|#EXT-X-/i.test(snippet)) return 'ok';
-                if (/<html|<!doctype/i.test(snippet)) return 'dead';
-            }
-            return 'ok';
-        } catch (err) {
-            clearTimeout(timer);
-            if (err && err.name === 'AbortError') return 'dead';
-            // Se CORS blocca fetch, verifica tramite probe Hls.js / video leggero
-            return await probeViaMediaElement(url);
-        }
-    }
-
-    function probeViaMediaElement(url) {
-        return new Promise(resolve => {
-            let done = false;
-            const finish = (status) => {
-                if (done) return;
-                done = true;
-                clearTimeout(t);
-                if (h) { try { h.destroy(); } catch (e) {} }
-                v.removeAttribute('src');
-                v.load();
-                resolve(status);
-            };
-            const t = setTimeout(() => finish('dead'), 4500);
-            const v = document.createElement('video');
-            v.muted = true;
-            v.preload = 'metadata';
-            let h = null;
-            if (/\.m3u8|\/hls|playlist/i.test(url) && window.Hls && Hls.isSupported()) {
-                h = new Hls({ manifestLoadingTimeOut: 4000, manifestLoadingMaxRetry: 0 });
-                h.on(Hls.Events.MANIFEST_PARSED, () => finish('ok'));
-                h.on(Hls.Events.ERROR, (_, d) => { if (d && d.fatal) finish('dead'); });
-                h.loadSource(url);
-            } else {
-                v.onloadedmetadata = () => finish('ok');
-                v.onerror = () => finish('dead');
-                v.src = url;
-            }
-        });
-    }
-
-    // Esegue il controllo a batch in background su tutta la lista M3U
-    window.tvRunHealthCheck = async function(forceReset) {
-        if (tvHealthAbort) tvHealthAbort.abort();
-        tvHealthAbort = new AbortController();
-        const signal = tvHealthAbort.signal;
-
-        const targets = (window.tvLineup || []).filter(c => !c.web);
-        if (forceReset) {
-            targets.forEach(c => tvHealthCache.delete(c.url));
-        }
-        tvRenderSidebarList();
-
-        const queue = targets.filter(c => !tvHealthCache.has(c.url));
-        const CONCURRENCY = 6;
-        let idx = 0;
-
-        async function worker() {
-            while (idx < queue.length && !signal.aborted) {
-                const ch = queue[idx++];
-                const status = await probeStreamUrl(ch.url, signal);
-                if (signal.aborted) return;
-                tvHealthCache.set(ch.url, status);
-                if (idx % 4 === 0 || idx === queue.length) {
-                    tvRenderSidebarList();
-                    if (typeof hmLive === 'function') hmLive();
-                }
-            }
-        }
-
-        await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
-        if (!signal.aborted) {
-            tvRenderSidebarList();
-            if (typeof hmLive === 'function') hmLive();
-        }
-    };
-
-    // Eventi UI del menu laterale
-    const sbSel = $s('tvSidebarListSel');
-    if (sbSel) sbSel.onchange = e => { if (e.target.value) sbSelectList(e.target.value); };
-
-    const sbSearch = $s('tvSidebarSearch');
-    if (sbSearch) sbSearch.oninput = e => {
-        tvSbSearch = e.target.value;
-        tvFocusedIdx = 0;
-        tvRenderSidebarList();
-    };
-
-    const sbCats = $s('tvSidebarCats');
-    if (sbCats) sbCats.onclick = e => {
-        const pill = e.target.closest('.tv-cat-pill');
-        if (!pill) return;
-        tvSbCat = pill.dataset.cat;
-        tvFocusedIdx = 0;
-        tvRenderSidebarList();
-    };
-
-    // Sovrascrive tvBuild per ripulire Pluto TV, popolare il menu laterale e avviare il test flussi
-    window.tvBuild = function() {
-        const cleanChs = (window.sbChs || []).filter(c => !window.tvIsBlockedPluto(c.name, c.group, c.url));
-        window.tvLineup = [{ num: 1, name: 'Aura1 HD', logo: '', group: 'WebTV Cloud', web: true }]
-            .concat(cleanChs.map((c, i) => ({
-                num: i + 2,
-                name: c.name,
-                logo: c.logo,
-                group: c.group || 'Digitale',
-                url: c.url
-            })));
-        if (currentChannelNum > window.tvLineup.length) currentChannelNum = 1;
-        tvRenderSidebarList();
-        if (typeof hmLive === 'function') hmLive();
-        if (cleanChs.length) tvRunHealthCheck(false);
-    };
-
-    // Riproduzione con fallback automatico se il canale selezionato va in errore fatale
-    const _origTvPlayUrl = window.tvPlayUrl;
-    window.tvPlayUrl = function(ch) {
-        _origTvPlayUrl(ch);
-        if (window.tvHls) {
-            window.tvHls.on(Hls.Events.ERROR, (_, d) => {
-                if (d && d.fatal && d.details === 'manifestLoadError') {
-                    tvHealthCache.set(ch.url, 'dead');
-                    tvRenderSidebarList();
-                    triggerNotification(`Flusso offline (${ch.name}), passo al prossimo...`);
-                    setTimeout(() => tvStep(1), 900);
-                }
-            });
-        }
-    };
-
-    // Zapping inteligente: scorre solo tra i canali funzionanti visibili nell'elenco
-    window.tvStep = function(d) {
-        const activeList = tvGetFilteredLineup();
-        if (!activeList.length) {
-            selectTvChannel(1);
-            return;
-        }
-        let pos = activeList.findIndex(c => c.num === currentChannelNum);
-        if (pos < 0) pos = 0;
-        else pos = (pos + d + activeList.length) % activeList.length;
-        tvFocusedIdx = pos;
-        selectTvChannel(activeList[pos].num);
-    };
-
-    // Quando si apre Aura TV (tv-view), apre direttamente il player con il menu laterale pronto
-    const _origOpenTargetView = window.openTargetView;
-    window.openTargetView = function(id) {
-        _origOpenTargetView(id);
-        if (id === 'tv-view') {
-            tvToggleSidebar(true);
-            if (!window.tvPlaying) {
-                selectTvChannel(currentChannelNum || 1);
-            }
-        }
-    };
-
-    // Navigazione da tastiera sul menu laterale (Frecce Su/Giù + Invio + Ctrl/M)
-    document.addEventListener('keydown', e => {
-        if (currentActiveView !== 'tv-view' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
-        const sb = $s('tvSidebar');
-        const isOpen = sb && sb.classList.contains('open');
-
-        if (e.key === 'Control' || e.key === 'm' || e.key === 'M') {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            tvToggleSidebar();
-            return;
-        }
-
-        if (isOpen) {
-            const list = tvGetFilteredLineup();
-            if (e.key === 'ArrowDown') {
-                e.preventDefault(); e.stopImmediatePropagation();
-                if (list.length) { tvFocusedIdx = (tvFocusedIdx + 1) % list.length; tvHighlightFocusedRow(); }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault(); e.stopImmediatePropagation();
-                if (list.length) { tvFocusedIdx = (tvFocusedIdx - 1 + list.length) % list.length; tvHighlightFocusedRow(); }
-            } else if (e.key === 'Enter') {
-                e.preventDefault(); e.stopImmediatePropagation();
-                if (list[tvFocusedIdx]) selectTvChannel(list[tvFocusedIdx].num);
-            } else if (e.key === 'Escape') {
-                e.preventDefault(); e.stopImmediatePropagation();
-                tvToggleSidebar(false);
-            }
-        }
-    }, true);
-
-    // Gestione comandi telecomando mobile aggiuntivi (TOGGLE_TV_LIST, TV_UP, TV_DOWN, TV_OK)
-    const _origListenRemote = window.listenToRemoteCommands;
-    window.listenToRemoteCommands = function() {
-        _origListenRemote();
-        if (!currentUser || window._rcDrawerOn) return;
-        window._rcDrawerOn = true;
-        let lastDrawerTs = Date.now();
-        database.ref('aura_remotes/' + currentUser.uid).on('value', snapshot => {
-            const cmd = snapshot.val();
-            if (!cmd || cmd.timestamp <= lastDrawerTs) return;
-            lastDrawerTs = cmd.timestamp;
-
-            if (cmd.action === 'TOGGLE_TV_LIST') {
-                if (currentActiveView !== 'tv-view') openTargetView('tv-view');
-                else tvToggleSidebar();
-            } else if (cmd.action === 'TV_UP' || cmd.action === 'TV_DOWN') {
-                const dir = cmd.action === 'TV_DOWN' ? 1 : -1;
-                if (currentActiveView !== 'tv-view') openTargetView('tv-view');
-                const sb = $s('tvSidebar');
-                if (sb && sb.classList.contains('open')) {
-                    const list = tvGetFilteredLineup();
-                    if (list.length) {
-                        tvFocusedIdx = (tvFocusedIdx + dir + list.length) % list.length;
-                        tvHighlightFocusedRow();
-                    }
-                } else {
-                    tvStep(dir);
-                }
-            } else if (cmd.action === 'TV_OK') {
-                if (currentActiveView === 'tv-view') {
-                    const sb = $s('tvSidebar');
-                    const list = tvGetFilteredLineup();
-                    if (sb && sb.classList.contains('open') && list[tvFocusedIdx]) {
-                        selectTvChannel(list[tvFocusedIdx].num);
-                    } else {
-                        tvToggleSidebar(true);
-                    }
-                }
-            }
-        });
-    };
-
-    // Riconfigura immediatamente l'elenco con le nuove regole
-    if (typeof window.tvBuild === 'function') window.tvBuild();
-})();
-</script>
-
 </body>
 </html>
