@@ -45,9 +45,6 @@
         #orientation-blocker p { color: var(--text-gray); font-size: 1.2rem; max-width: 500px; }
         @keyframes rotateDevice { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(-90deg); } }
 
-        @media (orientation: portrait) and (max-width: 1024px) {
-            #orientation-blocker { display: flex; }
-        }
 
         /* === SFONDO ANIMATO DINAMICO SUPER VIVACE === */
         .bg-ambient {
@@ -389,7 +386,6 @@
 
         /* === FIX MOBILE 100% (Senza intaccare Desktop) === */
         @media (max-width: 768px) {
-            #orientation-blocker { display: none !important; }
             
             .home-top-bar { padding: 15px 20px !important; flex-direction: column; gap: 10px; align-items: center !important; text-align: center; background: transparent; }
             .sys-meta { font-size: 1rem; gap: 15px; justify-content: center; }
@@ -677,12 +673,6 @@ body.tvp .corner-trigger{display:none}
         </div>
     </div>
 
-    <div id="fullscreen-prompt" style="display: none; position: fixed; inset: 0; background: rgba(3, 5, 10, 0.95); z-index: 9999999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
-        <h2 style="color: var(--neon-blue); font-size: 2.5rem; margin-bottom: 20px; text-shadow: var(--glow-blue); text-align: center;">Esperienza Immersiva</h2>
-        <p style="color: var(--text-gray); font-size: 1.2rem; margin-bottom: 40px; text-align: center; max-width: 80%;">Aura OS è progettato per funzionare a schermo intero.</p>
-        <button onclick="enableFullscreenAndStart()" style="background: #fff; color: #000; font-size: 1.5rem; font-weight: 800; padding: 15px 40px; border-radius: 30px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.2);">ATTIVA E INIZIA</button>
-    </div>
-
     <div id="mobile-remote-view">
         <div class="remote-header">
             <h3>AURA</h3>
@@ -757,6 +747,7 @@ body.tvp .corner-trigger{display:none}
             <div class="hv-right">
                 <i data-lucide="wifi" class="hv-wifi"></i><span class="hv-sep"></span>
                 <div class="hv-clock" onclick="toggleFullScreen()"><b id="hvTime">--:--</b><small id="hvDate"></small></div>
+                <button class="sb-staff-only hv-staffbtn" style="display:none" onclick="sbOpenStaff()">🛠 Staff</button>
                 <button class="hv-avatar" id="hvAvatar" onclick="hmAvatar()" aria-label="Profilo"><i data-lucide="user"></i></button>
             </div>
             <div class="hv-side"></div>
@@ -1661,8 +1652,10 @@ tvBuild();
                         if(emailDiv) emailDiv.innerText = currentUser.email;
                         if(window.lucide) lucide.createIcons();
                     } else {
-                        // MOSTRA IL PROMPT PER IL FULLSCREEN SOLO SU DESKTOP
-                        document.getElementById('fullscreen-prompt').style.display = 'flex';
+                        // DESKTOP/TV: avvio diretto, schermo intero automatico (nessun prompt)
+                        try { bootDesktopOS(); } catch (e) { console.error('[AuraTV] boot', e); }
+                        try { listenToRemoteCommands(); } catch (e) { console.error('[AuraTV] remote', e); }
+                        if (window.auraGoFullscreen) auraGoFullscreen();
                     }
                 } else {
                     authOverlay.style.display = 'flex';
@@ -1688,7 +1681,6 @@ tvBuild();
                 document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen API error:", err));
             }
             
-            document.getElementById('fullscreen-prompt').style.display = 'none';
             
             if (isMobileDevice) {
                 const emailDiv = document.getElementById('remote-user-email');
@@ -1735,6 +1727,7 @@ tvBuild();
         }
 
         function listenToRemoteCommands() {
+            if (window._rcOn) return; window._rcOn = true;
             database.ref('aura_remotes/' + currentUser.uid).on('value', (snapshot) => {
                 const cmd = snapshot.val();
                 if (!cmd || cmd.timestamp <= lastCommandTimestamp) return;
@@ -2306,7 +2299,7 @@ tvBuild();
     </script>
     <script>
 /* ===== S.B Horizon · estensioni: Staff, Aura Play (M3U), PWA ===== */
-const SB_STAFF_EMAILS = ['dev@infohorizon.it'];
+const SB_STAFF_EMAILS = ['dev@infohorizon.it', 'dev@inforhorizon.it'];
 let sbIsStaff = false, sbLists = {}, sbCache = {}, sbCacheV = {}, sbCurList = null;
 let sbChs = [], sbView = [], sbGroup = 'Tutti', sbQuery = '', sbCur = -1, sbHls = null;
 let sbRemoteOn = false, sbLastCmd = 0, sbBoot = Date.now(), sbShown = 80, sbUiT, sbNumBuf = '', sbNumT, sbMode = 'url';
@@ -2369,12 +2362,11 @@ window.sbOpenStaff = sbOpenStaff;
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
-        sbIsStaff = SB_STAFF_EMAILS.includes((user.email || '').toLowerCase());
+        sbIsStaff = SB_STAFF_EMAILS.includes((user.email || '').trim().toLowerCase());
         syncStaffUI(); sbWatchLists();
         if (!isMobileDevice) sbWatchRemote(user);
     } else {
         sbIsStaff = false; syncStaffUI();
-        const fp = $s('fullscreen-prompt'); if (fp) fp.style.display = 'none';
     }
 });
 
@@ -2846,6 +2838,71 @@ window.hmDel = b => { const it = b.closest('.hm-item'); if (confirm('Eliminare q
 window.hmAdd = sec => { const o = { enabled: true, order: 99 }; HM_SCH[sec][1].forEach(([k]) => { if (!(k in o)) o[k] = ''; }); if (o.target === '') o.target = 'tv-view'; if (o.link === '') o.link = 'tv-view'; if (sec === 'apps') { o.c1 = '#7b2cf0'; o.c2 = '#2b1170'; } database.ref('aura_home/' + sec).push(o).then(() => hmAdmin(true)).catch(e => alert(e.message)); };
 window.hmReset = () => { if (confirm('Ripristinare banner, app, menu e messaggi ai valori predefiniti?')) database.ref('aura_home').set(HM_DEF).then(() => triggerNotification('Preset ripristinato')); };
 const _sr = window.sbStaffRender; window.sbStaffRender = function () { _sr(); hmAdmin(); };
+</script>
+
+<style id="aura-fs-orient">
+/* Blocco verticale (solo TV/desktop): in verticale resta visibile SOLO il banner */
+#orientation-blocker{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;display:none!important;background:#03050a}
+body.is-portrait #orientation-blocker{display:flex!important}
+body.is-portrait{overflow:hidden}
+body.is-mobile-remote #orientation-blocker{display:none!important}
+.hv-staffbtn{padding:10px 22px;border-radius:999px;border:1px solid rgba(0,255,136,.6);background:rgba(0,255,136,.14);color:#00ff88;font-weight:800;font-size:17px;cursor:pointer;margin-right:14px}
+.hv-staffbtn:focus-visible{outline:4px solid #fff;outline-offset:4px}
+</style>
+<script>
+/* ===== AuraTV · schermo intero automatico + orizzontale forzato (TV/desktop) ===== */
+(function () {
+    const de = document.documentElement;
+    const inFS = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+    let lastExit = 0, pausedVideos = [], ytWasPlaying = false;
+
+    function lockLandscape() {
+        try { const o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(() => {}); } catch (e) {}
+    }
+    /* Il browser consente il fullscreen solo dopo un gesto (click, tasto, tocco):
+       lo richiediamo al login e al PRIMO gesto di qualsiasi tipo, senza alcun pulsante da premere. */
+    window.auraGoFullscreen = async function () {
+        if (isMobileDevice) return;               /* il telefono è solo telecomando */
+        if (!inFS()) {
+            try {
+                const f = de.requestFullscreen || de.webkitRequestFullscreen;
+                if (f) { const p = f.call(de, { navigationUI: 'hide' }); if (p && p.then) await p; }
+            } catch (e) {}
+        }
+        if (inFS()) lockLandscape();
+    };
+    window.toggleFullScreen = function () { window.auraGoFullscreen(); };   /* l'orologio non esce più dallo schermo intero */
+
+    ['pointerdown', 'mousedown', 'touchend', 'click', 'keydown'].forEach(t => addEventListener(t, e => {
+        if (isMobileDevice) return;
+        if (t === 'keydown' && e.key === 'Escape') { lastExit = Date.now(); return; }
+        if (Date.now() - lastExit < 1500) return;  /* se l'utente è appena uscito con Esc, non rientra a raffica */
+        if (!inFS()) window.auraGoFullscreen();
+    }, true));
+    addEventListener('fullscreenchange', () => { if (!inFS()) lastExit = Date.now(); else lockLandscape(); });
+
+    /* Orizzontale obbligatorio: in verticale (solo non-telecomando) compare soltanto il banner */
+    function orient() {
+        const b = document.body; if (!b) return;
+        const portrait = !isMobileDevice && innerHeight > innerWidth;
+        if (b.classList.contains('is-portrait') === portrait) return;
+        b.classList.toggle('is-portrait', portrait);
+        if (portrait) {
+            pausedVideos = [...document.querySelectorAll('video')].filter(v => !v.paused && !v.ended);
+            pausedVideos.forEach(v => { try { v.pause(); } catch (e) {} });
+            try { if (ytPlayerInstance && ytPlayerInstance.getPlayerState && ytPlayerInstance.getPlayerState() === 1) { ytPlayerInstance.pauseVideo(); ytWasPlaying = true; } } catch (e) {}
+        } else {
+            pausedVideos.forEach(v => { try { v.play().catch(() => {}); } catch (e) {} }); pausedVideos = [];
+            try { if (ytWasPlaying && ytPlayerInstance) ytPlayerInstance.playVideo(); } catch (e) {} ytWasPlaying = false;
+        }
+    }
+    ['resize', 'orientationchange', 'fullscreenchange', 'pageshow', 'focus'].forEach(t => addEventListener(t, () => { orient(); setTimeout(orient, 120); }));
+    try { screen.orientation && screen.orientation.addEventListener('change', orient); } catch (e) {}
+    setInterval(orient, 400);                       /* rete di sicurezza: funziona sempre */
+    orient();
+    /* in verticale i tasti non devono comandare l'app che sta sotto al banner */
+    addEventListener('keydown', e => { if (document.body.classList.contains('is-portrait')) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+})();
 </script>
 </body>
 </html>
