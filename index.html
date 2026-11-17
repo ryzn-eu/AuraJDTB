@@ -445,7 +445,7 @@
         #google-login-btn:hover { transform: scale(1.05); }
 
         /* Hides OS entirely on Mobile and Remote entirely on Desktop */
-        body.is-mobile-remote > *:not(#mobile-remote-view):not(#aura-auth-overlay):not(#fullscreen-prompt):not(#toast-layer):not(.bg-ambient):not(script) {
+        body.is-mobile-remote > *:not(#mobile-remote-view):not(#aura-auth-overlay):not(#fullscreen-prompt):not(#toast-layer):not(.bg-ambient):not(.sb-keep):not(script) {
             display: none !important;
         }
         body.is-desktop-os #mobile-remote-view { display: none !important; }
@@ -478,15 +478,135 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <!-- ===== PWA / S.B Horizon ===== -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#03050a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AuraTV">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" href="icon-192.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+    <style>
+    /* ===== LOOK SMART TV ===== */
+    body{background:#04060d}
+    .bg-ambient{opacity:.95}
+    .tile{background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.02));border-radius:28px;outline:none}
+    @media(min-width:1025px){.tile{width:200px;height:220px}.tile-icon{font-size:4.4rem}}
+    .tile:focus-visible,.sb-f:focus-visible{outline:4px solid #fff;outline-offset:5px;transform:translateY(-12px) scale(1.07);box-shadow:0 0 0 9px rgba(0,240,255,.3),0 30px 60px rgba(0,0,0,.6);z-index:3}
+    .tile:focus-visible::before{opacity:1}
+    .sb-rail{display:flex;gap:20px;overflow-x:auto;padding:14px 10px 26px;scrollbar-width:none}
+    .sb-rail::-webkit-scrollbar{display:none}
+    .sb-lcard{flex:none;width:280px;border-radius:24px;padding:22px;text-align:left;color:#fff;cursor:pointer;border:1px solid var(--glass-border);background:linear-gradient(135deg,rgba(177,0,255,.35),rgba(0,240,255,.16)),rgba(10,14,28,.7);transition:.25s;outline:none}
+    .sb-lcard:hover{transform:translateY(-8px) scale(1.04)}
+    .sb-lcard b{display:block;font-size:1.3rem;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sb-lcard span{color:var(--text-gray);font-size:.95rem}
+    .sb-chip{position:fixed;z-index:99999;border:0;border-radius:999px;padding:12px 22px;font-weight:800;cursor:pointer;color:#001014;background:var(--neon-blue);box-shadow:0 10px 30px rgba(0,240,255,.35);right:24px;bottom:24px;display:none}
+    .sys-meta .sb-mini{background:transparent;border:1px solid var(--glass-border);color:#fff;border-radius:999px;padding:7px 16px;cursor:pointer;font-weight:600;margin-right:12px}
+    /* ===== LOGIN ===== */
+    #aura-auth-overlay{overflow:auto;background:radial-gradient(800px 500px at 50% 0,rgba(177,0,255,.25),transparent),rgba(3,5,10,.96)}
+    .auth-card{width:min(440px,92vw);padding:38px 34px;border-radius:32px;background:var(--glass-core);border:1px solid var(--glass-border);box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center;margin:auto}
+    .auth-logo{font-size:3.4rem;font-weight:800;letter-spacing:4px}.auth-logo span{color:var(--neon-blue);text-shadow:var(--glow-blue)}
+    .auth-card p{color:var(--text-gray);margin:6px 0 26px}
+    #google-login-btn{width:100%;justify-content:center;font-size:1.15rem;padding:14px 20px}
+    .auth-or{display:flex;align-items:center;gap:12px;color:var(--text-gray);font-size:.85rem;margin:24px 0 16px}
+    .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--glass-border)}
+    .auth-card input{width:100%;padding:14px 18px;margin-bottom:12px;border-radius:16px;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;outline:none;user-select:text}
+    .auth-card input:focus{border-color:var(--neon-blue);box-shadow:0 0 0 4px rgba(0,240,255,.2)}
+    .auth-card .go{width:100%;padding:14px;border:0;border-radius:16px;font-weight:800;font-size:1.05rem;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink))}
+    #staffLoginMsg{min-height:20px;margin-top:12px;color:var(--neon-pink);font-size:.9rem}
+    /* ===== AURA PLAY (M3U) ===== */
+    .m3u-layout{display:grid;grid-template-columns:310px 1fr;height:100%}
+    .m3u-side{padding:34px 20px;background:rgba(5,8,18,.72);backdrop-filter:blur(24px);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;gap:12px;min-height:0}
+    .m3u-side h2{font-size:2rem;color:var(--neon-blue);text-shadow:var(--glow-blue)}
+    .m3u-side select,.m3u-side input{width:100%;padding:13px 16px;border-radius:16px;border:1px solid var(--glass-border);background:rgba(255,255,255,.07);color:#fff;font-size:1rem;outline:none;user-select:text}
+    .m3u-side select option{background:#0b1020}
+    .m3u-side input:focus,.m3u-side select:focus{border-color:var(--neon-blue)}
+    #m3uGroups{overflow:auto;flex:1;display:flex;flex-direction:column;gap:6px;padding:4px}
+    .m3u-g{display:flex;justify-content:space-between;gap:8px;padding:12px 16px;border-radius:16px;border:0;background:transparent;color:var(--text-gray);font-size:1rem;font-weight:600;cursor:pointer;text-align:left;outline:none}
+    .m3u-g.on{background:linear-gradient(90deg,rgba(0,240,255,.2),rgba(177,0,255,.18));color:#fff}
+    .m3u-g:hover,.m3u-g:focus-visible{background:rgba(255,255,255,.1);color:#fff}
+    .m3u-main{padding:34px 40px;overflow:auto;min-height:0}
+    #m3uGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px}
+    .m3u-card{border-radius:24px;overflow:hidden;border:1px solid var(--glass-border);background:var(--glass-core);backdrop-filter:blur(10px);color:#fff;text-align:left;cursor:pointer;padding:0;transition:.2s;outline:none}
+    .m3u-card:hover,.m3u-card:focus-visible{transform:scale(1.07);border-color:var(--neon-blue);box-shadow:0 0 0 4px rgba(0,240,255,.3),0 25px 50px rgba(0,0,0,.6);z-index:2;position:relative}
+    .m3u-logo{aspect-ratio:16/10;display:grid;place-items:center;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(0,0,0,.3))}
+    .m3u-logo img{max-width:60%;max-height:60%;object-fit:contain}
+    .m3u-logo em{font:normal 800 2.2rem 'Share Tech Mono',monospace;color:var(--neon-purple);text-shadow:var(--glow-purple)}
+    .m3u-meta{padding:12px 16px 16px}.m3u-meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.m3u-meta span{font-size:.85rem;color:var(--text-gray)}
+    #m3uEmpty{color:var(--text-gray);font-size:1.3rem;text-align:center;margin-top:12vh}
+    #m3uPlayer{position:absolute;inset:0;background:#000;z-index:30;display:none}
+    #m3uPlayer.open{display:block}
+    #m3uPlayer video{width:100%;height:100%;object-fit:contain;background:#000}
+    .m3u-osd{position:absolute;left:40px;top:40px;display:flex;gap:20px;align-items:center;padding:16px 28px;border-radius:24px;background:rgba(5,8,18,.65);backdrop-filter:blur(16px);border:1px solid var(--glass-border);opacity:0;transition:.4s;pointer-events:none}
+    #m3uPlayer.ui .m3u-osd{opacity:1}
+    .m3u-osd strong{font:2.6rem 'Share Tech Mono',monospace;color:var(--neon-blue);text-shadow:var(--glow-blue)}
+    .m3u-osd b{font-size:1.5rem;display:block}.m3u-osd small{color:var(--text-gray)}
+    #m3uStatus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;font:1.6rem 'Share Tech Mono',monospace;color:var(--text-gray);pointer-events:none}
+    #m3uStatus.err{color:var(--neon-pink)}
+    .m3u-nav{position:absolute;right:30px;top:30px;display:flex;gap:10px}
+    .m3u-nav button{width:56px;height:56px;border-radius:50%;border:1px solid var(--glass-border);background:rgba(5,8,18,.65);color:#fff;font-size:1.3rem;cursor:pointer;backdrop-filter:blur(10px)}
+    #m3uPlayer:not(.ui) .m3u-nav{opacity:0}
+    @media(max-width:900px){.m3u-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}#m3uGroups{flex-direction:row;flex:none;overflow-x:auto}.m3u-main{padding:20px}}
+    /* ===== PANNELLO STAFF ===== */
+    body.is-mobile-remote #staff-view.active{z-index:99999990}
+    .st-wrap{height:100%;overflow:auto;padding:40px 6vw 80px;background:rgba(3,5,10,.93);backdrop-filter:blur(24px)}
+    .st-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:26px}
+    .st-head h2{font-size:2.2rem;flex:1;min-width:200px}
+    .st-chip{padding:8px 16px;border-radius:999px;background:rgba(0,255,136,.12);border:1px solid var(--neon-green);color:var(--neon-green);font-size:.85rem;font-weight:800}
+    .st-btn{padding:12px 22px;border-radius:999px;border:1px solid var(--glass-border);background:rgba(255,255,255,.07);color:#fff;font-weight:700;cursor:pointer;font-size:.95rem}
+    .st-btn:hover{border-color:var(--neon-blue)}.st-btn.pri{background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink));border:0}.st-btn.dng{color:var(--neon-pink)}
+    .st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px}
+    .st-stat,.st-box{border-radius:24px;background:var(--glass-core);border:1px solid var(--glass-border);padding:20px 24px}
+    .st-stat b{display:block;font-size:2.4rem}.st-stat span{color:var(--text-gray)}
+    .st-box{margin-bottom:26px}.st-box h3{font-size:1.4rem;margin-bottom:16px}
+    .st-box input,.st-box textarea{width:100%;padding:13px 16px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;margin-bottom:12px;outline:none;user-select:text}
+    .st-box textarea{height:130px;font:13px monospace}
+    .st-box input:focus,.st-box textarea:focus{border-color:var(--neon-blue)}
+    .st-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.st-tabs .st-btn.on{background:rgba(0,240,255,.18);border-color:var(--neon-blue)}
+    #stMsg{min-height:20px;margin-top:10px;font-size:.95rem}
+    .st-row{display:flex;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--glass-border);flex-wrap:wrap}
+    .st-row .nm{flex:1;min-width:180px}.st-row .nm b{display:block}.st-row .nm span{color:var(--text-gray);font-size:.85rem}
+    .st-row .off{opacity:.5}
+
+    .auth-foot{position:fixed;left:0;right:0;bottom:14px;text-align:center;z-index:2}
+    #staffToggle{background:none;border:0;color:#fff;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:10px 18px;opacity:.38;-webkit-mask-image:linear-gradient(90deg,transparent,#000 28%,#000 72%,transparent);mask-image:linear-gradient(90deg,transparent,#000 28%,#000 72%,transparent);transition:.3s}
+    #staffToggle:hover,#staffToggle:focus-visible{opacity:1;-webkit-mask-image:none;mask-image:none;outline:none}
+    .staff-pop{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(360px,92vw);padding:22px;border-radius:24px;background:rgba(10,14,28,.92);border:1px solid var(--glass-border);box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;z-index:3}
+    .staff-pop.open{display:block}
+    .staff-pop form{margin:0}
+
+    .auth-tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(255,255,255,.07);margin-bottom:18px}
+    .auth-tabs button{flex:1;border:0;border-radius:999px;padding:11px;font-weight:800;color:var(--text-gray);background:transparent;cursor:pointer;font-size:1rem}
+    .auth-tabs button.on{color:#fff;background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink))}
+    #authMsg{min-height:20px;margin-top:12px;color:var(--neon-pink);font-size:.9rem}
+    .auth-card .go:disabled{opacity:.6}
+    </style>
 </head>
 <body>
 
-    <div id="aura-auth-overlay">
-        <h1>AURA OS</h1>
-        <button id="google-login-btn">
-            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Accedi per continuare
-        </button>
+    <div id="aura-auth-overlay" class="sb-keep">
+        <div class="auth-card">
+            <div class="auth-logo">AURA<span>TV</span></div>
+            <p>Accedi o crea il tuo account</p>
+            <div class="auth-tabs">
+                <button type="button" id="tabLogin" class="on">Accedi</button>
+                <button type="button" id="tabReg">Registrati</button>
+            </div>
+            <form id="emailAuthForm" autocomplete="on">
+                <input id="authEmail" name="email" type="email" placeholder="Email" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+                <input id="authPass" name="password" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+                <input id="authPass2" name="password2" type="password" placeholder="Ripeti la password" autocomplete="new-password" style="display:none">
+                <button type="submit" id="authSubmit" class="go">Accedi</button>
+                <div id="authMsg"></div>
+            </form>
+            <div class="auth-or">oppure</div>
+            <button id="google-login-btn">
+                <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Continua con Google
+            </button>
+        </div>
     </div>
 
     <div id="fullscreen-prompt" style="display: none; position: fixed; inset: 0; background: rgba(3, 5, 10, 0.95); z-index: 9999999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
@@ -499,6 +619,7 @@
         <div class="remote-header">
             <h3>AURA</h3>
             <div id="remote-user-email" style="opacity: 0.6; letter-spacing: 1px;">Connesso</div>
+            <button id="sbLogoutRemote" style="margin-top:10px;background:none;border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:6px 16px;cursor:pointer">Esci</button>
         </div>
         
         <div class="remote-grid">
@@ -508,7 +629,15 @@
             <button onclick="sendRemoteCmd('OPEN_APP', 'guidatv-view')"><i data-lucide="calendar"></i></button>
         </div>
 
-        <div class="remote-numpad">
+                <div class="remote-grid" style="margin-top:-20px">
+            <button onclick="sendRemoteCmd('OPEN_APP', 'm3u-view')" title="Aura Play"><i data-lucide="play-circle"></i></button>
+            <button onclick="sendRemoteCmd('M3U_PREV', null)" title="Canale precedente"><i data-lucide="skip-back"></i></button>
+            <button onclick="sendRemoteCmd('M3U_NEXT', null)" title="Canale successivo"><i data-lucide="skip-forward"></i></button>
+            <button id="sbRemoteStaff" class="sb-staff-only" onclick="sbOpenStaff()" title="Pannello staff" style="display:none"><i data-lucide="shield"></i></button>
+        </div>
+
+        
+<div class="remote-numpad">
             <button onclick="handleRemoteNumber(1)">1</button>
             <button onclick="handleRemoteNumber(2)">2</button>
             <button onclick="handleRemoteNumber(3)">3</button>
@@ -689,7 +818,43 @@
         </div>
     </div>
 
-    <script type="text/plain" id="aura-music-app-source">
+        <div id="m3u-view" class="view-frame">
+        <div class="m3u-layout">
+            <aside class="m3u-side">
+                <h2>Aura Play</h2>
+                <select id="m3uListSel" aria-label="Lista"></select>
+                <input id="m3uSearch" type="search" placeholder="Cerca un canale" autocomplete="off">
+                <div id="m3uGroups"></div>
+            </aside>
+            <section class="m3u-main">
+                <div id="m3uGrid"></div>
+                <div id="m3uEmpty">Nessuna lista disponibile al momento.</div>
+            </section>
+        </div>
+        <div id="m3uPlayer">
+            <video id="m3uVideo" playsinline autoplay></video>
+            <div class="m3u-osd"><strong id="m3uNum">01</strong><div><b id="m3uName"></b><small id="m3uGrp"></small></div></div>
+            <div class="m3u-nav"><button onclick="sbStep(-1)" aria-label="Precedente">⏮</button><button onclick="sbToggle()" aria-label="Pausa">⏯</button><button onclick="sbStep(1)" aria-label="Successivo">⏭</button><button onclick="sbClosePlayer()" aria-label="Chiudi">✕</button></div>
+            <div id="m3uStatus"></div>
+        </div>
+    </div>
+
+    <div id="staff-view" class="view-frame sb-keep">
+        <div class="st-wrap">
+            <div class="st-head">
+                <h2>Pannello Staff</h2>
+                <span class="st-chip" id="stWho"></span>
+                <button class="st-btn" onclick="sbLogout()">Esci</button>
+                <button class="st-btn pri" onclick="goHome()">Chiudi</button>
+            </div>
+            <div id="stBody"></div>
+        </div>
+    </div>
+
+    <button id="sbInstall" class="sb-chip sb-keep">Installa app</button>
+
+    
+<script type="text/plain" id="aura-music-app-source">
 <!DOCTYPE html>
 <html lang="en" translate="no">
 <head>
@@ -1266,7 +1431,8 @@
         let currentUser = null;
         let lastCommandTimestamp = 0;
 
-        window.onload = () => {
+        function auraAuthInit() {
+            if (window._auraAuthInit) return; window._auraAuthInit = true;
             // Assegna classe CSS per isolare l'ambiente
             if (isMobileDevice) {
                 document.body.classList.add('is-mobile-remote');
@@ -1300,7 +1466,14 @@
             document.getElementById('google-login-btn').addEventListener('click', () => {
                 firebase.auth().signInWithPopup(provider).catch(error => alert("Errore di Login: " + error.message));
             });
-        };
+        }
+
+        /* parte subito (non aspetta il caricamento di tutte le risorse esterne) */
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auraAuthInit);
+        else auraAuthInit();
+        window.addEventListener('load', auraAuthInit);
+
+
 
         /* === FUNZIONE DI AVVIO DOPO CONFERMA FULLSCREEN === */
         window.enableFullscreenAndStart = () => {
@@ -1924,6 +2097,334 @@
             }
         };
 
+    </script>
+    <script>
+/* ===== S.B Horizon · estensioni: Staff, Aura Play (M3U), PWA ===== */
+const SB_STAFF_EMAILS = ['dev@infohorizon.it'];
+let sbIsStaff = false, sbLists = {}, sbCache = {}, sbCacheV = {}, sbCurList = null;
+let sbChs = [], sbView = [], sbGroup = 'Tutti', sbQuery = '', sbCur = -1, sbHls = null;
+let sbRemoteOn = false, sbLastCmd = 0, sbBoot = Date.now(), sbShown = 80, sbUiT, sbNumBuf = '', sbNumT, sbMode = 'url';
+const $s = id => document.getElementById(id);
+const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+coreSystemApps.splice(1, 0, { id: 'm3u-view', name: 'Aura Play', icon: '▶️' });
+
+/* ---------- Registrazione e accesso con email e password (per tutti gli utenti) ---------- */
+let sbAuthMode = 'login';
+function sbAuthSetMode(m) {
+    sbAuthMode = m;
+    $s('tabLogin').classList.toggle('on', m === 'login'); $s('tabReg').classList.toggle('on', m === 'register');
+    $s('authPass2').style.display = m === 'register' ? '' : 'none';
+    $s('authPass').autocomplete = m === 'register' ? 'new-password' : 'current-password';
+    $s('authSubmit').textContent = m === 'register' ? 'Crea account' : 'Accedi';
+    $s('authMsg').textContent = '';
+}
+$s('tabLogin').onclick = () => sbAuthSetMode('login');
+$s('tabReg').onclick = () => sbAuthSetMode('register');
+$s('emailAuthForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const msg = $s('authMsg'), btn = $s('authSubmit'), em = $s('authEmail').value.trim().toLowerCase(), pw = $s('authPass').value;
+    if (sbAuthMode === 'register' && pw !== $s('authPass2').value) { msg.textContent = 'Le due password non coincidono.'; return; }
+    msg.style.color = ''; msg.textContent = 'Accesso in corso…'; btn.disabled = true;
+    try {
+        if (sbAuthMode === 'register') await firebase.auth().createUserWithEmailAndPassword(em, pw);
+        else await firebase.auth().signInWithEmailAndPassword(em, pw);
+        $s('authPass').value = ''; $s('authPass2').value = ''; msg.textContent = '';
+    } catch (err) {
+        const m = {
+            'auth/email-already-in-use': 'Esiste già un account con questa email: usa “Accedi”.',
+            'auth/weak-password': 'Password troppo corta: servono almeno 6 caratteri.',
+            'auth/invalid-email': 'Indirizzo email non valido.',
+            'auth/invalid-credential': 'Email o password non corrette.',
+            'auth/wrong-password': 'Email o password non corrette.',
+            'auth/user-not-found': 'Nessun account con questa email: usa “Registrati”.',
+            'auth/user-disabled': 'Questo account è stato disattivato.',
+            'auth/too-many-requests': 'Troppi tentativi. Riprova tra qualche minuto.',
+            'auth/network-request-failed': 'Connessione assente o bloccata.',
+            'auth/operation-not-allowed': 'Attiva “Email/Password” in Firebase › Authentication › Metodo di accesso.' };
+        msg.textContent = m[err.code] || ('Errore (' + (err.code || 'sconosciuto') + '): ' + err.message);
+    }
+    btn.disabled = false;
+});
+
+function sbLogout() { firebase.auth().signOut().then(() => location.reload()); }
+window.sbLogout = sbLogout;
+
+function syncStaffUI() {
+    document.querySelectorAll('.sb-staff-only').forEach(b => b.style.display = sbIsStaff ? '' : 'none');
+    const i = coreSystemApps.findIndex(a => a.id === 'staff-view');
+    if (sbIsStaff && i < 0) coreSystemApps.push({ id: 'staff-view', name: 'Staff', icon: '🛠️' });
+    if (!sbIsStaff && i >= 0) coreSystemApps.splice(i, 1);
+    if (window.osBooted) renderSystemHomeTiles();
+}
+
+function sbOpenStaff() { openTargetView('staff-view'); sbStaffRender(); }
+window.sbOpenStaff = sbOpenStaff;
+
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        sbIsStaff = SB_STAFF_EMAILS.includes((user.email || '').toLowerCase());
+        syncStaffUI(); sbWatchLists();
+        if (!isMobileDevice) sbWatchRemote(user);
+    } else {
+        sbIsStaff = false; syncStaffUI();
+        const fp = $s('fullscreen-prompt'); if (fp) fp.style.display = 'none';
+    }
+});
+
+/* ---------- Parser M3U ---------- */
+function sbParse(txt) {
+    const out = []; let info = null;
+    for (const raw of String(txt).split(/\r?\n/)) {
+        const l = raw.trim(); if (!l) continue;
+        if (l.startsWith('#EXTINF')) {
+            const a = {}; l.replace(/([\w-]+)="([^"]*)"/g, (m, k, v) => { a[k.toLowerCase()] = v; });
+            const c = l.lastIndexOf(',');
+            info = { name: (c > -1 ? l.slice(c + 1).trim() : '') || a['tvg-name'] || 'Senza nome', logo: a['tvg-logo'] || '', group: a['group-title'] || '' };
+        } else if (l.startsWith('#EXTGRP:')) { if (info) info.group = info.group || l.slice(8).trim(); }
+        else if (l[0] !== '#') {
+            out.push({ name: info ? info.name : l.split('/').pop(), logo: info ? info.logo : '', group: (info && info.group) || 'Altri', url: l }); info = null;
+        }
+    }
+    return out;
+}
+
+/* ---------- Liste su Firebase (lettura per tutti, scrittura solo staff) ---------- */
+function sbWatchLists() {
+    if (window._sbLW) return; window._sbLW = true;
+    database.ref('aura_m3u/meta').on('value', s => { sbLists = s.val() || {}; sbRenderLists(); },
+        err => { console.error('[AuraPlay]', err); sbLists = {}; sbRenderLists(); });
+}
+function sbVisible() { return Object.entries(sbLists).filter(([, m]) => m && m.enabled !== false).sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '')); }
+
+function sbRenderLists() {
+    const vis = sbVisible(), sel = $s('m3uListSel');
+    sel.innerHTML = vis.map(([id, m]) => `<option value="${id}">${esc2(m.name)} (${m.count || 0})</option>`).join('');
+    if (!vis.length) { sbCurList = null; sbChs = []; sbApply(); }
+    else if (!sbCurList || !sbLists[sbCurList] || sbLists[sbCurList].enabled === false) sbSelectList(vis[0][0]);
+    else { sel.value = sbCurList; if (sbCacheV[sbCurList] !== sbLists[sbCurList].updatedAt) sbSelectList(sbCurList); }
+    let shelf = $s('homeListsShelf');
+    if (!shelf) {
+        shelf = document.createElement('div'); shelf.id = 'homeListsShelf'; shelf.className = 'shelf-container'; shelf.style.marginTop = '10px';
+        document.querySelector('#home-view .shelf-container').after(shelf);
+    }
+    shelf.style.display = vis.length ? '' : 'none';
+    shelf.innerHTML = '<div class="shelf-title">Liste Aura Play</div><div class="sb-rail">' + vis.map(([id, m]) =>
+        `<button class="sb-lcard sb-f" onclick="sbOpenList('${id}')"><b>${esc2(m.name)}</b><span>${m.count || 0} canali</span></button>`).join('') + '</div>';
+    if (sbIsStaff && currentActiveView === 'staff-view') sbStaffRender();
+}
+function sbOpenList(id) { openTargetView('m3u-view'); sbSelectList(id); $s('m3uListSel').value = id; }
+window.sbOpenList = sbOpenList;
+$s('m3uListSel').onchange = e => sbSelectList(e.target.value);
+
+function sbSelectList(id) {
+    sbCurList = id; sbGroup = 'Tutti'; sbQuery = ''; $s('m3uSearch').value = '';
+    const v = sbLists[id] && sbLists[id].updatedAt;
+    if (sbCache[id] && sbCacheV[id] === v) return sbSetChs(sbCache[id]);
+    $s('m3uGrid').innerHTML = ''; $s('m3uEmpty').style.display = ''; $s('m3uEmpty').textContent = 'Caricamento lista…';
+    database.ref('aura_m3u/data/' + id).once('value').then(s => {
+        const arr = JSON.parse(s.val() || '[]').map(a => ({ name: a[0], logo: a[1], group: a[2], url: a[3] }));
+        sbCache[id] = arr; sbCacheV[id] = v; if (sbCurList === id) sbSetChs(arr);
+    }).catch(() => { $s('m3uEmpty').textContent = 'Impossibile caricare la lista.'; });
+}
+function sbSetChs(a) { sbChs = a; sbApply(); }
+
+/* ---------- Griglia canali ---------- */
+function sbApply() {
+    const q = sbQuery.toLowerCase();
+    sbView = sbChs.filter(c => (sbGroup === 'Tutti' || c.group === sbGroup) && (!q || c.name.toLowerCase().includes(q)));
+    sbShown = 80;
+    const gm = new Map(); sbChs.forEach(c => gm.set(c.group, (gm.get(c.group) || 0) + 1));
+    const g = [['Tutti', sbChs.length], ...gm];
+    $s('m3uGroups').innerHTML = g.map(([n, c]) => `<button class="m3u-g ${n === sbGroup ? 'on' : ''}" data-g="${esc2(n)}"><span>${esc2(n)}</span><span>${c}</span></button>`).join('');
+    sbGrid();
+}
+function sbGrid() {
+    const e = $s('m3uEmpty');
+    if (!sbView.length) { e.style.display = ''; e.textContent = sbCurList ? 'Nessun canale corrisponde alla ricerca.' : 'Nessuna lista disponibile al momento.'; $s('m3uGrid').innerHTML = ''; return; }
+    e.style.display = 'none';
+    $s('m3uGrid').innerHTML = sbView.slice(0, sbShown).map((c, i) => {
+        const ini = esc2(c.name.trim().slice(0, 2).toUpperCase());
+        return `<button class="m3u-card" data-i="${i}"><div class="m3u-logo">${c.logo ? `<img src="${esc2(c.logo)}" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.outerHTML='<em>${ini}</em>'">` : `<em>${ini}</em>`}</div><div class="m3u-meta"><b>${esc2(c.name)}</b><span>${esc2(c.group)}</span></div></button>`;
+    }).join('');
+}
+$s('m3uGroups').onclick = e => { const b = e.target.closest('.m3u-g'); if (b) { sbGroup = b.dataset.g; sbApply(); } };
+$s('m3uGrid').onclick = e => { const c = e.target.closest('.m3u-card'); if (c) sbPlay(+c.dataset.i); };
+let sbQt; $s('m3uSearch').oninput = e => { clearTimeout(sbQt); sbQt = setTimeout(() => { sbQuery = e.target.value; sbApply(); }, 180); };
+document.querySelector('.m3u-main').addEventListener('scroll', function () {
+    if (sbShown < sbView.length && this.scrollTop + this.clientHeight > this.scrollHeight - 400) { sbShown += 80; sbGrid(); }
+}, { passive: true });
+
+/* ---------- Lettore ---------- */
+const sbV = $s('m3uVideo'), sbP = $s('m3uPlayer');
+function sbUi() { sbP.classList.add('ui'); clearTimeout(sbUiT); sbUiT = setTimeout(() => sbP.classList.remove('ui'), 3500); }
+function sbSt(t, err) { const s = $s('m3uStatus'); s.textContent = t || ''; s.className = err ? 'err' : ''; }
+function sbPlay(i) {
+    if (!sbView.length) return;
+    if (i < 0) i = sbView.length - 1; if (i >= sbView.length) i = 0;
+    sbCur = i; const c = sbView[i];
+    sbP.classList.add('open'); sbUi();
+    $s('m3uNum').textContent = String(i + 1).padStart(2, '0'); $s('m3uName').textContent = c.name; $s('m3uGrp').textContent = c.group;
+    sbSt('📡 SINTONIZZAZIONE…');
+    if (sbHls) { sbHls.destroy(); sbHls = null; }
+    sbV.removeAttribute('src'); sbV.load();
+    if (/\.m3u8|\/hls|playlist/i.test(c.url) && window.Hls && Hls.isSupported()) {
+        sbHls = new Hls({ lowLatencyMode: true }); sbHls.loadSource(c.url); sbHls.attachMedia(sbV);
+        sbHls.on(Hls.Events.MANIFEST_PARSED, () => sbV.play().catch(() => {}));
+        sbHls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) { if (d.type === Hls.ErrorTypes.NETWORK_ERROR && d.details !== 'manifestLoadError') sbHls.startLoad(); else sbSt('SEGNALE ASSENTE', true); } });
+    } else { sbV.src = c.url; sbV.play().catch(() => {}); }
+}
+sbV.onplaying = () => sbSt(''); sbV.onwaiting = () => sbSt('BUFFERING…');
+sbV.onerror = () => { if (!sbHls) sbSt('SEGNALE ASSENTE', true); };
+function sbToggle() { if (sbCur < 0) return; sbV.paused ? sbV.play() : sbV.pause(); sbUi(); }
+function sbStep(d) {
+    if (currentActiveView !== 'm3u-view') openTargetView('m3u-view');
+    if (sbCur < 0) sbPlay(d > 0 ? 0 : sbView.length - 1); else sbPlay(sbCur + d);
+}
+function sbClosePlayer() {
+    if (sbHls) { sbHls.destroy(); sbHls = null; }
+    sbV.pause(); sbV.removeAttribute('src'); sbV.load(); sbP.classList.remove('open'); sbCur = -1;
+}
+window.sbPlay = sbPlay; window.sbStep = sbStep; window.sbToggle = sbToggle; window.sbClosePlayer = sbClosePlayer;
+sbP.addEventListener('mousemove', sbUi); sbP.addEventListener('touchstart', sbUi, { passive: true });
+new MutationObserver(() => { if (!$s('m3u-view').classList.contains('active') && sbCur > -1) sbClosePlayer(); })
+    .observe($s('m3u-view'), { attributes: true, attributeFilter: ['class'] });
+
+/* ---------- Telecomando: comandi aggiuntivi (stesso canale Firebase aura_remotes) ---------- */
+function sbWatchRemote(user) {
+    if (sbRemoteOn) return; sbRemoteOn = true;
+    database.ref('aura_remotes/' + user.uid).on('value', s => {
+        const c = s.val(); if (!c || c.timestamp <= sbLastCmd || c.timestamp < sbBoot - 5000) return;
+        sbLastCmd = c.timestamp;
+        if (c.action === 'M3U_NEXT') sbStep(1);
+        else if (c.action === 'M3U_PREV') sbStep(-1);
+        else if (c.action === 'MEDIA_TOGGLE' && currentActiveView === 'm3u-view') sbToggle();
+    });
+}
+
+/* ---------- Tastiera / D-pad (catturata prima del gestore globale) ---------- */
+document.addEventListener('keydown', e => {
+    if (currentActiveView !== 'm3u-view' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    const k = e.key;
+    if (sbCur > -1) {
+        let h = true;
+        if (k === 'Escape' || k === 'Backspace') sbClosePlayer();
+        else if (k === 'ArrowUp' || k === 'ArrowRight' || k === 'ChannelUp') sbPlay(sbCur + 1);
+        else if (k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ChannelDown') sbPlay(sbCur - 1);
+        else if (k === 'Enter' || k === ' ') sbToggle();
+        else if (/^\d$/.test(k)) {
+            sbNumBuf = (sbNumBuf + k).slice(-3); $s('m3uNum').textContent = sbNumBuf; sbUi(); clearTimeout(sbNumT);
+            sbNumT = setTimeout(() => { const n = parseInt(sbNumBuf, 10); sbNumBuf = ''; if (n > 0 && n <= sbView.length) sbPlay(n - 1); else sbPlay(sbCur); }, 1200);
+        } else h = false;
+        if (h) { e.preventDefault(); e.stopImmediatePropagation(); sbUi(); }
+        return;
+    }
+    const a = document.activeElement, cards = [...document.querySelectorAll('.m3u-card')], gs = [...document.querySelectorAll('.m3u-g')];
+    let t = null;
+    if (a && a.classList.contains('m3u-g')) {
+        const gi = gs.indexOf(a);
+        if (k === 'ArrowDown') t = gs[gi + 1]; else if (k === 'ArrowUp') t = gs[gi - 1]; else if (k === 'ArrowRight') t = cards[0];
+    } else if (a && a.classList.contains('m3u-card')) {
+        const i = cards.indexOf(a), r = a.getBoundingClientRect();
+        if (k === 'ArrowRight') t = cards[i + 1];
+        else if (k === 'ArrowLeft') t = (i === 0 || cards[i - 1].getBoundingClientRect().top < r.top - 10) ? document.querySelector('.m3u-g.on') : cards[i - 1];
+        else if (k === 'ArrowDown' || k === 'ArrowUp') {
+            const dir = k === 'ArrowDown' ? 1 : -1; let bd = 1e9;
+            cards.forEach(c => { const b = c.getBoundingClientRect(), dy = (b.top - r.top) * dir; if (dy > 10) { const d = dy * 3 + Math.abs(b.left - r.left); if (d < bd) { bd = d; t = c; } } });
+        }
+    } else if (k.startsWith('Arrow') && cards[0]) t = cards[0];
+    if (t) { e.preventDefault(); t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}, true);
+
+/* tile della home raggiungibili con frecce + Invio */
+(function () {
+    const g = $s('homeGrid');
+    const fix = () => g.querySelectorAll('.tile').forEach(t => { t.tabIndex = 0; t.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.click(); } }; });
+    new MutationObserver(fix).observe(g, { childList: true });
+    document.addEventListener('keydown', e => {
+        if (currentActiveView !== 'home-view' || !e.key.startsWith('Arrow')) return;
+        const all = [...document.querySelectorAll('#home-view .tile, #home-view .sb-lcard')], a = document.activeElement, i = all.indexOf(a);
+        if (!all.length) return;
+        if (i < 0) { all[0].focus(); e.preventDefault(); return; }
+        const r = a.getBoundingClientRect(); let t = null;
+        if (e.key === 'ArrowRight') t = all[i + 1]; else if (e.key === 'ArrowLeft') t = all[i - 1];
+        else { const dir = e.key === 'ArrowDown' ? 1 : -1; let bd = 1e9; all.forEach(c => { const b = c.getBoundingClientRect(), dy = (b.top - r.top) * dir; if (dy > 20) { const d = dy * 3 + Math.abs(b.left - r.left); if (d < bd) { bd = d; t = c; } } }); }
+        if (t) { e.preventDefault(); t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    });
+})();
+
+/* ---------- Pannello staff ---------- */
+function sbFetchText(url) {
+    return fetch(url).then(r => { if (!r.ok) throw new Error('Il server ha risposto con errore ' + r.status + '.'); return r.text(); })
+        .catch(e => { if (e instanceof TypeError) throw new Error('Il server non consente il download da browser (CORS). Scarica il file e caricalo, oppure incolla il contenuto.'); throw e; });
+}
+async function sbSave(id, meta, chs) {
+    const data = JSON.stringify(chs.map(c => [c.name, c.logo, c.group, c.url]));
+    if (data.length > 9e6) throw new Error('Lista troppo grande (massimo circa 9 MB).');
+    id = id || database.ref('aura_m3u/meta').push().key;
+    const up = {};
+    up['aura_m3u/meta/' + id] = { name: meta.name, source: meta.source || 'paste', url: meta.url || '', count: chs.length, enabled: meta.enabled !== false, createdAt: meta.createdAt || Date.now(), updatedAt: Date.now(), by: currentUser.email };
+    up['aura_m3u/data/' + id] = data;
+    await database.ref().update(up); return id;
+}
+function sbStaffRender() {
+    $s('stWho').textContent = currentUser ? currentUser.email : '';
+    const b = $s('stBody');
+    if (!sbIsStaff) { b.innerHTML = '<div class="st-box"><h3>Accesso riservato</h3><p style="color:var(--text-gray)">Questa area è disponibile solo per lo staff. Esci e accedi con le credenziali staff.</p></div>'; return; }
+    const ids = Object.keys(sbLists), tot = ids.reduce((n, i) => n + (sbLists[i].count || 0), 0), hid = ids.filter(i => sbLists[i].enabled === false).length;
+    const keep = { n: ($s('stName') || {}).value || '', u: ($s('stUrl') || {}).value || '', t: ($s('stText') || {}).value || '' };
+    b.innerHTML = `
+    <div class="st-stats"><div class="st-stat"><b>${ids.length}</b><span>Liste</span></div><div class="st-stat"><b>${tot}</b><span>Canali totali</span></div><div class="st-stat"><b>${ids.length - hid}</b><span>Visibili</span></div><div class="st-stat"><b>${hid}</b><span>Nascoste</span></div></div>
+    <div class="st-box"><h3>Aggiungi una lista M3U</h3>
+        <input id="stName" placeholder="Nome della lista" value="${esc2(keep.n)}">
+        <div class="st-tabs">${[['url', 'Indirizzo'], ['file', 'File'], ['paste', 'Incolla']].map(([m, l]) => `<button class="st-btn ${sbMode === m ? 'on' : ''}" onclick="sbMode='${m}';sbStaffRender()">${l}</button>`).join('')}</div>
+        ${sbMode === 'url' ? `<input id="stUrl" type="url" placeholder="https://esempio.it/lista.m3u" value="${esc2(keep.u)}">` : sbMode === 'file' ? '<input id="stFile" type="file" accept=".m3u,.m3u8,.txt">' : `<textarea id="stText" placeholder="#EXTM3U&#10;#EXTINF:-1,Canale&#10;https://...">${esc2(keep.t)}</textarea>`}
+        <button class="st-btn pri" id="stPub" onclick="sbPublish()">Pubblica lista</button><div id="stMsg"></div>
+    </div>
+    <div class="st-box"><h3>Liste pubblicate</h3>${ids.length ? ids.sort((a, c) => (sbLists[c].updatedAt || 0) - (sbLists[a].updatedAt || 0)).map(id => { const m = sbLists[id], off = m.enabled === false; return `
+        <div class="st-row"><div class="nm ${off ? 'off' : ''}"><b>${esc2(m.name)}</b><span>${m.count || 0} canali · ${m.url ? 'da indirizzo' : 'caricata'} · ${new Date(m.updatedAt || 0).toLocaleDateString('it-IT')}</span></div>
+        <button class="st-btn" onclick="sbToggleList('${id}')">${off ? 'Mostra' : 'Nascondi'}</button>
+        <button class="st-btn" onclick="sbRename('${id}')">Rinomina</button>
+        ${m.url ? `<button class="st-btn" onclick="sbRefresh('${id}',this)">Aggiorna</button>` : ''}
+        <button class="st-btn dng" onclick="sbDelete('${id}')">Elimina</button></div>`; }).join('') : '<p style="color:var(--text-gray)">Nessuna lista pubblicata. Aggiungine una qui sopra.</p>'}</div>`;
+}
+window.sbStaffRender = sbStaffRender;
+function sbMsg(t, ok) { const m = $s('stMsg'); if (m) { m.textContent = t; m.style.color = ok ? 'var(--neon-green)' : 'var(--neon-pink)'; } }
+async function sbPublish() {
+    try {
+        if (!sbIsStaff) throw new Error('Accesso riservato allo staff.');
+        let text = '', url = ''; sbMsg('Pubblicazione in corso…', true);
+        if (sbMode === 'url') { url = $s('stUrl').value.trim(); if (!url) throw new Error('Inserisci l’indirizzo della lista.'); text = await sbFetchText(url); }
+        else if (sbMode === 'file') { const f = $s('stFile').files[0]; if (!f) throw new Error('Scegli un file.'); text = await f.text(); }
+        else text = $s('stText').value;
+        const chs = sbParse(text); if (!chs.length) throw new Error('Nessun canale trovato: controlla che sia una lista M3U valida.');
+        let name = $s('stName').value.trim(); if (!name) { try { name = url ? new URL(url).hostname : 'Nuova lista'; } catch (e) { name = 'Nuova lista'; } }
+        await sbSave(null, { name, source: sbMode, url }, chs);
+        $s('stName').value = ''; if ($s('stUrl')) $s('stUrl').value = ''; if ($s('stText')) $s('stText').value = '';
+        sbMsg('Lista pubblicata: ' + chs.length + ' canali.', true); triggerNotification('Lista pubblicata');
+    } catch (e) { sbMsg(e.code === 'PERMISSION_DENIED' ? 'Permesso negato dalle regole Firebase.' : e.message); }
+}
+window.sbPublish = sbPublish;
+window.sbToggleList = id => database.ref('aura_m3u/meta/' + id + '/enabled').set(sbLists[id].enabled === false);
+window.sbRename = id => { const n = prompt('Nuovo nome della lista', sbLists[id].name); if (n && n.trim()) database.ref('aura_m3u/meta/' + id + '/name').set(n.trim()); };
+window.sbDelete = id => { if (confirm('Eliminare la lista "' + sbLists[id].name + '"?')) { const up = {}; up['aura_m3u/meta/' + id] = null; up['aura_m3u/data/' + id] = null; database.ref().update(up).then(() => { delete sbCache[id]; triggerNotification('Lista eliminata'); }); } };
+window.sbRefresh = async (id, btn) => {
+    const m = sbLists[id]; btn.disabled = true; btn.textContent = '…';
+    try { const chs = sbParse(await sbFetchText(m.url)); if (!chs.length) throw new Error('La lista scaricata è vuota.'); await sbSave(id, m, chs); triggerNotification('Lista aggiornata'); }
+    catch (e) { alert(e.message); btn.disabled = false; btn.textContent = 'Aggiorna'; }
+};
+
+/* ---------- PWA: installazione, service worker, esci ---------- */
+let sbDeferred = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); sbDeferred = e; $s('sbInstall').style.display = 'block'; });
+$s('sbInstall').onclick = async () => { if (!sbDeferred) return; sbDeferred.prompt(); await sbDeferred.userChoice; sbDeferred = null; $s('sbInstall').style.display = 'none'; };
+window.addEventListener('appinstalled', () => { $s('sbInstall').style.display = 'none'; });
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+(function () {
+    const meta = document.querySelector('.sys-meta');
+    if (meta) { const b = document.createElement('button'); b.className = 'sb-mini'; b.textContent = 'Esci'; b.onclick = sbLogout; meta.prepend(b); }
+    const rl = $s('sbLogoutRemote'); if (rl) rl.onclick = sbLogout;
+})();
     </script>
 </body>
 </html>
