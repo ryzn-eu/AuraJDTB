@@ -750,26 +750,27 @@ body.tvp .corner-trigger{display:none}
     </div>
 
     <div id="home-view" class="view-frame active">
-        <div class="home-top-bar">
-            <div class="sys-brand">AURA<span>TV</span></div>
-            <div class="sys-meta">
-                <button onclick="toggleFullScreen()" style="background:transparent; border:none; color:var(--neon-blue); cursor:pointer; display:flex; align-items:center; transition:0.3s; margin-right: 15px;" title="Schermo Intero">
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                </button>
-                <div class="badge-net">ONLINE</div>
-                <div id="sysTopTime">00:00</div>
+        <div class="hv-aurora"></div>
+        <div class="hv-stage" id="hvStage">
+            <div class="hv-logo" onclick="hmGo('home-view')"><b id="hvBrand">Aura</b><sup>TV</sup><small id="hvTag">More than TV</small></div>
+            <div class="hv-search"><i data-lucide="search"></i><input id="hvSearch" placeholder="Cerca film, serie, canali e app..." autocomplete="off"></div>
+            <div class="hv-right">
+                <i data-lucide="wifi" class="hv-wifi"></i><span class="hv-sep"></span>
+                <div class="hv-clock" onclick="toggleFullScreen()"><b id="hvTime">--:--</b><small id="hvDate"></small></div>
+                <button class="hv-avatar" id="hvAvatar" onclick="hmAvatar()" aria-label="Profilo"><i data-lucide="user"></i></button>
             </div>
+            <div class="hv-side"></div>
+            <nav class="hv-nav" id="hvNav"></nav>
+            <button class="hv-prem" id="hvPrem" data-hvf><i data-lucide="crown"></i><div><b id="hvPremT">Aura Premium</b><small id="hvPremS">Sblocca di più!</small></div><i data-lucide="chevron-right" class="hv-chev"></i></button>
+            <div class="hv-hero" id="hvHero"></div>
+            <div class="hv-sec" style="top:455px"><h3><i data-lucide="star" class="hv-star"></i><span id="hvAppsT">Le tue app preferite</span></h3><a data-hvf tabindex="0" onclick="hmGo('store-view')">Vedi tutte <i data-lucide="arrow-right"></i></a></div>
+            <div class="hv-apps" id="hvApps"></div>
+            <div class="hv-sec" style="top:637px"><h3><i data-lucide="radio-tower" class="hv-radio"></i><span id="hvLiveT">Canali TV in diretta</span></h3><a data-hvf tabindex="0" onclick="hmGo('tv-view')">Vedi tutti <i data-lucide="arrow-right"></i></a></div>
+            <div class="hv-live" id="hvLive"></div>
+            <div class="hv-ticker"><i data-lucide="sparkles"></i><div class="hv-tk"><div id="hvTk"></div></div><span class="hv-pow"><u></u><em id="hvPow">Powered by Aura</em></span></div>
         </div>
-
-        <div class="tv-clock-center">
-            <div class="tv-clock-time" id="centerTime">00:00</div>
-            <div class="tv-clock-date" id="centerDate">Caricamento data...</div>
-        </div>
-        
-        <div class="shelf-container">
-            <div class="shelf-title">Applicazioni di Sistema</div>
-            <div class="grid-tiles" id="homeGrid"></div>
-        </div>
+        <div class="shelf-container" style="display:none"><div id="homeGrid"></div></div>
+        <span id="sysTopTime" hidden></span><span id="centerTime" hidden></span><span id="centerDate" hidden></span>
     </div>
 
     <div id="tv-view" class="view-frame">
@@ -910,6 +911,7 @@ body.tvp .corner-trigger{display:none}
                 <button class="st-btn pri" onclick="goHome()">Chiudi</button>
             </div>
             <div id="stBody"><p style="color:var(--text-gray)">Caricamento…</p></div>
+            <div id="stHome"></div>
         </div>
     </div>
 
@@ -2630,5 +2632,220 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.
     const rl = $s('sbLogoutRemote'); if (rl) rl.onclick = sbLogout;
 })();
     </script>
+<style>
+/* ===== AURA TV · HOME (canvas 1672x941 scalato) ===== */
+#home-view{display:block!important;padding:0!important;overflow:hidden!important;background:#06081c}
+.hv-aurora{position:absolute;inset:0;background:radial-gradient(ellipse 55% 38% at 58% 6%,rgba(0,255,170,.38),transparent 72%),radial-gradient(ellipse 45% 40% at 88% 12%,rgba(160,70,255,.5),transparent 72%),radial-gradient(ellipse 40% 32% at 18% 14%,rgba(0,190,255,.22),transparent 72%),radial-gradient(ellipse 70% 30% at 50% 100%,rgba(120,40,200,.35),transparent 75%),linear-gradient(#070a24,#0b0522 55%,#05030f);animation:hvAur 16s ease-in-out infinite alternate}
+@keyframes hvAur{to{filter:hue-rotate(25deg) brightness(1.12)}}
+.hv-stage{position:absolute;left:50%;top:50%;width:1672px;height:941px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;color:#fff}
+.hv-stage button{font-family:inherit;color:#fff;cursor:pointer;border:0;background:none}
+.hv-stage>*{position:absolute}
+.hv-logo{left:30px;top:30px;width:270px;height:130px;cursor:pointer}
+.hv-logo b{position:absolute;left:44px;top:-8px;font-size:118px;font-style:italic;font-weight:800;letter-spacing:-4px;background:linear-gradient(180deg,#fff 30%,#c9a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(170,90,255,.9))}
+.hv-logo sup{position:absolute;left:222px;top:18px;font-size:26px;font-style:italic;font-weight:700;color:#d9c2ff}
+.hv-logo small{position:absolute;left:108px;top:101px;font-size:18px;font-weight:500;color:#eee}
+.hv-logo::before{content:'';position:absolute;left:4px;top:56px;width:250px;height:60px;border:5px solid transparent;border-top-color:#a64dff;border-left-color:#d49bff;border-radius:50%;transform:rotate(-14deg);filter:drop-shadow(0 0 10px #a64dff)}
+.hv-search{left:386px;top:36px;width:642px;height:56px;border-radius:28px;border:2px solid rgba(150,90,255,.75);background:rgba(30,25,80,.55);backdrop-filter:blur(14px);display:flex;align-items:center;gap:16px;padding:0 26px;box-shadow:0 0 22px rgba(130,60,255,.35)}
+.hv-search svg{width:30px;height:30px;stroke-width:2.2}
+.hv-search input{flex:1;background:none;border:0;outline:0;color:#fff;font-size:21px}
+.hv-search input::placeholder{color:rgba(255,255,255,.7)}
+.hv-right{left:1380px;top:30px;width:272px;height:64px;display:flex;align-items:center;gap:14px}
+.hv-wifi{width:44px;height:44px;stroke-width:2.4;filter:drop-shadow(0 0 6px #7af)}
+.hv-sep{width:2px;height:48px;background:rgba(255,255,255,.22);margin:0 4px 0 2px}
+.hv-clock{cursor:pointer;line-height:1.05}.hv-clock b{display:block;font-size:34px;font-weight:700}.hv-clock small{font-size:17px;color:#eee}
+.hv-avatar{width:52px;height:52px;border-radius:50%;margin-left:18px;border:2px solid #8cf;background:linear-gradient(135deg,#2a8cff,#7b2cff);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0}
+.hv-avatar img{width:100%;height:100%;object-fit:cover}.hv-avatar svg{width:30px;height:30px}
+.hv-side{left:0;top:188px;width:285px;height:672px;border-radius:0 30px 30px 0;background:linear-gradient(90deg,rgba(20,20,60,.15),rgba(40,40,110,.28));border-right:2px solid rgba(70,110,255,.35)}
+.hv-nav{left:18px;top:211px;width:242px}
+.hv-nav button{display:flex;align-items:center;gap:22px;width:100%;height:58px;padding:0 24px;border-radius:22px;font-size:21px;text-align:left;opacity:.92;transition:.2s}
+.hv-nav button svg{width:36px;height:36px;stroke-width:1.8;flex:none}
+.hv-nav button:first-child{height:67px;margin-bottom:4px;font-weight:700;opacity:1;font-size:22px;border:2px solid #c07bff;background:linear-gradient(90deg,#8a2cf0,#5b2bd8);box-shadow:0 0 22px rgba(160,80,255,.7),inset 0 0 14px rgba(255,255,255,.18)}
+.hv-nav button:first-child svg{fill:#fff}
+.hv-nav button.on:not(:first-child){background:rgba(255,255,255,.08)}
+.hv-prem{left:18px;top:738px;width:242px;height:95px;border-radius:22px!important;border:2px solid rgba(170,90,255,.85)!important;background:rgba(40,20,90,.55)!important;display:flex;align-items:center;gap:16px;padding:0 18px;text-align:left;box-shadow:0 0 22px rgba(150,70,255,.4)}
+.hv-prem>svg:first-child{width:54px;height:54px;color:#ffc43d;fill:#ffc43d33;filter:drop-shadow(0 0 8px #ffb300)}
+.hv-prem b{display:block;font-size:19px;font-weight:700}.hv-prem small{font-size:16px;color:#ddd}.hv-chev{width:18px;height:18px;margin-left:auto;opacity:.6;align-self:flex-end;margin-bottom:12px}
+.hv-hero{left:313px;top:131px;width:1337px;height:306px;border-radius:34px;border:2px solid rgba(190,130,255,.9);overflow:hidden;box-shadow:0 0 28px rgba(150,80,255,.55);background:linear-gradient(120deg,#180a3a,#2a1060 50%,#0a3a4a)}
+.hv-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .9s}.hv-slide.on{opacity:1}
+.hv-slide::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,6,30,.88) 0,rgba(8,6,30,.55) 35%,transparent 62%)}
+.hv-slide div{position:absolute;left:88px;top:42px}
+.hv-slide i{display:block;font-style:normal;font-size:33px;font-weight:600}
+.hv-slide h1{font-size:92px;line-height:1;font-style:italic;font-weight:800;letter-spacing:-2px;margin:-2px 0 4px;text-shadow:0 4px 24px rgba(0,0,0,.6)}
+.hv-slide p{font-size:28px;font-weight:500;margin-bottom:22px}
+.hv-slide button{width:264px;height:55px;border-radius:28px;border:2px solid #b87dff!important;background:linear-gradient(90deg,rgba(70,30,200,.75),rgba(110,50,230,.55))!important;font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:16px;box-shadow:0 0 18px rgba(150,80,255,.7)}
+.hv-slide button::before{content:'';border-left:20px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent}
+.hv-dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:15px}
+.hv-dots span{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer}.hv-dots span.on{background:#fff;box-shadow:0 0 8px #fff}
+.hv-sec{left:306px;width:1344px;display:flex;justify-content:space-between;align-items:center;height:36px}
+.hv-sec h3{display:flex;align-items:center;gap:14px;font-size:25px;font-weight:600}
+.hv-sec h3 svg{width:34px;height:34px}.hv-star{color:#b24dff;fill:#b24dff}.hv-radio{color:#b78dff}
+.hv-sec a{display:flex;align-items:center;gap:10px;font-size:20px;cursor:pointer}.hv-sec a svg{width:26px;height:26px}
+.hv-apps{left:306px;top:499px;width:1344px;height:114px;display:flex;gap:17px}
+.hv-app{flex:1;border-radius:18px!important;border:1.5px solid rgba(255,255,255,.35)!important;background:linear-gradient(160deg,var(--c1),var(--c2))!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:19px;font-weight:600;box-shadow:inset 0 0 18px rgba(255,255,255,.12),0 6px 18px rgba(0,0,0,.4);transition:.25s}
+.hv-app svg{width:50px;height:50px;stroke-width:1.8}.hv-app img{width:50px;height:50px;object-fit:contain}.hv-app em{font-style:normal;font-size:42px;line-height:50px}
+.hv-live{left:309px;top:679px;width:1340px;height:160px;display:flex;gap:10px}
+.hv-empty{width:100%;display:flex;align-items:center;justify-content:center;border-radius:18px;border:1.5px dashed rgba(255,255,255,.25);color:#cbd;font-size:20px;background:rgba(255,255,255,.04)}
+.hv-ch{flex:1;min-width:0;position:relative;overflow:hidden;border-radius:16px!important;border:1.5px solid rgba(255,255,255,.28)!important;background:linear-gradient(150deg,var(--c1),var(--c2))!important;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:.25s;text-align:left}
+.hv-ch::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.22),transparent 65%)}
+.hv-chart{position:absolute;left:12%;right:12%;top:10px;height:88px;display:flex;align-items:center;justify-content:center}
+.hv-chart img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}.hv-chart em{font-size:44px;font-weight:800;font-style:normal;opacity:.9}
+.hv-liveb{position:absolute;right:10px;top:8px;background:#e5223a;border-radius:6px;padding:3px 10px;font-size:14px;font-weight:700;letter-spacing:.5px}
+.hv-cap{position:absolute;left:0;right:0;bottom:0;padding:34px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
+.hv-cap b{display:block;font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:18px}.hv-cap small{display:block;font-size:16px;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hv-dots3{position:absolute;right:10px;bottom:12px;font-size:24px;font-weight:700}
+.hv-ticker{left:21px;top:862px;width:1629px;height:59px;border-radius:30px;border:2px solid rgba(160,90,255,.85);background:rgba(14,8,40,.72);box-shadow:0 0 20px rgba(140,60,255,.4);display:flex;align-items:center;gap:20px;padding:0 28px 0 34px;overflow:hidden}
+.hv-ticker>svg{width:28px;height:28px;color:#b36bff;flex:none;fill:#b36bff44}
+.hv-tk{flex:1;overflow:hidden;white-space:nowrap;font-size:19px}.hv-tk div{display:inline-block}.hv-tk .mq{animation:hvMq var(--d,30s) linear infinite;padding-left:100%}
+@keyframes hvMq{to{transform:translateX(-100%)}}
+.hv-pow{display:flex;align-items:center;gap:10px;font-size:18px;flex:none}.hv-pow u{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#d9b3ff,#7b3df0)}.hv-pow em{font-style:normal}
+.hv-stage :is(.hv-app,.hv-ch,.hv-nav button,.hv-prem,.hv-search,.hv-sec a):hover{filter:brightness(1.15)}
+.hv-stage :is(.hv-app,.hv-ch,.hv-prem,.hv-sec a,.hv-nav button):focus-visible,.hv-stage [data-hvf]:focus-visible{outline:4px solid #fff;outline-offset:4px;transform:scale(1.05);z-index:5}
+/* pannello staff · home */
+.hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.hm-grid label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--text-gray)}
+#stHome input[type=text],#stHome input[type=number],#stHome input:not([type]){padding:11px 14px;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);color:#fff;font-size:.95rem;width:100%}
+.hm-item{border:1px solid var(--glass-border);border-radius:18px;padding:14px;margin:12px 0;background:rgba(255,255,255,.03)}
+.hm-item .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.hm-item img.th{height:56px;border-radius:10px;margin-bottom:6px;object-fit:cover}
+.hm-chk{display:flex!important;flex-direction:row!important;align-items:center;gap:8px!important;color:#fff!important}
+</style>
+<script>
+/* ===== AURA TV · HOME guidata da Firebase (aura_home) + editor Staff ===== */
+const HM_IMG = 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1600&q=80';
+const HM_DEF = {
+  config: { brand: 'Aura', tag: 'More than TV', search: 'Cerca film, serie, canali e app...', appsTitle: 'Le tue app preferite', liveTitle: 'Canali TV in diretta', premTitle: 'Aura Premium', premSub: 'Sblocca di più!', premLink: 'settings-view', powered: 'Powered by Aura', heroSec: 6 },
+  banners: { b1: { kicker: 'Benvenuto su', title: 'Aura TV', sub: 'La tua TV, senza limiti.', btn: 'Inizia a guardare', img: HM_IMG, link: 'tv-view', order: 1, enabled: true } },
+  apps: {
+    a1: { label: 'TV Live', icon: 'tv', c1: '#7b2cf0', c2: '#2b1170', target: 'tv-view', order: 1, enabled: true },
+    a2: { label: 'Film', icon: 'clapperboard', c1: '#d8182c', c2: '#5a0a14', target: 'm3u-view', order: 2, enabled: true },
+    a3: { label: 'Serie TV', icon: 'film', c1: '#2f6df0', c2: '#0f2a78', target: 'm3u-view', order: 3, enabled: true },
+    a4: { label: 'Applicazioni', icon: 'layout-grid', c1: '#2a2f3d', c2: '#0e1118', target: 'store-view', order: 4, enabled: true },
+    a5: { label: 'Preferiti', icon: 'star', c1: '#e8a317', c2: '#6b4106', target: 'tv-view', order: 5, enabled: true },
+    a6: { label: 'Cronologia', icon: 'history', c1: '#10a56a', c2: '#073d2c', target: 'tv-view', order: 6, enabled: true },
+    a7: { label: 'Impostazioni', icon: 'settings', c1: '#4a5470', c2: '#1a2033', target: 'settings-view', order: 7, enabled: true } },
+  nav: {
+    n1: { label: 'Home', icon: 'home', target: 'home-view', order: 1, enabled: true },
+    n2: { label: 'TV Live', icon: 'tv', target: 'tv-view', order: 2, enabled: true },
+    n3: { label: 'Film', icon: 'clapperboard', target: 'm3u-view', order: 3, enabled: true },
+    n4: { label: 'Serie TV', icon: 'film', target: 'm3u-view', order: 4, enabled: true },
+    n5: { label: 'Applicazioni', icon: 'layout-grid', target: 'store-view', order: 5, enabled: true },
+    n6: { label: 'Preferiti', icon: 'star', target: 'tv-view', order: 6, enabled: true },
+    n7: { label: 'Cronologia', icon: 'history', target: 'tv-view', order: 7, enabled: true },
+    n8: { label: 'Impostazioni', icon: 'settings', target: 'settings-view', order: 8, enabled: true } },
+  ticker: { t1: { text: 'Aura TV · La migliore esperienza di intrattenimento, sempre con te.', order: 1, enabled: true } }
+};
+let HM = JSON.parse(JSON.stringify(HM_DEF)), hmSlide = 0, hmTimer = null;
+const hmSorted = o => Object.entries(o || {}).filter(([, v]) => v && v.enabled !== false).sort((a, b) => (a[1].order || 0) - (b[1].order || 0));
+const hmIcons = () => { try { window.lucide && lucide.createIcons(); } catch (e) {} };
+function hmIcon(v) { v = String(v || ''); if (/^https?:/.test(v)) return `<img src="${esc2(v)}" alt="" referrerpolicy="no-referrer">`; if (/^[a-z0-9-]+$/.test(v)) return `<i data-lucide="${v}"></i>`; return `<em>${esc2(v)}</em>`; }
+function hmGo(t) {
+  if (!t) return; t = String(t).trim();
+  if (/^https?:/.test(t)) window.open(t, '_blank', 'noopener');
+  else if (t.startsWith('list:')) sbOpenList(t.slice(5));
+  else if (t === 'staff-view') { if (sbIsStaff) sbOpenStaff(); }
+  else openTargetView(t);
+}
+window.hmGo = hmGo;
+
+function hmScale() { const s = Math.min(innerWidth / 1672, innerHeight / 941); $s('hvStage').style.setProperty('--s', s); }
+addEventListener('resize', hmScale); hmScale();
+
+function hmClock() {
+  const d = new Date();
+  $s('hvTime').textContent = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  $s('hvDate').textContent = d.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).replace(/\./g, '').replace(/(^|\s)\p{L}/gu, m => m.toUpperCase());
+}
+hmClock(); setInterval(hmClock, 1000);
+
+function hmRender() {
+  const c = HM.config;
+  $s('hvBrand').textContent = c.brand; $s('hvTag').textContent = c.tag; $s('hvSearch').placeholder = c.search;
+  $s('hvAppsT').textContent = c.appsTitle; $s('hvLiveT').textContent = c.liveTitle;
+  $s('hvPremT').textContent = c.premTitle; $s('hvPremS').textContent = c.premSub; $s('hvPow').textContent = c.powered;
+  $s('hvPrem').onclick = () => hmGo(c.premLink);
+  $s('hvNav').innerHTML = hmSorted(HM.nav).map(([id, n], i) => `<button data-hvf data-t="${esc2(n.target)}" class="${i ? '' : 'on'}">${hmIcon(n.icon)}<span>${esc2(n.label)}</span></button>`).join('');
+  $s('hvApps').innerHTML = hmSorted(HM.apps).map(([id, a]) => `<button class="hv-app" data-hvf data-t="${esc2(a.target)}" style="--c1:${esc2(a.c1 || '#444')};--c2:${esc2(a.c2 || '#111')}">${hmIcon(a.icon)}<span>${esc2(a.label)}</span></button>`).join('');
+  const bs = hmSorted(HM.banners);
+  $s('hvHero').innerHTML = bs.map(([id, b], i) => `<div class="hv-slide ${i ? '' : 'on'}" style="background-image:url('${esc2(b.img)}')"><div><i>${esc2(b.kicker)}</i><h1>${esc2(b.title)}</h1><p>${esc2(b.sub)}</p>${b.btn ? `<button data-hvf data-t="${esc2(b.link)}">${esc2(b.btn)}</button>` : ''}</div></div>`).join('') + (bs.length > 1 ? `<div class="hv-dots">${bs.map((b, i) => `<span data-i="${i}" class="${i ? '' : 'on'}"></span>`).join('')}</div>` : '');
+  hmSlide = 0; clearInterval(hmTimer);
+  if (bs.length > 1) hmTimer = setInterval(() => hmShow(hmSlide + 1), Math.max(3, +c.heroSec || 6) * 1000);
+  const tk = hmSorted(HM.ticker).map(([, t]) => esc2(t.text)).join('   ·   '), el = $s('hvTk');
+  el.innerHTML = `<div>${tk}</div>`; el.firstChild.className = '';
+  requestAnimationFrame(() => { const d = el.firstChild; if (d.scrollWidth > el.clientWidth) { d.className = 'mq'; d.style.setProperty('--d', Math.max(15, d.scrollWidth / 70) + 's'); } });
+  hmLive(); hmIcons();
+}
+function hmShow(i) {
+  const s = document.querySelectorAll('.hv-slide'), d = document.querySelectorAll('.hv-dots span'); if (!s.length) return;
+  hmSlide = (i + s.length) % s.length; s.forEach((e, k) => e.classList.toggle('on', k === hmSlide)); d.forEach((e, k) => e.classList.toggle('on', k === hmSlide));
+}
+$s('hvHero').onclick = e => { const d = e.target.closest('.hv-dots span'); if (d) return hmShow(+d.dataset.i); const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
+$s('hvNav').onclick = $s('hvApps').onclick = e => { const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
+$s('hvSearch').onkeydown = e => { if (e.key === 'Enter') { openTargetView('tv-view'); tvQuery = e.target.value; $s('tvSearch').value = tvQuery; tvRenderBrowse(); } };
+
+/* Canali in diretta: generati dalla lista M3U attiva (nome + logo dalla lista), colori automatici dal logo */
+const hmHue = n => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+function hmLive() {
+  const box = $s('hvLive'); if (!box) return;
+  const ch = (window.tvLineup || []).filter(c => !c.web).slice(0, 6);
+  if (!ch.length) { box.innerHTML = '<div class="hv-empty">Nessun canale: lo staff può caricare una lista M3U dal pannello Staff.</div>'; return; }
+  box.innerHTML = ch.map(c => { const h = hmHue(c.name); return `<button class="hv-ch" data-hvf data-n="${c.num}" style="--c1:hsla(${h},70%,48%,.85);--c2:hsla(${(h + 50) % 360},70%,20%,.9)"><div class="hv-chart">${c.logo ? `<img src="${esc2(c.logo)}" crossorigin="anonymous" referrerpolicy="no-referrer" alt="" onerror="if(!this.dataset.r){this.dataset.r=1;this.removeAttribute('crossorigin');this.src=this.src}else this.remove()">` : `<em>${esc2(c.name.trim().slice(0, 2).toUpperCase())}</em>`}</div><span class="hv-liveb">LIVE</span><div class="hv-cap"><b>${esc2(c.name)}</b><small>${esc2(c.group)}</small></div><span class="hv-dots3">⋮</span></button>`; }).join('');
+  box.querySelectorAll('.hv-ch img').forEach(img => { const go = () => { try {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 8; const x = cv.getContext('2d'); x.drawImage(img, 0, 0, 8, 8);
+    const d = x.getImageData(0, 0, 8, 8).data; let r = 0, g = 0, b = 0, n = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 128) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+    if (!n) return; r = r / n | 0; g = g / n | 0; b = b / n | 0; const k = Math.max(r, g, b, 1), f = k < 90 ? 90 / k : 1, el = img.closest('.hv-ch');
+    el.style.setProperty('--c1', `rgba(${Math.min(255, r * f | 0)},${Math.min(255, g * f | 0)},${Math.min(255, b * f | 0)},.85)`); el.style.setProperty('--c2', `rgba(${r * .3 | 0},${g * .3 | 0},${b * .3 | 0},.92)`);
+  } catch (e) {} }; img.complete ? go() : img.addEventListener('load', go); });
+}
+window.tvRenderHome = hmLive;
+$s('hvLive').onclick = e => { const c = e.target.closest('.hv-ch'); if (c) { openTargetView('tv-view'); selectTvChannel(+c.dataset.n); } };
+
+/* Avatar */
+firebase.auth().onAuthStateChanged(u => {
+  $s('hvAvatar').innerHTML = u && u.photoURL ? `<img src="${esc2(u.photoURL)}" referrerpolicy="no-referrer" alt="">` : '<i data-lucide="user"></i>'; hmIcons();
+  database.ref('aura_home').off(); hmWatch();
+});
+window.hmAvatar = () => { if (sbIsStaff) sbOpenStaff(); else triggerNotification(currentUser ? currentUser.email : 'Non connesso'); };
+
+/* Dati da Firebase */
+function hmWatch() {
+  database.ref('aura_home').on('value', s => {
+    const v = s.val();
+    if (!v) { HM = JSON.parse(JSON.stringify(HM_DEF)); if (sbIsStaff) database.ref('aura_home').set(HM_DEF).catch(() => {}); }
+    else HM = { config: Object.assign({}, HM_DEF.config, v.config || {}), banners: v.banners || {}, apps: v.apps || {}, nav: v.nav || {}, ticker: v.ticker || {} };
+    hmRender(); hmAdmin();
+  }, err => { console.warn('[AuraHome]', err); hmRender(); });
+}
+hmRender();
+
+/* Navigazione con frecce / telecomando */
+document.addEventListener('keydown', e => {
+  if (currentActiveView !== 'home-view' || !/^Arrow/.test(e.key) || /INPUT/.test(e.target.tagName)) return;
+  const all = [...document.querySelectorAll('#hvStage [data-hvf]')], i = all.indexOf(document.activeElement);
+  const n = all[(i < 0 ? 0 : i + (/Left|Up/.test(e.key) ? -1 : 1) + all.length) % all.length]; if (n) { n.focus(); e.preventDefault(); }
+}, true);
+
+/* ---------- Editor Staff ---------- */
+const HM_CFG = [['brand', 'Nome logo'], ['tag', 'Slogan logo'], ['search', 'Testo ricerca'], ['appsTitle', 'Titolo app'], ['liveTitle', 'Titolo canali'], ['premTitle', 'Premium · titolo'], ['premSub', 'Premium · sottotitolo'], ['premLink', 'Premium · destinazione'], ['powered', 'Testo “Powered by”'], ['heroSec', 'Secondi per banner']];
+const HM_SCH = {
+  banners: ['Banner scorrevoli', [['kicker', 'Sopratitolo'], ['title', 'Titolo'], ['sub', 'Sottotitolo'], ['btn', 'Testo pulsante'], ['img', 'Link immagine (https://…)'], ['link', 'Destinazione (vista, list:ID o https://…)'], ['order', 'Ordine', 1]]],
+  apps: ['App preferite (riquadri colorati)', [['label', 'Nome'], ['icon', 'Icona (nome lucide, emoji o link)'], ['c1', 'Colore 1 (#hex)'], ['c2', 'Colore 2 (#hex)'], ['target', 'Destinazione'], ['order', 'Ordine', 1]]],
+  nav: ['Menu laterale', [['label', 'Nome'], ['icon', 'Icona lucide'], ['target', 'Destinazione'], ['order', 'Ordine', 1]]],
+  ticker: ['Barra messaggi in basso', [['text', 'Messaggio'], ['order', 'Ordine', 1]]] };
+function hmAdmin(force) {
+  const el = $s('stHome'); if (!el) return;
+  if (!sbIsStaff) { el.innerHTML = ''; return; }
+  if (!force && el.contains(document.activeElement) && /INPUT/.test(document.activeElement.tagName)) return;
+  const c = HM.config;
+  el.innerHTML = `<div class="st-box"><h3>Home · Impostazioni generali</h3><div class="hm-grid">${HM_CFG.map(([k, l]) => `<label>${l}<input data-cfg="${k}" value="${esc2(c[k])}"></label>`).join('')}</div><button class="st-btn pri" onclick="hmSaveCfg()">Salva impostazioni</button> <button class="st-btn dng" onclick="hmReset()">Ripristina preset</button></div>` +
+    Object.entries(HM_SCH).map(([sec, [tit, f]]) => `<div class="st-box"><h3>${tit}</h3>${Object.entries(HM[sec] || {}).sort((a, b) => ((a[1] || {}).order || 0) - ((b[1] || {}).order || 0)).map(([id, it]) => `<div class="hm-item" data-s="${sec}" data-id="${id}">${it.img ? `<img class="th" src="${esc2(it.img)}" alt="">` : ''}<div class="hm-grid">${f.map(([k, l, n]) => `<label>${l}<input data-k="${k}" ${n ? 'type="number"' : ''} value="${esc2(it[k])}"></label>`).join('')}</div><div class="row"><label class="hm-chk"><input type="checkbox" data-k="enabled" ${it.enabled !== false ? 'checked' : ''}> Visibile</label><button class="st-btn pri" onclick="hmSave(this)">Salva</button><button class="st-btn dng" onclick="hmDel(this)">Elimina</button></div></div>`).join('') || '<p style="color:var(--text-gray)">Nessun elemento.</p>'}<button class="st-btn" onclick="hmAdd('${sec}')">+ Aggiungi</button></div>`).join('');
+}
+window.hmSaveCfg = () => { const o = {}; document.querySelectorAll('#stHome [data-cfg]').forEach(i => o[i.dataset.cfg] = i.dataset.cfg === 'heroSec' ? +i.value || 6 : i.value); database.ref('aura_home/config').set(o).then(() => triggerNotification('Impostazioni salvate')).catch(e => alert(e.message)); };
+window.hmSave = b => { const it = b.closest('.hm-item'), o = {}; it.querySelectorAll('[data-k]').forEach(i => o[i.dataset.k] = i.type === 'checkbox' ? i.checked : i.type === 'number' ? +i.value || 0 : i.value.trim()); database.ref(`aura_home/${it.dataset.s}/${it.dataset.id}`).set(o).then(() => triggerNotification('Salvato')).catch(e => alert(e.message)); };
+window.hmDel = b => { const it = b.closest('.hm-item'); if (confirm('Eliminare questo elemento?')) database.ref(`aura_home/${it.dataset.s}/${it.dataset.id}`).remove(); };
+window.hmAdd = sec => { const o = { enabled: true, order: 99 }; HM_SCH[sec][1].forEach(([k]) => { if (!(k in o)) o[k] = ''; }); if (o.target === '') o.target = 'tv-view'; if (o.link === '') o.link = 'tv-view'; if (sec === 'apps') { o.c1 = '#7b2cf0'; o.c2 = '#2b1170'; } database.ref('aura_home/' + sec).push(o).then(() => hmAdmin(true)).catch(e => alert(e.message)); };
+window.hmReset = () => { if (confirm('Ripristinare banner, app, menu e messaggi ai valori predefiniti?')) database.ref('aura_home').set(HM_DEF).then(() => triggerNotification('Preset ripristinato')); };
+const _sr = window.sbStaffRender; window.sbStaffRender = function () { _sr(); hmAdmin(); };
+</script>
 </body>
 </html>
