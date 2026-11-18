@@ -881,6 +881,7 @@ body.tvp .corner-trigger{display:none}
                 <h2>Aura Play</h2>
                 <select id="m3uListSel" aria-label="Lista"></select>
                 <input id="m3uSearch" type="search" placeholder="Cerca un canale" autocomplete="off">
+                <button class="chip" id="m3uVerify" data-verify="1" style="width:100%">✔ Verifica canali</button>
                 <div id="m3uGroups"></div>
             </aside>
             <section class="m3u-main">
@@ -2241,6 +2242,82 @@ function sbDedupe(arr) {
     return out;
 }
 
+/* ---------- Verifica canali: controlla quali rispondono e oscura quelli che non vanno (risultato salvato su questo dispositivo) ---------- */
+let sbDead = {}; try { sbDead = JSON.parse(localStorage.getItem('aura_dead_v1') || '{}') || {}; } catch (e) { sbDead = {}; }
+const SB_VER = { run: false, stop: false, done: 0, total: 0, dead: 0 };
+const sbH = u => { u = String(u || ''); let h = 5381; for (let i = 0; i < u.length; i++) h = ((h << 5) + h + u.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + u.length.toString(36); };
+const sbIsDead = u => { const e = sbDead[sbH(u)]; return !!e && e.ok === false; };
+const sbDeadSave = () => { try { localStorage.setItem('aura_dead_v1', JSON.stringify(sbDead)); } catch (e) {} };
+const sbVerText = () => SB_VER.run ? '⏳ ' + SB_VER.done + '/' + SB_VER.total + ' · tocca per fermare' : '✔ Verifica canali';
+const sbVerLabel = () => document.querySelectorAll('[data-verify]').forEach(b => { b.textContent = sbVerText(); });
+const sbDeadCount = () => (sbChs || []).filter(c => sbIsDead(c.url)).length;
+async function sbPeek(u, ms) {
+    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), ms);
+    try {
+        const r = await fetch(u, { signal: ac.signal, cache: 'no-store' });
+        if (!r.ok) throw new Error('http ' + r.status);
+        let t = '';
+        if (r.body && r.body.getReader) {
+            const rd = r.body.getReader(), dec = new TextDecoder();
+            while (t.length < 16384) { const x = await rd.read(); if (x.done) break; t += dec.decode(x.value, { stream: true }); }
+            try { rd.cancel(); } catch (e) {}
+        } else t = await r.text();
+        return { t, u: r.url || u };
+    } finally { clearTimeout(tm); }
+}
+function sbProbeVideo(url) {
+    return new Promise(res => {
+        const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true; let d = false;
+        const end = ok => { if (d) return; d = true; clearTimeout(tm); v.removeAttribute('src'); try { v.load(); } catch (e) {} res(ok); };
+        const tm = setTimeout(() => end(false), 9000);
+        v.onloadedmetadata = () => end(true); v.onerror = () => end(false); v.src = url;
+    });
+}
+async function sbProbe(url) {
+    try {
+        if (!/^https?:/i.test(url)) return false;
+        if (location.protocol === 'https:' && /^http:/i.test(url)) return false;
+        if (/\.(mp4|webm|ogv|mp3|aac)(\?|$)/i.test(url)) return await sbProbeVideo(url);
+        const a = await sbPeek(url, 9000);
+        if (!/#EXTM3U/.test(a.t)) return false;
+        if (/#EXT-X-STREAM-INF/.test(a.t)) {
+            const ls = a.t.split(/\r?\n/); let v = '';
+            for (let i = 0; i < ls.length && !v; i++) if (ls[i].startsWith('#EXT-X-STREAM-INF')) { for (let j = i + 1; j < ls.length; j++) { const x = ls[j].trim(); if (x && x[0] !== '#') { v = x; break; } } }
+            if (!v) return false;
+            const b = await sbPeek(new URL(v, a.u).href, 9000);
+            return /#EXTM3U/.test(b.t) && /#EXTINF|#EXT-X-MAP|#EXT-X-STREAM-INF/.test(b.t);
+        }
+        return /#EXTINF/.test(a.t);
+    } catch (e) { return false; }
+}
+async function sbVerify() {
+    if (SB_VER.run) { SB_VER.stop = true; return; }
+    const now = Date.now(), seen = new Set(), todo = [];
+    for (const c of (sbChs || [])) { if (!c.url || seen.has(c.url)) continue; seen.add(c.url); const e = sbDead[sbH(c.url)]; if (!e || now - e.t > 6 * 3600e3) todo.push(c.url); }
+    if (!todo.length) { triggerNotification((sbChs || []).length ? 'Canali già verificati da poco' : 'Nessun canale da verificare'); return; }
+    Object.assign(SB_VER, { run: true, stop: false, done: 0, total: todo.length, dead: 0 }); sbVerLabel();
+    let idx = 0; const tested = [];
+    const worker = async () => {
+        while (!SB_VER.stop && idx < todo.length) {
+            const u = todo[idx++], ok = await sbProbe(u);
+            sbDead[sbH(u)] = { ok, t: Date.now() }; tested.push(u); SB_VER.done++; if (!ok) SB_VER.dead++;
+            if (SB_VER.done % 4 === 0) sbVerLabel();
+        }
+    };
+    await Promise.all(Array.from({ length: 6 }, worker));
+    let note;
+    if (SB_VER.done >= 5 && SB_VER.dead === SB_VER.done) {
+        tested.forEach(u => { delete sbDead[sbH(u)]; });
+        note = 'Verifica non attendibile: nessun canale risponde (rete assente o server che bloccano il browser). Nessun canale nascosto.';
+    } else note = 'Verifica ' + (SB_VER.stop ? 'interrotta' : 'completata') + ': ' + SB_VER.dead + ' canali non funzionanti nascosti su ' + SB_VER.done + ' controllati.';
+    sbDeadSave(); SB_VER.run = false; sbVerLabel(); sbApply(); tvBuild(); triggerNotification(note);
+}
+function sbDeadReset() { (sbChs || []).forEach(c => { delete sbDead[sbH(c.url)]; }); sbDeadSave(); sbApply(); tvBuild(); triggerNotification('Canali nascosti ripristinati'); }
+document.addEventListener('click', e => {
+    if (e.target.closest('[data-verify]')) { sbVerify(); return; }
+    if (e.target.closest('[data-reset]')) sbDeadReset();
+});
+
 /* ---------- Parser M3U ---------- */
 function sbParse(txt) {
     const out = []; let info = null;
@@ -2301,10 +2378,11 @@ function sbSetChs(a) { sbChs = a; sbApply(); }
 /* ---------- Griglia canali ---------- */
 function sbApply() {
     const q = sbQuery.toLowerCase();
-    sbView = sbChs.filter(c => (sbGroup === 'Tutti' || c.group === sbGroup) && (!q || c.name.toLowerCase().includes(q)));
+    const live = sbChs.filter(c => !sbIsDead(c.url));
+    sbView = live.filter(c => (sbGroup === 'Tutti' || c.group === sbGroup) && (!q || c.name.toLowerCase().includes(q)));
     sbShown = 80;
-    const gm = new Map(); sbChs.forEach(c => gm.set(c.group, (gm.get(c.group) || 0) + 1));
-    const g = [['Tutti', sbChs.length], ...gm];
+    const gm = new Map(); live.forEach(c => gm.set(c.group, (gm.get(c.group) || 0) + 1));
+    const g = [['Tutti', live.length], ...gm];
     $s('m3uGroups').innerHTML = g.map(([n, c]) => `<button class="m3u-g ${n === sbGroup ? 'on' : ''}" data-g="${esc2(n)}"><span>${esc2(n)}</span><span>${c}</span></button>`).join('');
     sbGrid();
 }
@@ -2783,7 +2861,7 @@ const tvArt=c=>{const i=esc2((c.name||'?').trim().slice(0,2).toUpperCase());retu
 const tvNn=n=>String(n).padStart(2,'0');
 
 function tvBuild(){
-    tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}].concat((sbChs||[]).map((c,i)=>({num:i+2,name:c.name,logo:c.logo,group:c.group||'Altri',url:c.url})));
+    tvLineup=[{num:1,name:'Aura1 HD',logo:'',group:'Aura',web:true}].concat((sbChs||[]).filter(c=>!sbIsDead(c.url)).map((c,i)=>({num:i+2,name:c.name,logo:c.logo,group:c.group||'Altri',url:c.url})));
     if(currentChannelNum>tvLineup.length) currentChannelNum=1;
     const box=$s('chListContainer'); if(!box) return;
     box.innerHTML=tvLineup.map(c=>`<div class="ch-row ${c.num===currentChannelNum&&tvPlaying?'active':''}" id="sidebar-ch-${c.num}" data-n="${c.num}"><div class="ch-logo">${c.web?'<em>📡</em>':tvArt(c)}</div><div class="ch-idx">${tvNn(c.num)}</div><div class="ch-meta-title">${esc2(c.name)}</div></div>`).join('');
@@ -2794,7 +2872,7 @@ function buildTvChannels(){ tvBuild(); }
 function tvCard(c,extra){return `<button class="atv-card ${extra||''}" data-n="${c.num}"><div class="atv-art">${c.web?'📡':tvArt(c)}</div><div class="atv-cap"><i>${tvNn(c.num)}</i><b>${esc2(c.name)}</b></div></button>`;}
 function tvRenderBrowse(){
     const L=$s('tvLists'), R=$s('tvRows'); if(!L||!R) return;
-    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('');
+    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('')+`<button class="chip" data-verify="1">${sbVerText()}</button>`+(sbDeadCount()?`<button class="chip" data-reset="1">Mostra ${sbDeadCount()} nascosti</button>`:'');
     const q=tvQuery.trim().toLowerCase(); let h='';
     if(!q) h+=`<div class="atv-row"><h3>In evidenza</h3><div class="rail"><button class="atv-card hero" data-n="1"><div class="atv-art">📡</div><div class="atv-cap"><i>01</i><b>Aura1 HD · WebTV Cloud</b></div></button></div></div>`;
     const chs=tvLineup.slice(1).filter(c=>!q||c.name.toLowerCase().includes(q));
@@ -2819,7 +2897,7 @@ document.addEventListener('click',e=>{
     if(c.dataset.all){openTargetView('tv-view');return;}
     if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
 });
-$s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b){tvMore={};sbSelectList(b.dataset.l);}};
+$s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b&&b.dataset.l){tvMore={};sbSelectList(b.dataset.l);}};
 $s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
 $s('tvSearch').oninput=e=>{clearTimeout(tvQt);tvQt=setTimeout(()=>{tvQuery=e.target.value;tvRenderBrowse();},180);};
 
