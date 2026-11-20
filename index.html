@@ -743,21 +743,129 @@ body.tvp .corner-trigger{display:none}
 
     <div id="home-view" class="view-frame active">
         <div class="hv-aurora"></div>
-        <div class="hv-stage" id="hvStage">
-            <div class="hv-logo" onclick="hmGo('home-view')"><b id="hvBrand">Aura</b><sup>TV</sup></div>
-            <div class="hv-search"><i data-lucide="search"></i><input id="hvSearch" placeholder="Cerca film, serie, canali e app..." autocomplete="off"></div>
-            <div class="hv-right">
-                <i data-lucide="wifi" class="hv-wifi"></i><span class="hv-sep"></span>
-                <div class="hv-clock" onclick="toggleFullScreen()"><b id="hvTime">--:--</b><small id="hvDate"></small></div>
-                <button class="sb-staff-only hv-staffbtn" style="display:none" onclick="sbOpenStaff()">🛠 Staff</button>
-                <button class="hv-avatar" id="hvAvatar" onclick="hmAvatar()" aria-label="Profilo"><i data-lucide="user"></i></button>
+        <div class="hv-layout">
+            <aside class="hv-sidebar">
+                <div class="hv-brand" onclick="hmGo('home-view')">
+                    <div class="hv-brand-mark">A</div>
+                    <div>
+                        <b id="hvBrand">Aura</b><sup>TV</sup>
+                        <small id="hvTag">More than TV</small>
+                    </div>
+                </div>
+                <nav class="hv-nav" id="hvNav"></nav>
+                <button class="hv-prem" id="hvPrem" data-hvf>
+                    <i data-lucide="crown"></i>
+                    <div>
+                        <b id="hvPremT">Aura Premium</b>
+                        <small id="hvPremS">Sblocca di più!</small>
+                    </div>
+                    <i data-lucide="chevron-right" class="hv-chev"></i>
+                </button>
+            </aside>
+
+            <main class="hv-main">
+                <header class="hv-topbar">
+                    <div class="hv-search">
+                        <i data-lucide="search"></i>
+                        <input id="hvSearch" placeholder="Cerca film, serie, canali e app..." autocomplete="off">
+                    </div>
+                    <div class="hv-status">
+                        <button class="sb-staff-only hv-staffbtn" style="display:none" onclick="sbOpenStaff()">🛠 Staff</button>
+                        <div class="hv-pill"><i data-lucide="wifi"></i><span>Online</span></div>
+                        <div class="hv-clock" onclick="toggleFullScreen()" title="Schermo intero">
+                            <b id="hvTime">--:--</b>
+                            <small id="hvDate"></small>
+                        </div>
+                        <button class="hv-avatar" id="hvAvatar" onclick="hmAvatar()" aria-label="Profilo">
+                            <i data-lucide="user"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <section class="hv-hero" id="hvHero"></section>
+
+                <section class="hv-section">
+                    <div class="hv-sec-head">
+                        <h3><i data-lucide="star" class="hv-star"></i><span id="hvAppsT">Le tue app preferite</span></h3>
+                        <button class="hv-link" data-hvf onclick="hmGo('store-view')">Aura Store <i data-lucide="arrow-right"></i></button>
+                    </div>
+                    <div class="hv-apps" id="hvApps"></div>
+                </section>
+
+                <section class="hv-section">
+                    <div class="hv-sec-head">
+                        <h3><i data-lucide="radio-tower" class="hv-radio"></i><span id="hvLiveT">Canali TV in diretta</span></h3>
+                        <button class="hv-link" data-hvf onclick="hmGo('tv-view')">Vedi tutti <i data-lucide="arrow-right"></i></button>
+                    </div>
+                    <div class="hv-live" id="hvLive"></div>
+                </section>
+
+                <footer class="hv-ticker">
+                    <i data-lucide="sparkles"></i>
+                    <div class="hv-tk"><div id="hvTk"></div></div>
+                    <span class="hv-pow"><u></u><em id="hvPow">Powered by Aura</em></span>
+                </footer>
+            </main>
+        </div>
+        <div class="shelf-container" style="display:none"><div id="homeGrid"></div></div>
+        <span id="sysTopTime" hidden></span><span id="centerTime" hidden></span><span id="centerDate" hidden></span>
+    </div>
+
+    <div id="movies-view" class="view-frame">
+        <div id="moviesBrowse">
+            <div class="tvb-head">
+                <div>
+                    <h1>Film & Serie TV</h1>
+                    <p style="color:var(--text-gray);margin-top:4px;font-size:1rem;">Catalogo Cinema On Demand dalle liste M3U dedicate</p>
+                </div>
+                <input id="moviesSearch" type="search" placeholder="Cerca un film o una serie..." autocomplete="off">
             </div>
-            <div class="hv-side"></div>
-            <nav class="hv-nav" id="hvNav"></nav>
-            <button class="hv-prem" id="hvPrem" data-hvf><i data-lucide="crown"></i><div><b id="hvPremT">Aura Premium</b><small id="hvPremS">Sblocca di più!</small></div><i data-lucide="chevron-right" class="hv-chev"></i></button>
-            <div class="hv-tvbox" id="hvTvBox">
-<button class="hv-tvidle" id="hvTvIdle" data-hvf aria-label="Guarda la TV"><span class="hv-play"></span><b>Guarda la TV</b><small>Tocca per iniziare</small><span class="hv-liveb">LIVE</span></button>
-<div id="tvPlayer">
+            <div id="moviesLists" class="chips"></div>
+            <div id="moviesGroups" class="chips" style="padding-top:10px;"></div>
+            <div id="moviesRows"></div>
+        </div>
+    </div>
+
+    <div id="webapp-view" class="view-frame">
+        <div class="wv-shell">
+            <div class="wv-bar" id="wvBar">
+                <div class="wv-app-info">
+                    <span id="wvIcon" class="wv-icon">🌐</span>
+                    <div>
+                        <b id="wvTitle">Web App</b>
+                        <small id="wvUrlLabel">Container WebView AuraOS</small>
+                    </div>
+                </div>
+                <div class="wv-actions">
+                    <button class="wv-btn" onclick="wvReload()"><i data-lucide="rotate-cw"></i> Ricarica</button>
+                    <button class="wv-btn" onclick="wvOpenExternal()"><i data-lucide="external-link"></i> Finestra Esterna</button>
+                    <button class="wv-btn pri" onclick="goHome()"><i data-lucide="home"></i> Home</button>
+                </div>
+            </div>
+            <div class="wv-stage">
+                <iframe id="wvFrame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div id="wvFallback" class="wv-fallback" style="display:none;">
+                    <div class="wv-fb-card">
+                        <div id="wvFbIcon" style="font-size:4rem;margin-bottom:12px;">📺</div>
+                        <h2 id="wvFbTitle">Apertura App</h2>
+                        <p>Questo servizio protegge lo streaming DRM e il login bloccando l'anteprima interna. Avvialo nella finestra dedicata AuraOS:</p>
+                        <div style="display:flex;gap:14px;justify-content:center;margin-top:22px;flex-wrap:wrap;">
+                            <button class="st-btn pri" onclick="wvOpenExternal()">Apri App Ora</button>
+                            <button class="st-btn" onclick="goHome()">Torna alla Home</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tv-view" class="view-frame">
+        <div id="tvBrowse">
+            <div class="tvb-head"><h1>Aura TV</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"></div>
+            <div id="tvLists" class="chips"></div>
+            <div id="tvRows"></div>
+        </div>
+        <div id="tvPlayer">
             <div class="tv-screen-wrapper">
                 <div class="tv-osd-input" id="tvOsdDisplay"></div>
                 <div class="tv-channel-overlay"><h1 id="tvChTitle"></h1><p id="tvChStatus"></p></div>
@@ -769,25 +877,10 @@ body.tvp .corner-trigger{display:none}
                 <div id="tvPlayerCore"></div>
                 <div id="tvMsg"></div>
             </div>
-            <div class="hv-tvctl"><button onclick="tvStep(-1)" aria-label="Canale precedente">‹</button><button onclick="tvStep(1)" aria-label="Canale successivo">›</button><button id="hvTvExp" data-hvf onclick="hvToggleFull()" aria-label="Schermo intero">⤢</button><button onclick="tvStop()" aria-label="Chiudi">✕</button></div>
+            <button id="tvBack" onclick="tvBackToBrowse()">‹ Canali</button>
+            <button id="tvHome" onclick="goHome()">⌂ Home</button>
             <div class="tv-sidebar-channels" id="tvSidebar"><div class="ch-list-scroll" id="chListContainer"></div></div>
         </div>
-</div>
-</div>
-            <div class="hv-hero" id="hvHero"></div>
-            <div class="hv-sec" style="top:455px"><h3><i data-lucide="star" class="hv-star"></i><span id="hvAppsT">Le tue app preferite</span></h3><a data-hvf tabindex="0" onclick="hmGo('store-view')">Vedi tutte <i data-lucide="arrow-right"></i></a></div>
-            <div class="hv-apps" id="hvApps"></div>
-            <div class="hv-sec" style="top:637px"><h3><i data-lucide="radio-tower" class="hv-radio"></i><span id="hvLiveT">Canali TV in diretta</span></h3><a data-hvf tabindex="0" onclick="hvGuideOpen()">Vedi tutti <i data-lucide="arrow-right"></i></a></div>
-            <div class="hv-live" id="hvLive"></div>
-            <div class="hv-ticker"><i data-lucide="sparkles"></i><div class="hv-tk"><div id="hvTk"></div></div><span class="hv-pow"><u></u><em id="hvPow">Powered by Aura</em></span></div>
-            <div class="hv-guide" id="hvGuide"><div id="tvBrowse">
-            <div class="tvb-head"><h1>Tutti i canali</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"><button id="hvGuideX" onclick="hvGuideClose()">✕ Chiudi</button></div>
-            <div id="tvLists" class="chips"></div>
-            <div id="tvRows"></div>
-        </div></div>
-        </div>
-        <div class="shelf-container" style="display:none"><div id="homeGrid"></div></div>
-        <span id="sysTopTime" hidden></span><span id="centerTime" hidden></span><span id="centerDate" hidden></span>
     </div>
 
     <div id="guidatv-view" class="view-frame full-app-padding">
@@ -1472,9 +1565,17 @@ body.tvp .corner-trigger{display:none}
         ];
 
         const storeCatalogDatabase = [
-            { id: 'app_snake', name: 'Neon Snake', icon: '🐍', desc: 'Il classico arcade leggendario riscritto con grafica vettoriale fluorescente.', type: 'game' },
-            { id: 'app_pixel', name: 'Pixel Studio', icon: '🎨', desc: 'Disegna splendide opere d’arte in pixel sul grande schermo del tuo salotto.', type: 'creative' }
+            { id: 'app_youtube', name: 'YouTube', icon: '▶️', url: 'https://www.youtube.com/tv', externalUrl: 'https://www.youtube.com', c1: '#ff0033', c2: '#5c0011', desc: 'Guarda video, musica, dirette e creator in alta definizione.', type: 'webapp', embedSafe: true },
+            { id: 'app_twitch', name: 'Twitch', icon: '🟣', url: 'https://player.twitch.tv/?channel=monstercat&parent=' + (location.hostname || 'localhost'), externalUrl: 'https://www.twitch.tv', c1: '#9146ff', c2: '#3b1578', desc: 'Streaming live di gaming, esport e intrattenimento.', type: 'webapp', embedSafe: true },
+            { id: 'app_netflix', name: 'Netflix', icon: '🎬', url: 'https://www.netflix.com', c1: '#e50914', c2: '#4d0307', desc: 'Film, serie originali e documentari pluripremiati.', type: 'webapp', embedSafe: false },
+            { id: 'app_plutotv', name: 'Pluto TV', icon: '🪐', url: 'https://pluto.tv/it/live-tv', c1: '#ffdd00', c2: '#4a4100', desc: 'TV gratuita con decine di canali live tematici e film on demand.', type: 'webapp', embedSafe: false },
+            { id: 'app_prime', name: 'Prime Video', icon: '💠', url: 'https://www.primevideo.com', c1: '#00a8e1', c2: '#00364d', desc: 'Amazon Originals, cinema e sport in diretta.', type: 'webapp', embedSafe: false },
+            { id: 'app_disney', name: 'Disney+', icon: '✨', url: 'https://www.disneyplus.com', c1: '#113ccf', c2: '#061447', desc: 'Disney, Pixar, Marvel, Star Wars e National Geographic.', type: 'webapp', embedSafe: false },
+            { id: 'app_raiplay', name: 'RaiPlay', icon: '📡', url: 'https://www.raiplay.it', c1: '#0055ff', c2: '#001d57', desc: 'Dirette Rai, fiction, cinema italiano e archivio on demand.', type: 'webapp', embedSafe: false },
+            { id: 'app_snake', name: 'Neon Snake', icon: '🐍', c1: '#00ff88', c2: '#064729', desc: 'Il classico arcade leggendario riscritto con grafica vettoriale fluorescente.', type: 'game' },
+            { id: 'app_pixel', name: 'Pixel Studio', icon: '🎨', c1: '#ff007f', c2: '#59042e', desc: 'Disegna splendide opere d’arte in pixel sul grande schermo del tuo salotto.', type: 'creative' }
         ];
+        let currentWebApp = null;
 
         let installedAppsId = JSON.parse(localStorage.getItem('aura_installed_cache')) || [];
         let currentActiveView = 'home-view';
@@ -1607,7 +1708,7 @@ body.tvp .corner-trigger{display:none}
                         goHome();
                         break;
                     case 'MEDIA_TOGGLE':
-                        if(currentActiveView === 'home-view' && tvPlaying && window.tvToggleM3u && tvToggleM3u()) {} else if(currentActiveView === 'home-view' && tvPlaying) {
+                        if(currentActiveView === 'tv-view' && window.tvToggleM3u && tvToggleM3u()) {} else if(currentActiveView === 'tv-view') {
  if(ytPlayerInstance && typeof ytPlayerInstance.getPlayerState === 'function') {
                                 if(ytPlayerInstance.getPlayerState() === 1) pauseWebTV();
                                 else ytPlayerInstance.playVideo();
@@ -2018,16 +2119,77 @@ body.tvp .corner-trigger{display:none}
         function renderStoreCatalog() {
             const catalog = document.getElementById('storeCatalog'); catalog.innerHTML = '';
             storeCatalogDatabase.forEach(prod => {
-                const isInst = installedAppsId.includes(prod.id); const btnLabel = isInst ? 'Installata' : 'Installa Ora'; const btnClass = isInst ? 'store-install-btn installed' : 'store-install-btn';
+                const isInst = installedAppsId.includes(prod.id);
                 catalog.innerHTML += `
                     <div class="store-product-card">
                         <div class="product-art">${prod.icon}</div>
-                        <div style="flex:1;"><h3 style="font-size: 1.6rem; margin-bottom: 5px;">${prod.name}</h3><p style="color: var(--text-gray); font-size: 1.1rem; margin-bottom: 15px;">${prod.desc}</p><button class="${btnClass}" onclick="${isInst ? '' : `installApp('${prod.id}')`}">${btnLabel}</button></div>
+                        <div style="flex:1;">
+                            <h3 style="font-size: 1.6rem; margin-bottom: 5px;">${prod.name}</h3>
+                            <p style="color: var(--text-gray); font-size: 1.05rem; margin-bottom: 15px;">${prod.desc}</p>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                ${isInst
+                                    ? `<button class="store-install-btn installed" onclick="hmGo('${prod.id}')">Apri App</button>
+                                       <button class="st-btn dng" onclick="uninstallApp('${prod.id}')">Disinstalla</button>`
+                                    : `<button class="store-install-btn" onclick="installApp('${prod.id}')">Installa Ora</button>`
+                                }
+                            </div>
+                        </div>
                     </div>`;
             });
         }
 
-        function installApp(id) { if(!installedAppsId.includes(id)) { installedAppsId.push(id); localStorage.setItem('aura_installed_cache', JSON.stringify(installedAppsId)); const p = storeCatalogDatabase.find(x => x.id === id); triggerNotification(`${p ? p.name : 'App'} aggiunta alla Home`); renderSystemHomeTiles(); renderStoreCatalog(); if (window.hmRenderApps) hmRenderApps(true); } }
+        function installApp(id) {
+            if(!installedAppsId.includes(id)) {
+                installedAppsId.push(id);
+                localStorage.setItem('aura_installed_cache', JSON.stringify(installedAppsId));
+                const spec = storeCatalogDatabase.find(x => x.id === id);
+                triggerNotification(`${spec ? spec.name : 'App'} installata e aggiunta alla Home!`);
+                renderSystemHomeTiles();
+                renderStoreCatalog();
+                if (typeof hmRender === 'function') hmRender();
+            }
+        }
+
+        function uninstallApp(id) {
+            installedAppsId = installedAppsId.filter(x => x !== id);
+            localStorage.setItem('aura_installed_cache', JSON.stringify(installedAppsId));
+            triggerNotification('App rimossa dalla Home');
+            renderSystemHomeTiles();
+            renderStoreCatalog();
+            if (typeof hmRender === 'function') hmRender();
+        }
+
+        function openWebApp(app) {
+            currentWebApp = app;
+            openTargetView('webapp-view');
+            document.getElementById('wvIcon').textContent = app.icon || '🌐';
+            document.getElementById('wvTitle').textContent = app.name;
+            document.getElementById('wvUrlLabel').textContent = app.externalUrl || app.url || 'AuraOS WebView';
+            const frame = document.getElementById('wvFrame');
+            const fb = document.getElementById('wvFallback');
+            if (app.embedSafe === false) {
+                frame.style.display = 'none';
+                frame.src = 'about:blank';
+                fb.style.display = 'grid';
+                document.getElementById('wvFbIcon').textContent = app.icon || '📺';
+                document.getElementById('wvFbTitle').textContent = app.name;
+            } else {
+                fb.style.display = 'none';
+                frame.style.display = 'block';
+                frame.src = app.url;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function wvReload() {
+            const frame = document.getElementById('wvFrame');
+            if (currentWebApp && frame && frame.style.display !== 'none') frame.src = currentWebApp.url;
+        }
+
+        function wvOpenExternal() {
+            if (!currentWebApp) return;
+            window.open(currentWebApp.externalUrl || currentWebApp.url, '_blank', 'noopener,noreferrer');
+        }
 
         function switchSettingsTab(tabId, el) {
             if(el) { document.querySelectorAll('.settings-opt-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
@@ -2086,7 +2248,7 @@ body.tvp .corner-trigger{display:none}
 
         let tvInputBuffer = ""; let tvInputTimeout;
         document.addEventListener('keydown', (e) => {
-            if(currentActiveView === 'home-view' && !isMobileDevice && !/INPUT|TEXTAREA/.test(e.target.tagName)) {
+            if(currentActiveView === 'tv-view' && !isMobileDevice && !/INPUT|TEXTAREA/.test(e.target.tagName)) {
                 if(e.key >= '0' && e.key <= '9') {
                     tvInputBuffer += e.key; if(tvInputBuffer.length > 3) tvInputBuffer = tvInputBuffer.slice(-3);
                     const osd = document.getElementById('tvOsdDisplay'); osd.innerText = tvInputBuffer; osd.classList.add('visible');
@@ -2164,7 +2326,7 @@ body.tvp .corner-trigger{display:none}
 const SB_STAFF_EMAILS = ['dev@infohorizon.it', 'dev@inforhorizon.it'];
 let sbIsStaff = false, sbLists = {}, sbCache = {}, sbCacheV = {}, sbCurList = null;
 let sbChs = [], sbView = [], sbGroup = 'Tutti', sbQuery = '', sbCur = -1, sbHls = null;
-let sbRemoteOn = false, sbLastCmd = 0, sbBoot = Date.now(), sbShown = 80, sbUiT, sbNumBuf = '', sbNumT, sbMode = 'url';
+let sbRemoteOn = false, sbLastCmd = 0, sbBoot = Date.now(), sbShown = 80, sbUiT, sbNumBuf = '', sbNumT, sbMode = 'url', sbCategory = 'tv';
 const $s = id => document.getElementById(id);
 const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -2402,12 +2564,15 @@ function sbWatchLists() {
         err => { console.error('[AuraPlay]', err); sbLists = {}; sbRenderLists(); });
 }
 function sbVisible() { return Object.entries(sbLists).filter(([, m]) => m && m.enabled !== false).sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '')); }
+function tvVisibleLists() { return sbVisible().filter(([, m]) => (m.category || 'tv') !== 'movies'); }
+function movieVisibleLists() { return sbVisible().filter(([, m]) => m.category === 'movies'); }
 
 function sbRenderLists() {
-    const vis = sbVisible(), sel = $s('m3uListSel');
+    const vis = sbVisible(), tvVis = tvVisibleLists(), sel = $s('m3uListSel');
     sel.innerHTML = vis.map(([id, m]) => `<option value="${id}">${esc2(m.name)} (${m.count || 0})</option>`).join('');
-    if (!vis.length) { sbCurList = null; sbChs = []; sbApply(); }
-    else if (!sbCurList || !sbLists[sbCurList] || sbLists[sbCurList].enabled === false) sbSelectList(vis[0][0]);
+    const tvPool = tvVis.length ? tvVis : vis;
+    if (!tvPool.length) { sbCurList = null; sbChs = []; sbApply(); }
+    else if (!sbCurList || !sbLists[sbCurList] || sbLists[sbCurList].enabled === false || (tvVis.length && sbLists[sbCurList].category === 'movies')) sbSelectList(tvPool[0][0]);
     else { sel.value = sbCurList; if (sbCacheV[sbCurList] !== sbLists[sbCurList].updatedAt) sbSelectList(sbCurList); }
     let shelf = $s('homeListsShelf');
     if (!shelf) {
@@ -2417,6 +2582,7 @@ function sbRenderLists() {
     shelf.style.display = vis.length ? '' : 'none';
     shelf.innerHTML = '<div class="shelf-title">Liste Aura Play</div><div class="sb-rail">' + vis.map(([id, m]) =>
         `<button class="sb-lcard sb-f" onclick="sbOpenList('${id}')"><b>${esc2(m.name)}</b><span>${m.count || 0} canali</span></button>`).join('') + '</div>';
+    if (typeof mvSyncLists === 'function') mvSyncLists();
     if (sbIsStaff && currentActiveView === 'staff-view') sbStaffRender();
 }
 function sbOpenList(id) { openTargetView('m3u-view'); sbSelectList(id); $s('m3uListSel').value = id; }
@@ -2570,10 +2736,14 @@ async function sbSave(id, meta, chs) {
     if (data.length > 9e6) throw new Error('Lista troppo grande (massimo circa 9 MB).');
     id = id || database.ref('aura_m3u/meta').push().key;
     const up = {};
-    up['aura_m3u/meta/' + id] = { name: meta.name, source: meta.source || 'paste', url: meta.url || '', count: chs.length, enabled: meta.enabled !== false, createdAt: meta.createdAt || Date.now(), updatedAt: Date.now(), by: currentUser.email };
+    up['aura_m3u/meta/' + id] = { name: meta.name, category: meta.category || 'tv', source: meta.source || 'paste', url: meta.url || '', count: chs.length, enabled: meta.enabled !== false, createdAt: meta.createdAt || Date.now(), updatedAt: Date.now(), by: currentUser.email };
     up['aura_m3u/data/' + id] = data;
     await database.ref().update(up); return id;
 }
+window.sbToggleCategory = id => {
+    const cur = (sbLists[id] && sbLists[id].category) || 'tv';
+    database.ref('aura_m3u/meta/' + id + '/category').set(cur === 'movies' ? 'tv' : 'movies');
+};
 function sbStaffRender() {
     $s('stWho').textContent = currentUser ? currentUser.email : '';
     const b = $s('stBody');
@@ -2581,15 +2751,20 @@ function sbStaffRender() {
     const ids = Object.keys(sbLists), tot = ids.reduce((n, i) => n + (sbLists[i].count || 0), 0), hid = ids.filter(i => sbLists[i].enabled === false).length;
     const keep = { n: ($s('stName') || {}).value || '', u: ($s('stUrl') || {}).value || '', t: ($s('stText') || {}).value || '' };
     b.innerHTML = `
-    <div class="st-stats"><div class="st-stat"><b>${ids.length}</b><span>Liste</span></div><div class="st-stat"><b>${tot}</b><span>Canali totali</span></div><div class="st-stat"><b>${ids.length - hid}</b><span>Visibili</span></div><div class="st-stat"><b>${hid}</b><span>Nascoste</span></div></div>
+    <div class="st-stats"><div class="st-stat"><b>${ids.length}</b><span>Liste</span></div><div class="st-stat"><b>${tot}</b><span>Elementi totali</span></div><div class="st-stat"><b>${ids.length - hid}</b><span>Visibili</span></div><div class="st-stat"><b>${hid}</b><span>Nascoste</span></div></div>
     <div class="st-box"><h3>Aggiungi una lista M3U</h3>
         <input id="stName" placeholder="Nome della lista" value="${esc2(keep.n)}">
+        <div class="st-tabs" style="margin-bottom:8px;">
+            <button class="st-btn ${sbCategory === 'tv' ? 'on' : ''}" onclick="sbCategory='tv';sbStaffRender()">📺 Sezione TV Live</button>
+            <button class="st-btn ${sbCategory === 'movies' ? 'on' : ''}" onclick="sbCategory='movies';sbStaffRender()">🎬 Sezione Film & Serie</button>
+        </div>
         <div class="st-tabs">${[['url', 'Indirizzo'], ['file', 'File'], ['paste', 'Incolla']].map(([m, l]) => `<button class="st-btn ${sbMode === m ? 'on' : ''}" onclick="sbMode='${m}';sbStaffRender()">${l}</button>`).join('')}</div>
         ${sbMode === 'url' ? `<input id="stUrl" type="url" placeholder="https://esempio.it/lista.m3u" value="${esc2(keep.u)}">` : sbMode === 'file' ? '<input id="stFile" type="file" accept=".m3u,.m3u8,.txt">' : `<textarea id="stText" placeholder="#EXTM3U&#10;#EXTINF:-1,Canale&#10;https://...">${esc2(keep.t)}</textarea>`}
         <button class="st-btn pri" id="stPub" onclick="sbPublish()">Pubblica lista</button><div id="stMsg"></div>
     </div>
-    <div class="st-box"><h3>Liste pubblicate</h3>${ids.length ? ids.sort((a, c) => (sbLists[c].updatedAt || 0) - (sbLists[a].updatedAt || 0)).map(id => { const m = sbLists[id], off = m.enabled === false; return `
-        <div class="st-row"><div class="nm ${off ? 'off' : ''}"><b>${esc2(m.name)}</b><span>${m.count || 0} canali · ${m.url ? 'da indirizzo' : 'caricata'} · ${new Date(m.updatedAt || 0).toLocaleDateString('it-IT')}</span></div>
+    <div class="st-box"><h3>Liste pubblicate</h3>${ids.length ? ids.sort((a, c) => (sbLists[c].updatedAt || 0) - (sbLists[a].updatedAt || 0)).map(id => { const m = sbLists[id], off = m.enabled === false, isMov = m.category === 'movies'; return `
+        <div class="st-row"><div class="nm ${off ? 'off' : ''}"><b>${esc2(m.name)}</b><span>${isMov ? '🎬 Film' : '📺 TV'} · ${m.count || 0} elementi · ${m.url ? 'da indirizzo' : 'caricata'} · ${new Date(m.updatedAt || 0).toLocaleDateString('it-IT')}</span></div>
+        <button class="st-btn" onclick="sbToggleCategory('${id}')">${isMov ? '🎬 Film' : '📺 TV'}</button>
         <button class="st-btn" onclick="sbToggleList('${id}')">${off ? 'Mostra' : 'Nascondi'}</button>
         <button class="st-btn" onclick="sbRename('${id}')">Rinomina</button>
         ${m.url ? `<button class="st-btn" onclick="sbRefresh('${id}',this)">Aggiorna</button>` : ''}
@@ -2604,11 +2779,11 @@ async function sbPublish() {
         if (sbMode === 'url') { url = $s('stUrl').value.trim(); if (!url) throw new Error('Inserisci l’indirizzo della lista.'); text = await sbFetchText(url); }
         else if (sbMode === 'file') { const f = $s('stFile').files[0]; if (!f) throw new Error('Scegli un file.'); text = await f.text(); }
         else text = $s('stText').value;
-        const chs = sbParse(text); if (!chs.length) throw new Error('Nessun canale trovato: controlla che sia una lista M3U valida.');
+        const chs = sbParse(text); if (!chs.length) throw new Error('Nessun elemento trovato: controlla che sia una lista M3U valida.');
         let name = $s('stName').value.trim(); if (!name) { try { name = url ? new URL(url).hostname : 'Nuova lista'; } catch (e) { name = 'Nuova lista'; } }
-        await sbSave(null, { name, source: sbMode, url }, chs);
+        await sbSave(null, { name, category: sbCategory, source: sbMode, url }, chs);
         $s('stName').value = ''; if ($s('stUrl')) $s('stUrl').value = ''; if ($s('stText')) $s('stText').value = '';
-        sbMsg('Lista pubblicata: ' + chs.length + ' canali.', true); triggerNotification('Lista pubblicata');
+        sbMsg('Lista pubblicata: ' + chs.length + ' elementi.', true); triggerNotification('Lista pubblicata');
     } catch (e) { sbMsg(e.code === 'PERMISSION_DENIED' ? 'Permesso negato dalle regole Firebase.' : e.message); }
 }
 window.sbPublish = sbPublish;
@@ -2634,73 +2809,64 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.
 })();
     </script>
 <style>
-/* ===== AURA TV · HOME (canvas 1672x941 scalato) ===== */
-#home-view{display:block!important;padding:0!important;overflow:hidden!important;background:#06081c}
-.hv-aurora{position:absolute;inset:0;background:radial-gradient(ellipse 55% 38% at 58% 6%,rgba(0,255,170,.38),transparent 72%),radial-gradient(ellipse 45% 40% at 88% 12%,rgba(160,70,255,.5),transparent 72%),radial-gradient(ellipse 40% 32% at 18% 14%,rgba(0,190,255,.22),transparent 72%),radial-gradient(ellipse 70% 30% at 50% 100%,rgba(120,40,200,.35),transparent 75%),linear-gradient(#070a24,#0b0522 55%,#05030f);animation:hvAur 16s ease-in-out infinite alternate}
-@keyframes hvAur{to{filter:hue-rotate(25deg) brightness(1.12)}}
-.hv-stage{position:absolute;left:50%;top:50%;width:1672px;height:941px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;color:#fff}
-.hv-stage button{font-family:inherit;color:#fff;cursor:pointer;border:0;background:none}
-.hv-stage>*{position:absolute}
-.hv-logo{left:30px;top:30px;width:270px;height:130px;cursor:pointer}
-.hv-logo b{position:absolute;left:44px;top:-8px;font-size:118px;font-style:italic;font-weight:800;letter-spacing:-4px;background:linear-gradient(180deg,#fff 30%,#c9a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 14px rgba(170,90,255,.9))}
-.hv-logo sup{position:absolute;left:222px;top:18px;font-size:26px;font-style:italic;font-weight:700;color:#d9c2ff}
-.hv-logo small{position:absolute;left:108px;top:101px;font-size:18px;font-weight:500;color:#eee}
-.hv-logo::before{content:'';position:absolute;left:4px;top:56px;width:250px;height:60px;border:5px solid transparent;border-top-color:#a64dff;border-left-color:#d49bff;border-radius:50%;transform:rotate(-14deg);filter:drop-shadow(0 0 10px #a64dff)}
-.hv-search{left:386px;top:36px;width:642px;height:56px;border-radius:28px;border:2px solid rgba(150,90,255,.75);background:rgba(30,25,80,.55);backdrop-filter:blur(14px);display:flex;align-items:center;gap:16px;padding:0 26px;box-shadow:0 0 22px rgba(130,60,255,.35)}
-.hv-search svg{width:30px;height:30px;stroke-width:2.2}
-.hv-search input{flex:1;background:none;border:0;outline:0;color:#fff;font-size:21px}
-.hv-search input::placeholder{color:rgba(255,255,255,.7)}
-.hv-right{left:1380px;top:30px;width:272px;height:64px;display:flex;align-items:center;gap:14px}
-.hv-wifi{width:44px;height:44px;stroke-width:2.4;filter:drop-shadow(0 0 6px #7af)}
-.hv-sep{width:2px;height:48px;background:rgba(255,255,255,.22);margin:0 4px 0 2px}
-.hv-clock{cursor:pointer;line-height:1.05}.hv-clock b{display:block;font-size:34px;font-weight:700}.hv-clock small{font-size:17px;color:#eee}
-.hv-avatar{width:52px;height:52px;border-radius:50%;margin-left:18px;border:2px solid #8cf;background:linear-gradient(135deg,#2a8cff,#7b2cff);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0}
-.hv-avatar img{width:100%;height:100%;object-fit:cover}.hv-avatar svg{width:30px;height:30px}
-.hv-side{left:0;top:188px;width:285px;height:672px;border-radius:0 30px 30px 0;background:linear-gradient(90deg,rgba(20,20,60,.15),rgba(40,40,110,.28));border-right:2px solid rgba(70,110,255,.35)}
-.hv-nav{left:18px;top:211px;width:242px}
-.hv-nav button{display:flex;align-items:center;gap:22px;width:100%;height:58px;padding:0 24px;border-radius:22px;font-size:21px;text-align:left;opacity:.92;transition:.2s}
-.hv-nav button svg{width:36px;height:36px;stroke-width:1.8;flex:none}
-.hv-nav button:first-child{height:67px;margin-bottom:4px;font-weight:700;opacity:1;font-size:22px;border:2px solid #c07bff;background:linear-gradient(90deg,#8a2cf0,#5b2bd8);box-shadow:0 0 22px rgba(160,80,255,.7),inset 0 0 14px rgba(255,255,255,.18)}
-.hv-nav button:first-child svg{fill:#fff}
-.hv-nav button.on:not(:first-child){background:rgba(255,255,255,.08)}
-.hv-prem{left:18px;top:738px;width:242px;height:95px;border-radius:22px!important;border:2px solid rgba(170,90,255,.85)!important;background:rgba(40,20,90,.55)!important;display:flex;align-items:center;gap:16px;padding:0 18px;text-align:left;box-shadow:0 0 22px rgba(150,70,255,.4)}
-.hv-prem>svg:first-child{width:54px;height:54px;color:#ffc43d;fill:#ffc43d33;filter:drop-shadow(0 0 8px #ffb300)}
-.hv-prem b{display:block;font-size:19px;font-weight:700}.hv-prem small{font-size:16px;color:#ddd}.hv-chev{width:18px;height:18px;margin-left:auto;opacity:.6;align-self:flex-end;margin-bottom:12px}
-.hv-hero{left:313px;top:131px;width:1337px;height:306px;border-radius:34px;border:2px solid rgba(190,130,255,.9);overflow:hidden;box-shadow:0 0 28px rgba(150,80,255,.55);background:linear-gradient(120deg,#180a3a,#2a1060 50%,#0a3a4a)}
-.hv-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .9s}.hv-slide.on{opacity:1}
-.hv-slide::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,6,30,.88) 0,rgba(8,6,30,.55) 35%,transparent 62%)}
-.hv-slide div{position:absolute;left:88px;top:42px}
-.hv-slide i{display:block;font-style:normal;font-size:33px;font-weight:600}
-.hv-slide h1{font-size:92px;line-height:1;font-style:italic;font-weight:800;letter-spacing:-2px;margin:-2px 0 4px;text-shadow:0 4px 24px rgba(0,0,0,.6)}
-.hv-slide p{font-size:28px;font-weight:500;margin-bottom:22px}
-.hv-slide button{width:264px;height:55px;border-radius:28px;border:2px solid #b87dff!important;background:linear-gradient(90deg,rgba(70,30,200,.75),rgba(110,50,230,.55))!important;font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:16px;box-shadow:0 0 18px rgba(150,80,255,.7)}
-.hv-slide button::before{content:'';border-left:20px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent}
-.hv-dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:15px}
-.hv-dots span{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer}.hv-dots span.on{background:#fff;box-shadow:0 0 8px #fff}
-.hv-sec{left:306px;width:1344px;display:flex;justify-content:space-between;align-items:center;height:36px}
-.hv-sec h3{display:flex;align-items:center;gap:14px;font-size:25px;font-weight:600}
-.hv-sec h3 svg{width:34px;height:34px}.hv-star{color:#b24dff;fill:#b24dff}.hv-radio{color:#b78dff}
-.hv-sec a{display:flex;align-items:center;gap:10px;font-size:20px;cursor:pointer}.hv-sec a svg{width:26px;height:26px}
-.hv-apps{left:306px;top:499px;width:1344px;height:114px;display:flex;gap:17px}
-.hv-app{flex:1;border-radius:18px!important;border:1.5px solid rgba(255,255,255,.35)!important;background:linear-gradient(160deg,var(--c1),var(--c2))!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:19px;font-weight:600;box-shadow:inset 0 0 18px rgba(255,255,255,.12),0 6px 18px rgba(0,0,0,.4);transition:.25s}
-.hv-app svg{width:50px;height:50px;stroke-width:1.8}.hv-app img{width:50px;height:50px;object-fit:contain}.hv-app em{font-style:normal;font-size:42px;line-height:50px}
-.hv-live{left:309px;top:679px;width:1340px;height:160px;display:flex;gap:10px}
-.hv-empty{width:100%;display:flex;align-items:center;justify-content:center;border-radius:18px;border:1.5px dashed rgba(255,255,255,.25);color:#cbd;font-size:20px;background:rgba(255,255,255,.04)}
-.hv-ch{flex:1;min-width:0;position:relative;overflow:hidden;border-radius:16px!important;border:1.5px solid rgba(255,255,255,.28)!important;background:linear-gradient(150deg,var(--c1),var(--c2))!important;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:.25s;text-align:left}
-.hv-ch::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.22),transparent 65%)}
-.hv-chart{position:absolute;left:12%;right:12%;top:10px;height:88px;display:flex;align-items:center;justify-content:center}
-.hv-chart img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}.hv-chart em{font-size:44px;font-weight:800;font-style:normal;opacity:.9}
-.hv-liveb{position:absolute;right:10px;top:8px;background:#e5223a;border-radius:6px;padding:3px 10px;font-size:14px;font-weight:700;letter-spacing:.5px}
-.hv-cap{position:absolute;left:0;right:0;bottom:0;padding:34px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
-.hv-cap b{display:block;font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:18px}.hv-cap small{display:block;font-size:16px;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hv-dots3{position:absolute;right:10px;bottom:12px;font-size:24px;font-weight:700}
-.hv-ticker{left:21px;top:862px;width:1629px;height:59px;border-radius:30px;border:2px solid rgba(160,90,255,.85);background:rgba(14,8,40,.72);box-shadow:0 0 20px rgba(140,60,255,.4);display:flex;align-items:center;gap:20px;padding:0 28px 0 34px;overflow:hidden}
-.hv-ticker>svg{width:28px;height:28px;color:#b36bff;flex:none;fill:#b36bff44}
-.hv-tk{flex:1;overflow:hidden;white-space:nowrap;font-size:19px}.hv-tk div{display:inline-block}.hv-tk .mq{animation:hvMq var(--d,30s) linear infinite;padding-left:100%}
+/* ===== AURA TV · HOME MODERNA & INTEGRATA ===== */
+#home-view{display:block!important;padding:0!important;overflow:hidden!important;background:#050714}
+.hv-aurora{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 15% 15%,rgba(0,240,255,.16),transparent 42%),radial-gradient(circle at 85% 10%,rgba(177,0,255,.24),transparent 48%),radial-gradient(circle at 65% 90%,rgba(255,0,127,.14),transparent 45%),linear-gradient(160deg,#060919 0%,#09061d 55%,#04050e 100%)}
+.hv-layout{position:relative;z-index:2;display:grid;grid-template-columns:260px 1fr;height:100%;width:100%;padding:22px 28px 22px 22px;gap:24px}
+.hv-sidebar{background:rgba(14,18,38,.62);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:24px 16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.hv-brand{display:flex;align-items:center;gap:14px;padding:4px 10px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.08)}
+.hv-brand-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:1.7rem;font-weight:800;font-style:italic;background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 8px 22px rgba(0,240,255,.35)}
+.hv-brand b{font-size:1.75rem;font-weight:800;letter-spacing:-.5px}.hv-brand sup{font-size:.85rem;color:var(--neon-blue);font-weight:800;margin-left:3px}.hv-brand small{display:block;font-size:.78rem;color:var(--text-gray);margin-top:-2px}
+.hv-nav{display:flex;flex-direction:column;gap:6px;margin:16px 0 auto;overflow-y:auto;scrollbar-width:none}.hv-nav::-webkit-scrollbar{display:none}
+.hv-nav button{display:flex;align-items:center;gap:14px;width:100%;padding:13px 16px;border-radius:16px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,.78);font-size:1rem;font-weight:600;text-align:left;cursor:pointer;transition:all .22s ease}
+.hv-nav button svg{width:21px;height:21px;flex:none}
+.hv-nav button:hover,.hv-nav button:focus-visible{background:rgba(255,255,255,.08);color:#fff;transform:translateX(4px);outline:none}
+.hv-nav button.on{background:linear-gradient(90deg,rgba(0,240,255,.2),rgba(177,0,255,.22));border-color:rgba(0,240,255,.45);color:#fff;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.hv-prem{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;border:1px solid rgba(255,196,61,.35);background:linear-gradient(135deg,rgba(255,196,61,.14),rgba(177,0,255,.16));color:#fff;text-align:left;cursor:pointer;transition:.25s}
+.hv-prem:hover{transform:translateY(-2px);border-color:#ffc43d}.hv-prem>svg:first-child{width:28px;height:28px;color:#ffc43d;flex:none}.hv-prem b{display:block;font-size:.95rem}.hv-prem small{font-size:.78rem;color:var(--text-gray)}.hv-chev{width:16px;height:16px;margin-left:auto;opacity:.6}
+.hv-main{display:flex;flex-direction:column;gap:20px;overflow-y:auto;overflow-x:hidden;padding-right:6px;scrollbar-width:none}.hv-main::-webkit-scrollbar{display:none}
+.hv-topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hv-search{flex:1;min-width:260px;max-width:540px;height:48px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px);display:flex;align-items:center;gap:12px;padding:0 20px;transition:.25s}
+.hv-search:focus-within{border-color:var(--neon-blue);background:rgba(255,255,255,.1);box-shadow:0 0 0 4px rgba(0,240,255,.15)}.hv-search svg{width:19px;height:19px;color:var(--text-gray)}.hv-search input{flex:1;background:none;border:0;outline:0;color:#fff;font-size:.98rem;user-select:text}
+.hv-status{display:flex;align-items:center;gap:14px}
+.hv-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--neon-green);font-size:.85rem;font-weight:700}.hv-pill svg{width:16px;height:16px}
+.hv-clock{text-align:right;cursor:pointer;line-height:1.15}.hv-clock b{display:block;font-size:1.35rem;font-weight:800}.hv-clock small{font-size:.8rem;color:var(--text-gray)}
+.hv-avatar{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));color:#fff;display:grid;place-items:center;overflow:hidden;cursor:pointer}.hv-avatar img{width:100%;height:100%;object-fit:cover}
+.hv-hero{position:relative;height:245px;flex:none;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.hv-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .7s ease;pointer-events:none}.hv-slide.on{opacity:1;pointer-events:auto}
+.hv-slide::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,7,20,.92) 0%,rgba(5,7,20,.62) 48%,rgba(5,7,20,.15) 100%)}
+.hv-slide>div{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 42px;max-width:680px}
+.hv-slide i{font-style:normal;font-size:.9rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--neon-blue);margin-bottom:4px}
+.hv-slide h1{font-size:clamp(2.2rem,3.6vw,3.3rem);font-weight:800;line-height:1.05;margin-bottom:8px}
+.hv-slide p{font-size:1.05rem;color:rgba(255,255,255,.82);margin-bottom:18px}
+.hv-hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hv-slide button{padding:11px 24px;border-radius:999px;border:0;font-weight:700;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:.2s;background:#fff;color:#050714}
+.hv-slide button.sec{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px)}
+.hv-slide button:hover{transform:scale(1.04)}
+.hv-dots{position:absolute;right:26px;bottom:18px;z-index:3;display:flex;gap:8px}.hv-dots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:.2s}.hv-dots span.on{width:24px;border-radius:999px;background:#fff}
+.hv-section{display:flex;flex-direction:column;gap:12px}
+.hv-sec-head{display:flex;align-items:center;justify-content:space-between}.hv-sec-head h3{display:flex;align-items:center;gap:10px;font-size:1.15rem;font-weight:700}.hv-sec-head h3 svg{width:20px;height:20px;color:var(--neon-blue)}
+.hv-link{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;padding:7px 14px;border-radius:999px;font-size:.88rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:.2s}.hv-link:hover{background:rgba(255,255,255,.15)}.hv-link svg{width:15px;height:15px}
+.hv-apps{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}.hv-apps::-webkit-scrollbar{display:none}
+.hv-app{flex:none;width:146px;height:102px;border-radius:22px;border:1px solid rgba(255,255,255,.16);background:linear-gradient(150deg,var(--c1),var(--c2));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .25s ease;box-shadow:0 10px 24px rgba(0,0,0,.35);position:relative}
+.hv-app svg{width:32px;height:32px}.hv-app em{font-style:normal;font-size:2rem;line-height:1}
+.hv-app:hover,.hv-app:focus-visible{transform:translateY(-5px) scale(1.04);outline:3px solid #fff;outline-offset:3px}
+.hv-app .hv-badge-inst{position:absolute;top:8px;right:8px;font-size:.65rem;padding:2px 6px;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;letter-spacing:.5px}
+.hv-live{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}.hv-live::-webkit-scrollbar{display:none}
+.hv-ch{flex:none;width:215px;height:132px;border-radius:20px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:linear-gradient(145deg,var(--c1),var(--c2));color:#fff;text-align:left;cursor:pointer;transition:all .25s ease;box-shadow:0 10px 24px rgba(0,0,0,.38)}
+.hv-ch:hover,.hv-ch:focus-visible{transform:translateY(-5px) scale(1.04);outline:3px solid #fff;outline-offset:3px}
+.hv-chart{position:absolute;inset:12px 16px 46px;display:flex;align-items:center;justify-content:center}.hv-chart img{max-width:75%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}.hv-chart em{font-style:normal;font-size:2rem;font-weight:800}
+.hv-liveb{position:absolute;top:10px;right:10px;background:#e5223a;font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.6px}
+.hv-num-pill{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.45);font-family:'Share Tech Mono',monospace;font-size:.78rem;padding:2px 8px;border-radius:6px}
+.hv-cap{position:absolute;left:0;right:0;bottom:0;padding:24px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85))}.hv-cap b{display:block;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hv-cap small{display:block;font-size:.78rem;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hv-empty{width:100%;padding:28px;border-radius:20px;border:1px dashed rgba(255,255,255,.2);text-align:center;color:var(--text-gray)}
+.hv-ticker{margin-top:auto;height:44px;flex:none;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:14px;padding:0 20px;font-size:.88rem}
+.hv-ticker>svg{width:18px;height:18px;color:var(--neon-blue);flex:none}.hv-tk{flex:1;overflow:hidden;white-space:nowrap}.hv-tk div{display:inline-block}.hv-tk .mq{animation:hvMq var(--d,28s) linear infinite;padding-left:100%}
 @keyframes hvMq{to{transform:translateX(-100%)}}
-.hv-pow{display:flex;align-items:center;gap:10px;font-size:18px;flex:none}.hv-pow u{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#d9b3ff,#7b3df0)}.hv-pow em{font-style:normal}
-.hv-stage :is(.hv-app,.hv-ch,.hv-nav button,.hv-prem,.hv-search,.hv-sec a):hover{filter:brightness(1.15)}
-.hv-stage :is(.hv-app,.hv-ch,.hv-prem,.hv-sec a,.hv-nav button):focus-visible,.hv-stage [data-hvf]:focus-visible{outline:4px solid #fff;outline-offset:4px;transform:scale(1.05);z-index:5}
+.hv-pow{display:flex;align-items:center;gap:8px;color:var(--text-gray);font-size:.82rem;flex:none}.hv-pow u{width:10px;height:10px;border-radius:50%;background:var(--neon-blue)}.hv-pow em{font-style:normal}
+#movies-view{background:#05070d}#moviesBrowse{position:absolute;inset:0;overflow-y:auto;padding:34px 0 90px}
+#webapp-view{background:#05070d;z-index:20}.wv-shell{display:flex;flex-direction:column;width:100%;height:100%}.wv-bar{height:64px;flex:none;padding:0 24px;background:rgba(10,14,28,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:space-between;gap:16px}.wv-app-info{display:flex;align-items:center;gap:12px}.wv-icon{font-size:1.8rem;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);display:grid;place-items:center}.wv-app-info b{display:block;font-size:1.05rem}.wv-app-info small{color:var(--text-gray);font-size:.8rem}.wv-actions{display:flex;gap:10px}.wv-btn{padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font-weight:600;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s}.wv-btn svg{width:16px;height:16px}.wv-btn:hover{background:rgba(255,255,255,.16)}.wv-btn.pri{background:linear-gradient(90deg,var(--neon-blue),var(--neon-purple));border:0;color:#fff;font-weight:700}.wv-stage{position:relative;flex:1;background:#000}.wv-stage iframe{width:100%;height:100%;border:0;background:#000}.wv-fallback{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at center,#141a36,#05070d);padding:24px}.wv-fb-card{max-width:480px;text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:28px;padding:36px;backdrop-filter:blur(20px)}.wv-fb-card p{color:var(--text-gray);margin-top:10px;line-height:1.5}
+@media(max-width:900px){.hv-layout{grid-template-columns:1fr;padding:14px}.hv-sidebar{display:none}}
 /* pannello staff · home */
 .hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
 .hm-grid label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--text-gray)}
@@ -2711,21 +2877,27 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.
 .hm-chk{display:flex!important;flex-direction:row!important;align-items:center;gap:8px!important;color:#fff!important}
 </style>
 <script>
-/* ===== AURA TV · HOME guidata da Firebase (aura_home) + editor Staff ===== */
+/* ===== AURA TV · HOME guidata da Firebase (aura_home) + editor Staff + Film & WebApp ===== */
 const HM_IMG = 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1600&q=80';
 const HM_DEF = {
-  config: { brand: 'Aura', search: 'Cerca film, serie, canali e app...', appsTitle: 'Le tue app preferite', liveTitle: 'Canali TV in diretta', premTitle: 'Aura Premium', premSub: 'Sblocca di più!', premLink: 'settings-view', powered: 'Powered by Aura', heroSec: 6 },
-  banners: { b1: { kicker: 'Benvenuto su', title: 'Aura TV', sub: 'La tua TV, senza limiti.', btn: 'Inizia a guardare', img: HM_IMG, link: 'tv-view', order: 1, enabled: true } },
+  config: { brand: 'Aura', tag: 'More than TV', search: 'Cerca film, serie, canali e app...', appsTitle: 'Le tue app preferite', liveTitle: 'Canali TV in diretta', premTitle: 'Aura Premium', premSub: 'Sblocca di più!', premLink: 'settings-view', powered: 'Powered by Aura', heroSec: 6 },
+  banners: { b1: { kicker: 'Benvenuto su', title: 'Aura TV', sub: 'TV Live, Cinema On Demand e App in un unico posto.', btn: 'Sintonizza TV', img: HM_IMG, link: 'tv-view', order: 1, enabled: true } },
   apps: {
-    a2: { label: 'Film', icon: 'clapperboard', c1: '#d8182c', c2: '#5a0a14', target: 'm3u-view', order: 2, enabled: true },
-    a3: { label: 'Serie TV', icon: 'film', c1: '#2f6df0', c2: '#0f2a78', target: 'm3u-view', order: 3, enabled: true },
-    a4: { label: 'Applicazioni', icon: 'layout-grid', c1: '#2a2f3d', c2: '#0e1118', target: 'store-view', order: 4, enabled: true },
+    a1: { label: 'TV Live', icon: 'tv', c1: '#7b2cf0', c2: '#2b1170', target: 'tv-view', order: 1, enabled: true },
+    a2: { label: 'Film & Serie', icon: 'clapperboard', c1: '#d8182c', c2: '#5a0a14', target: 'movies-view', order: 2, enabled: true },
+    a3: { label: 'Aura Play', icon: 'play-circle', c1: '#2f6df0', c2: '#0f2a78', target: 'm3u-view', order: 3, enabled: true },
+    a4: { label: 'Aura Store', icon: 'layout-grid', c1: '#2a2f3d', c2: '#0e1118', target: 'store-view', order: 4, enabled: true },
+    a5: { label: 'Guida TV', icon: 'calendar', c1: '#e8a317', c2: '#6b4106', target: 'guidatv-view', order: 5, enabled: true },
+    a6: { label: 'Browser', icon: 'globe', c1: '#10a56a', c2: '#073d2c', target: 'web-view', order: 6, enabled: true },
     a7: { label: 'Impostazioni', icon: 'settings', c1: '#4a5470', c2: '#1a2033', target: 'settings-view', order: 7, enabled: true } },
   nav: {
     n1: { label: 'Home', icon: 'home', target: 'home-view', order: 1, enabled: true },
-    n3: { label: 'Film', icon: 'clapperboard', target: 'm3u-view', order: 3, enabled: true },
-    n4: { label: 'Serie TV', icon: 'film', target: 'm3u-view', order: 4, enabled: true },
-    n5: { label: 'Applicazioni', icon: 'layout-grid', target: 'store-view', order: 5, enabled: true },
+    n2: { label: 'TV Live', icon: 'tv', target: 'tv-view', order: 2, enabled: true },
+    n3: { label: 'Film & Serie', icon: 'clapperboard', target: 'movies-view', order: 3, enabled: true },
+    n4: { label: 'Aura Play', icon: 'play-circle', target: 'm3u-view', order: 4, enabled: true },
+    n5: { label: 'Aura Store', icon: 'layout-grid', target: 'store-view', order: 5, enabled: true },
+    n6: { label: 'Guida TV', icon: 'calendar', target: 'guidatv-view', order: 6, enabled: true },
+    n7: { label: 'Meteo', icon: 'cloud-sun', target: 'meteo-view', order: 7, enabled: true },
     n8: { label: 'Impostazioni', icon: 'settings', target: 'settings-view', order: 8, enabled: true } },
   ticker: { t1: { text: 'Aura TV · La migliore esperienza di intrattenimento, sempre con te.', order: 1, enabled: true } }
 };
@@ -2735,17 +2907,14 @@ const hmIcons = () => { try { window.lucide && lucide.createIcons(); } catch (e)
 function hmIcon(v) { v = String(v || ''); if (/^https?:/.test(v)) return `<img src="${esc2(v)}" alt="" referrerpolicy="no-referrer">`; if (/^[a-z0-9-]+$/.test(v)) return `<i data-lucide="${v}"></i>`; return `<em>${esc2(v)}</em>`; }
 function hmGo(t) {
   if (!t) return; t = String(t).trim();
-  if (t === 'tv-view') { tvPlayInline(); return; }
+  const webApp = (typeof storeCatalogDatabase !== 'undefined') ? storeCatalogDatabase.find(x => x.id === t) : null;
+  if (webApp && webApp.type === 'webapp') { openWebApp(webApp); return; }
   if (/^https?:/.test(t)) window.open(t, '_blank', 'noopener');
   else if (t.startsWith('list:')) sbOpenList(t.slice(5));
   else if (t === 'staff-view') { if (sbIsStaff) sbOpenStaff(); }
-  else if (document.getElementById(t)) openTargetView(t);
-  else triggerNotification('App non ancora disponibile');
+  else openTargetView(t);
 }
 window.hmGo = hmGo;
-
-function hmScale() { const s = Math.min(innerWidth / 1672, innerHeight / 941); $s('hvStage').style.setProperty('--s', s); }
-addEventListener('resize', hmScale); hmScale();
 
 function hmClock() {
   const d = new Date();
@@ -2756,14 +2925,29 @@ hmClock(); setInterval(hmClock, 1000);
 
 function hmRender() {
   const c = HM.config;
-  $s('hvBrand').textContent = c.brand; $s('hvSearch').placeholder = c.search;
+  $s('hvBrand').textContent = c.brand; $s('hvTag').textContent = c.tag; $s('hvSearch').placeholder = c.search;
   $s('hvAppsT').textContent = c.appsTitle; $s('hvLiveT').textContent = c.liveTitle;
   $s('hvPremT').textContent = c.premTitle; $s('hvPremS').textContent = c.premSub; $s('hvPow').textContent = c.powered;
   $s('hvPrem').onclick = () => hmGo(c.premLink);
-  $s('hvNav').innerHTML = hmSorted(HM.nav).filter(([, n]) => n.target !== 'tv-view').map(([id, n], i) => `<button data-hvf data-t="${esc2(n.target)}" class="${i ? '' : 'on'}">${hmIcon(n.icon)}<span>${esc2(n.label)}</span></button>`).join('');
-  hmRenderApps();
+  $s('hvNav').innerHTML = hmSorted(HM.nav).map(([id, n], i) => {
+    const tgt = (n.label === 'Film' || n.label === 'Serie TV') && n.target === 'm3u-view' ? 'movies-view' : n.target;
+    return `<button data-hvf data-t="${esc2(tgt)}" class="${i ? '' : 'on'}">${hmIcon(n.icon)}<span>${esc2(n.label)}</span></button>`;
+  }).join('');
+
+  const baseApps = hmSorted(HM.apps).map(([, a]) => {
+    const tgt = (a.label === 'Film' || a.label === 'Serie TV') && a.target === 'm3u-view' ? 'movies-view' : a.target;
+    return { id: tgt, label: a.label, icon: a.icon, c1: a.c1 || '#444', c2: a.c2 || '#111', installed: false };
+  });
+  const userApps = (typeof installedAppsId !== 'undefined' && typeof storeCatalogDatabase !== 'undefined')
+    ? installedAppsId.map(id => storeCatalogDatabase.find(x => x.id === id)).filter(Boolean).map(app => ({
+        id: app.id, label: app.name, icon: app.icon, c1: app.c1 || '#2b5876', c2: app.c2 || '#4e4376', installed: true
+      }))
+    : [];
+  const allApps = [...baseApps, ...userApps];
+  $s('hvApps').innerHTML = allApps.map(a => `<button class="hv-app" data-hvf data-t="${esc2(a.id)}" style="--c1:${esc2(a.c1)};--c2:${esc2(a.c2)}">${a.installed ? '<span class="hv-badge-inst">APP</span>' : ''}${hmIcon(a.icon)}<span>${esc2(a.label)}</span></button>`).join('');
+
   const bs = hmSorted(HM.banners);
-  $s('hvHero').innerHTML = bs.map(([id, b], i) => `<div class="hv-slide ${i ? '' : 'on'}" style="background-image:url('${esc2(b.img)}')"><div><i>${esc2(b.kicker)}</i><h1>${esc2(b.title)}</h1><p>${esc2(b.sub)}</p>${b.btn ? `<button data-hvf data-t="${esc2(b.link)}">${esc2(b.btn)}</button>` : ''}</div></div>`).join('') + (bs.length > 1 ? `<div class="hv-dots">${bs.map((b, i) => `<span data-i="${i}" class="${i ? '' : 'on'}"></span>`).join('')}</div>` : '');
+  $s('hvHero').innerHTML = bs.map(([id, b], i) => `<div class="hv-slide ${i ? '' : 'on'}" style="background-image:url('${esc2(b.img)}')"><div><i>${esc2(b.kicker)}</i><h1>${esc2(b.title)}</h1><p>${esc2(b.sub)}</p><div class="hv-hero-btns">${b.btn ? `<button data-hvf data-t="${esc2(b.link)}">${esc2(b.btn)}</button>` : ''}<button class="sec" data-hvf onclick="openTargetView('tv-view');selectTvChannel(1)">📡 Aura1 HD Live</button></div></div></div>`).join('') + (bs.length > 1 ? `<div class="hv-dots">${bs.map((b, i) => `<span data-i="${i}" class="${i ? '' : 'on'}"></span>`).join('')}</div>` : '');
   hmSlide = 0; clearInterval(hmTimer);
   if (bs.length > 1) hmTimer = setInterval(() => hmShow(hmSlide + 1), Math.max(3, +c.heroSec || 6) * 1000);
   const tk = hmSorted(HM.ticker).map(([, t]) => esc2(t.text)).join('   ·   '), el = $s('hvTk');
@@ -2771,39 +2955,65 @@ function hmRender() {
   requestAnimationFrame(() => { const d = el.firstChild; if (d.scrollWidth > el.clientWidth) { d.className = 'mq'; d.style.setProperty('--d', Math.max(15, d.scrollWidth / 70) + 's'); } });
   hmLive(); hmIcons();
 }
-function hmRenderApps(scrollEnd) {
-  const box = $s('hvApps'); if (!box) return;
-  const base = hmSorted(HM.apps).filter(([, a]) => a.target !== 'tv-view').map(([id, a]) => `<button class="hv-app" data-hvf data-t="${esc2(a.target)}" style="--c1:${esc2(a.c1 || '#444')};--c2:${esc2(a.c2 || '#111')}">${hmIcon(a.icon)}<span>${esc2(a.label)}</span></button>`);
-  const inst = installedAppsId.map(id => { const p = storeCatalogDatabase.find(x => x.id === id); if (!p) return ''; const h = hmHue(p.name); return `<button class="hv-app hv-inst" data-hvf data-t="${esc2(p.id)}" style="--c1:hsl(${h},65%,46%);--c2:hsl(${(h + 45) % 360},65%,16%)">${hmIcon(p.icon)}<span>${esc2(p.name)}</span></button>`; });
-  box.innerHTML = base.concat(inst).join(''); hmIcons();
-  if (scrollEnd) setTimeout(() => box.scrollTo({ left: box.scrollWidth, behavior: 'smooth' }), 60);
-}
-window.hmRenderApps = hmRenderApps;
 function hmShow(i) {
   const s = document.querySelectorAll('.hv-slide'), d = document.querySelectorAll('.hv-dots span'); if (!s.length) return;
   hmSlide = (i + s.length) % s.length; s.forEach((e, k) => e.classList.toggle('on', k === hmSlide)); d.forEach((e, k) => e.classList.toggle('on', k === hmSlide));
 }
 $s('hvHero').onclick = e => { const d = e.target.closest('.hv-dots span'); if (d) return hmShow(+d.dataset.i); const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
 $s('hvNav').onclick = $s('hvApps').onclick = e => { const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
-$s('hvSearch').onkeydown = e => { if (e.key === 'Enter') hvGuideOpen(e.target.value); };
+$s('hvSearch').onkeydown = e => { if (e.key === 'Enter') { openTargetView('tv-view'); tvQuery = e.target.value; $s('tvSearch').value = tvQuery; tvRenderBrowse(); } };
 
-/* Canali in diretta: generati dalla lista M3U attiva (nome + logo dalla lista), colori automatici dal logo */
 const hmHue = n => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
 function hmLive() {
   const box = $s('hvLive'); if (!box) return;
-  const ch = (window.tvLineup || []).filter(c => !c.web).slice(0, 6);
-  if (!ch.length) { box.innerHTML = '<div class="hv-empty">Nessun canale: lo staff può caricare una lista M3U dal pannello Staff.</div>'; return; }
-  box.innerHTML = ch.map(c => { const h = hmHue(c.name); return `<button class="hv-ch" data-hvf data-n="${c.num}" style="--c1:hsla(${h},70%,48%,.85);--c2:hsla(${(h + 50) % 360},70%,20%,.9)"><div class="hv-chart">${c.logo ? `<img src="${esc2(c.logo)}" crossorigin="anonymous" referrerpolicy="no-referrer" alt="" onerror="if(!this.dataset.r){this.dataset.r=1;this.removeAttribute('crossorigin');this.src=this.src}else this.remove()">` : `<em>${esc2(c.name.trim().slice(0, 2).toUpperCase())}</em>`}</div><span class="hv-liveb">LIVE</span><div class="hv-cap"><b>${esc2(c.name)}</b><small>${esc2(c.group)}</small></div><span class="hv-dots3">⋮</span></button>`; }).join('');
-  box.querySelectorAll('.hv-ch img').forEach(img => { const go = () => { try {
-    const cv = document.createElement('canvas'); cv.width = cv.height = 8; const x = cv.getContext('2d'); x.drawImage(img, 0, 0, 8, 8);
-    const d = x.getImageData(0, 0, 8, 8).data; let r = 0, g = 0, b = 0, n = 0;
-    for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 128) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
-    if (!n) return; r = r / n | 0; g = g / n | 0; b = b / n | 0; const k = Math.max(r, g, b, 1), f = k < 90 ? 90 / k : 1, el = img.closest('.hv-ch');
-    el.style.setProperty('--c1', `rgba(${Math.min(255, r * f | 0)},${Math.min(255, g * f | 0)},${Math.min(255, b * f | 0)},.85)`); el.style.setProperty('--c2', `rgba(${r * .3 | 0},${g * .3 | 0},${b * .3 | 0},.92)`);
-  } catch (e) {} }; img.complete ? go() : img.addEventListener('load', go); });
+  const ch = (window.tvLineup || []).slice(0, 12);
+  if (!ch.length) { box.innerHTML = '<div class="hv-empty">Nessun canale disponibile.</div>'; return; }
+  box.innerHTML = ch.map(c => { const h = hmHue(c.name); return `<button class="hv-ch" data-hvf data-n="${c.num}" style="--c1:hsla(${h},70%,44%,.85);--c2:hsla(${(h + 50) % 360},70%,18%,.92)"><span class="hv-num-pill">${tvNn(c.num)}</span><span class="hv-liveb">LIVE</span><div class="hv-chart">${c.web ? '<em>📡</em>' : (c.logo ? `<img src="${esc2(c.logo)}" crossorigin="anonymous" referrerpolicy="no-referrer" alt="" onerror="if(!this.dataset.r){this.dataset.r=1;this.removeAttribute('crossorigin');this.src=this.src}else this.remove()">` : `<em>${esc2(c.name.trim().slice(0, 2).toUpperCase())}</em>`)}</div><div class="hv-cap"><b>${esc2(c.name)}</b><small>${c.web ? 'WebTV Cloud' : esc2(c.group)}</small></div></button>`; }).join('');
 }
 window.tvRenderHome = hmLive;
-$s('hvLive').onclick = e => { const c = e.target.closest('.hv-ch'); if (c) selectTvChannel(+c.dataset.n); };
+$s('hvLive').onclick = e => { const c = e.target.closest('.hv-ch'); if (c) { openTargetView('tv-view'); selectTvChannel(+c.dataset.n); } };
+
+/* ===== SEZIONE FILM & SERIE (Separata dalla TV) ===== */
+let mvCurList = null, mvChs = [], mvGroup = 'Tutti', mvQuery = '', mvCache = {};
+function mvSyncLists() {
+  const lists = movieVisibleLists();
+  if (!lists.length) { mvCurList = null; mvChs = []; mvRenderBrowse(); return; }
+  if (!mvCurList || !sbLists[mvCurList] || sbLists[mvCurList].category !== 'movies') mvSelectList(lists[0][0]);
+  else mvRenderBrowse();
+}
+function mvSelectList(id) {
+  mvCurList = id; mvGroup = 'Tutti'; mvQuery = '';
+  if (mvCache[id]) { mvChs = mvCache[id]; mvRenderBrowse(); return; }
+  database.ref('aura_m3u/data/' + id).once('value').then(s => {
+    const arr = sbDedupe(JSON.parse(s.val() || '[]').map(a => ({ name: a[0], logo: a[1], group: a[2] || 'Film', url: a[3] })));
+    mvCache[id] = arr;
+    if (mvCurList === id) { mvChs = arr; mvRenderBrowse(); }
+  });
+}
+function mvRenderBrowse() {
+  const L = $s('moviesLists'), G = $s('moviesGroups'), R = $s('moviesRows');
+  if (!L || !R) return;
+  const lists = movieVisibleLists();
+  L.innerHTML = lists.map(([id, m]) => `<button class="chip ${id === mvCurList ? 'on' : ''}" data-ml="${id}">${esc2(m.name)} · ${m.count || 0}</button>`).join('');
+  if (!lists.length) { G.innerHTML = ''; R.innerHTML = '<div class="atv-empty">Nessuna lista Film pubblicata. Lo staff può aggiungere liste M3U Film dal pannello Staff.</div>'; return; }
+  const groups = ['Tutti', ...new Set(mvChs.map(c => c.group))];
+  G.innerHTML = groups.map(g => `<button class="chip ${g === mvGroup ? 'on' : ''}" data-mg="${esc2(g)}">${esc2(g)}</button>`).join('');
+  const q = mvQuery.trim().toLowerCase();
+  const filtered = mvChs.filter(c => (mvGroup === 'Tutti' || c.group === mvGroup) && (!q || c.name.toLowerCase().includes(q)));
+  if (!filtered.length) { R.innerHTML = '<div class="atv-empty">Nessun film o serie trovato.</div>'; return; }
+  window._mvFiltered = filtered;
+  R.innerHTML = `<div class="atv-row"><h3>Catalogo (${filtered.length})</h3><div class="rail" style="flex-wrap:wrap!important;overflow:visible">${filtered.slice(0, 150).map((c, idx) => `<button class="atv-card" data-mvidx="${idx}"><div class="atv-art">${tvArt(c)}</div><div class="atv-cap"><i>FILM</i><b>${esc2(c.name)}</b></div></button>`).join('')}</div></div>`;
+}
+$s('moviesLists').onclick = e => { const b = e.target.closest('[data-ml]'); if (b) mvSelectList(b.dataset.ml); };
+$s('moviesGroups').onclick = e => { const b = e.target.closest('[data-mg]'); if (b) { mvGroup = b.dataset.mg; mvRenderBrowse(); } };
+$s('moviesSearch').oninput = e => { mvQuery = e.target.value; mvRenderBrowse(); };
+$s('moviesRows').onclick = e => {
+  const card = e.target.closest('[data-mvidx]');
+  if (!card || !window._mvFiltered) return;
+  sbView = window._mvFiltered;
+  openTargetView('m3u-view');
+  sbPlay(+card.dataset.mvidx);
+};
 
 /* Avatar */
 firebase.auth().onAuthStateChanged(u => {
@@ -2825,13 +3035,13 @@ hmRender();
 
 /* Navigazione con frecce / telecomando */
 document.addEventListener('keydown', e => {
-  if (currentActiveView !== 'home-view' || !/^Arrow/.test(e.key) || /INPUT/.test(e.target.tagName) || (window.hvBlockNav && hvBlockNav())) return;
-  const all = [...document.querySelectorAll('#hvStage [data-hvf]')].filter(el => el.offsetParent), i = all.indexOf(document.activeElement);
+  if (currentActiveView !== 'home-view' || !/^Arrow/.test(e.key) || /INPUT/.test(e.target.tagName)) return;
+  const all = [...document.querySelectorAll('#home-view [data-hvf]')], i = all.indexOf(document.activeElement);
   const n = all[(i < 0 ? 0 : i + (/Left|Up/.test(e.key) ? -1 : 1) + all.length) % all.length]; if (n) { n.focus(); e.preventDefault(); }
 }, true);
 
 /* ---------- Editor Staff ---------- */
-const HM_CFG = [['brand', 'Nome logo'], ['search', 'Testo ricerca'], ['appsTitle', 'Titolo app'], ['liveTitle', 'Titolo canali'], ['premTitle', 'Premium · titolo'], ['premSub', 'Premium · sottotitolo'], ['premLink', 'Premium · destinazione'], ['powered', 'Testo “Powered by”'], ['heroSec', 'Secondi per banner']];
+const HM_CFG = [['brand', 'Nome logo'], ['tag', 'Slogan logo'], ['search', 'Testo ricerca'], ['appsTitle', 'Titolo app'], ['liveTitle', 'Titolo canali'], ['premTitle', 'Premium · titolo'], ['premSub', 'Premium · sottotitolo'], ['premLink', 'Premium · destinazione'], ['powered', 'Testo “Powered by”'], ['heroSec', 'Secondi per banner']];
 const HM_SCH = {
   banners: ['Banner scorrevoli', [['kicker', 'Sopratitolo'], ['title', 'Titolo'], ['sub', 'Sottotitolo'], ['btn', 'Testo pulsante'], ['img', 'Link immagine (https://…)'], ['link', 'Destinazione (vista, list:ID o https://…)'], ['order', 'Ordine', 1]]],
   apps: ['App preferite (riquadri colorati)', [['label', 'Nome'], ['icon', 'Icona (nome lucide, emoji o link)'], ['c1', 'Colore 1 (#hex)'], ['c2', 'Colore 2 (#hex)'], ['target', 'Destinazione'], ['order', 'Ordine', 1]]],
@@ -2936,7 +3146,7 @@ function buildTvChannels(){ tvBuild(); }
 function tvCard(c,extra){return `<button class="atv-card ${extra||''}" data-n="${c.num}"><div class="atv-art">${c.web?'📡':tvArt(c)}</div><div class="atv-cap"><i>${tvNn(c.num)}</i><b>${esc2(c.name)}</b></div></button>`;}
 function tvRenderBrowse(){
     const L=$s('tvLists'), R=$s('tvRows'); if(!L||!R) return;
-    L.innerHTML=sbVisible().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('')+`<button class="chip" data-verify="1">${sbVerText()}</button>`+`<button class="chip" data-rr="1">${sbRRText()} · ${sbRRCount()}</button>`+(sbDeadCount()?`<button class="chip" data-reset="1">Mostra ${sbDeadCount()} non funzionanti</button>`:'');
+    L.innerHTML=tvVisibleLists().map(([id,m])=>`<button class="chip ${id===sbCurList?'on':''}" data-l="${id}">${esc2(m.name)} · ${m.count||0}</button>`).join('')+`<button class="chip" data-verify="1">${sbVerText()}</button>`+`<button class="chip" data-rr="1">${sbRRText()} · ${sbRRCount()}</button>`+(sbDeadCount()?`<button class="chip" data-reset="1">Mostra ${sbDeadCount()} non funzionanti</button>`:'');
     const q=tvQuery.trim().toLowerCase(); let h='';
     if(!q) h+=`<div class="atv-row"><h3>In evidenza</h3><div class="rail"><button class="atv-card hero" data-n="1"><div class="atv-art">📡</div><div class="atv-cap"><i>01</i><b>Aura1 HD · WebTV Cloud</b></div></button></div></div>`;
     const chs=tvLineup.slice(1).filter(c=>!q||c.name.toLowerCase().includes(q));
@@ -2958,8 +3168,8 @@ function tvRenderHome(){
 document.addEventListener('click',e=>{
     const c=e.target.closest('.atv-card'); if(!c) return;
     if(c.dataset.more){tvMore[c.dataset.more]=true;tvRenderBrowse();return;}
-    if(c.dataset.all){hvGuideOpen();return;}
-    hvGuideClose(); selectTvChannel(+c.dataset.n);
+    if(c.dataset.all){openTargetView('tv-view');return;}
+    if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
 });
 $s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b&&b.dataset.l){tvMore={};sbSelectList(b.dataset.l);}};
 $s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
@@ -2970,11 +3180,11 @@ function sbSetChs(a){ sbChs=a; sbApply(); tvBuild(); }
 const _sbRL=sbRenderLists; sbRenderLists=function(){ _sbRL(); tvBuild(); };
 
 /* player */
-function tvShow(p){ tvPlaying=p; $s('hvTvBox').classList.toggle('live',p); if(!p) hvCollapse(); }
+function tvShow(p){ tvPlaying=p; $s('tv-view').classList.toggle('tv-playing',p); document.body.classList.toggle('tvp',p&&currentActiveView==='tv-view'); }
 function tvKill(){ if(tvHls){tvHls.destroy();tvHls=null;} const v=$s('tvVideo'); if(v){v.pause();v.removeAttribute('src');v.load();} }
 function tvStop(){ tvKill(); pauseWebTV(); $s('tvPlayerCore').innerHTML=''; $s('tvMsg').textContent=''; tvShow(false); }
 function tvBackToBrowse(){ tvStop(); document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active')); }
-function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); if(hvExpanded()) $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
+function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
 $s('tvPlayer').addEventListener('mousemove',tvUi); $s('tvPlayer').addEventListener('touchstart',tvUi,{passive:true});
 function tvMsg(t){ const m=$s('tvMsg'); m.textContent=t||''; m.className=/ASSENTE/.test(t||'')?'err':''; }
 function tvPlayUrl(ch){
@@ -2992,8 +3202,7 @@ function selectTvChannel(num){
     num=parseInt(num,10);
     if(!(num>=1&&num<=tvLineup.length)){ triggerNotification('Canale non disponibile'); return; }
     currentChannelNum=num; const ch=tvLineup[num-1];
-    tvShow(true); try{localStorage.setItem('aura_last_ch',num);}catch(e){}
-    document.querySelectorAll('.hv-ch').forEach(b=>b.classList.toggle('playing',+b.dataset.n===num));
+    tvShow(true); document.body.classList.toggle('tvp',currentActiveView==='tv-view');
     document.querySelectorAll('.ch-row').forEach(r=>r.classList.remove('active'));
     const row=$s('sidebar-ch-'+num); if(row){ row.classList.add('active'); row.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
     $s('tvChTitle').innerText=tvNn(num)+' - '+ch.name; $s('tvChStatus').innerText=ch.web?'Palinsesto WebTV Cloud':(ch.group||'');
@@ -3006,44 +3215,43 @@ function selectTvChannel(num){
 function tvStep(d){ let n=currentChannelNum+d; if(n<1) n=tvLineup.length; if(n>tvLineup.length) n=1; selectTvChannel(n); }
 window.tvToggleM3u=function(){ const v=$s('tvVideo'); if(currentChannelNum===1||!v) return false; v.paused?v.play():v.pause(); return true; };
 const _sbStepOld=window.sbStep;
-sbStep=function(d){ if(currentActiveView==='home-view'){ if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
+sbStep=function(d){ if(currentActiveView==='tv-view'||currentActiveView==='home-view'){ if(currentActiveView!=='tv-view') openTargetView('tv-view'); if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
 window.sbStep=sbStep;
 
 /* navigazione viste (Staff = schermata a sé, sempre visibile) */
 function openTargetView(id){
-    if(id==='tv-view') id='home-view';          /* la TV vive nella home */
-    const leaving=currentActiveView==='home-view'&&id!=='home-view';
+    const leaving=currentActiveView==='tv-view'&&id!=='tv-view';
     document.querySelectorAll('.view-frame').forEach(v=>v.classList.remove('active'));
     $s('staff-view').classList.toggle('open',id==='staff-view');
     const t=document.getElementById(id); if(t&&t.classList.contains('view-frame')) t.classList.add('active');
     currentActiveView=id; $s('tvSidebar').classList.remove('open');
-    if(leaving){ tvStop(); hvGuideClose(); }
-    if(id==='home-view'){ hvGuideClose(); hvCollapse(); if(tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync(); }
+    if(leaving) tvStop(); if(id!=='webapp-view'&&$s('wvFrame')) $s('wvFrame').src='about:blank';
+    if(id==='tv-view'&&!tvPlaying) tvShow(false);
+    if(id==='tv-view'&&tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync();
+    document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
 }
 function goHome(){ openTargetView('home-view'); }
 const tvIsBack=e=>/^(Escape|Backspace|GoBack|BrowserBack|XF86Back)$/.test(e.key)||e.keyCode===10009||e.keyCode===461;
 document.addEventListener('keydown',e=>{
-    if(currentActiveView!=='home-view') return;
-    const inp=/INPUT|TEXTAREA|SELECT/.test(e.target.tagName), k=e.key;
-    if(hvGuideOn()){
-        if(tvIsBack(e)&&!(inp&&k==='Backspace')){ e.preventDefault(); e.stopImmediatePropagation(); hvGuideClose(); return; }
-        if(inp||!k.startsWith('Arrow')) return;
-        const all=[...document.querySelectorAll('#hvGuide .atv-card,#hvGuide .chip,#tvSearch,#hvGuideX')],a=document.activeElement,i=all.indexOf(a);
-        if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
-        const r=a.getBoundingClientRect();let t=null;
-        if(k==='ArrowRight')t=all[i+1];else if(k==='ArrowLeft')t=all[i-1];
-        else{const dir=k==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
-        if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
-        return;
+    if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
+        if(tvPlaying){
+            const k=e.key; let h=true;
+            if(tvIsBack(e)) tvBackToBrowse();
+            else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
+            else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
+            else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
+            if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
+        } else if(tvIsBack(e)){
+            e.preventDefault(); e.stopImmediatePropagation(); goHome();
+        } else if(e.key.startsWith('Arrow')){
+            const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
+            if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
+            const r=a.getBoundingClientRect();let t=null;
+            if(e.key==='ArrowRight')t=all[i+1];else if(e.key==='ArrowLeft')t=all[i-1];
+            else{const dir=e.key==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
+            if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
+        }
     }
-    if(inp||!hvExpanded()) return;
-    if((k==='Enter'||k===' ')&&e.target.closest&&e.target.closest('.hv-tvctl')) return;
-    let h=true;
-    if(tvIsBack(e)) hvCollapse();
-    else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
-    else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
-    else if(k==='Enter'||k===' '){ tvUi(); window.tvToggleM3u(); } else h=false;
-    if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
 },true);
 
 /* ---------- STAFF: lettura robusta + errori visibili ---------- */
@@ -3064,57 +3272,6 @@ async function sbFetchText(url){
     throw new Error(((last&&last.message)||'Download non riuscito')+' Prova con “File” o “Incolla”.');
 }
 tvBuild();
-</script>
-<style id="aura-home-tv">
-/* ===== TV integrata nella Home ===== */
-.hv-tvbox{left:313px;top:131px;width:544px;height:306px;border-radius:34px;border:2px solid rgba(190,130,255,.9);overflow:hidden;box-shadow:0 0 28px rgba(150,80,255,.55);background:#000;z-index:3}
-.hv-tvbox.full{left:0;top:0;width:1672px;height:941px;border-radius:0;border:0;box-shadow:none;z-index:70}
-#hvTvBox .hv-tvidle{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:radial-gradient(circle at 50% 38%,rgba(130,70,255,.5),transparent 70%),linear-gradient(135deg,#120a34,#1d0f4d 55%,#08323f)}
-.hv-play{width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.14);border:3px solid #fff;display:grid;place-items:center;box-shadow:0 0 26px rgba(170,90,255,.8);transition:.25s}
-.hv-play::before{content:'';margin-left:8px;border-left:28px solid #fff;border-top:17px solid transparent;border-bottom:17px solid transparent}
-.hv-tvidle:hover .hv-play,.hv-tvidle:focus-visible .hv-play{transform:scale(1.1)}
-.hv-tvidle b{font-size:30px;font-weight:800;margin-top:10px}.hv-tvidle small{font-size:18px;color:#d9c8ff}
-#hvTvBox.live .hv-tvidle{display:none}
-#hvTvBox #tvPlayer{display:none}#hvTvBox.live #tvPlayer{display:block}
-#hvTvBox:not(.full) #tvSidebar{display:none!important}
-#hvTvBox .tv-channel-overlay{top:16px!important;bottom:auto!important;left:22px!important}
-#hvTvBox .tv-channel-overlay h1{font-size:28px!important}#hvTvBox .tv-channel-overlay p{font-size:13px;margin-top:4px}
-#hvTvBox.full .tv-channel-overlay{top:40px!important;left:60px!important}
-#hvTvBox.full .tv-channel-overlay h1{font-size:64px!important}#hvTvBox.full .tv-channel-overlay p{font-size:22px}
-#hvTvBox .tv-osd-input{font-size:2rem;padding:4px 16px;right:20px;top:64px}
-#hvTvBox.full .tv-osd-input{font-size:5rem;padding:10px 40px;right:60px;top:40px}
-.hv-tvctl{position:absolute;top:14px;right:14px;z-index:60;display:flex;gap:10px;opacity:0;transition:.3s}
-#tvPlayer.ui .hv-tvctl,.hv-tvctl:focus-within{opacity:1}
-#hvTvBox .hv-tvctl button{width:44px;height:44px;border-radius:50%;background:rgba(20,24,40,.65);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.3);font-size:22px;line-height:1;display:grid;place-items:center}
-#hvTvBox.full .hv-tvctl{top:30px;right:40px;gap:16px}#hvTvBox.full .hv-tvctl button{width:60px;height:60px;font-size:30px}
-.hv-hero{left:873px!important;width:777px!important}
-.hv-slide div{left:48px!important;top:36px!important}.hv-slide h1{font-size:72px!important}.hv-slide p{font-size:24px!important;margin-bottom:18px!important}
-.hv-slide button{width:236px!important}
-.hv-apps{left:296px!important;top:489px!important;width:1364px!important;height:134px!important;padding:10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
-.hv-apps::-webkit-scrollbar{display:none}.hv-app{flex:1 0 150px}
-.hv-ch.playing{outline:3px solid #fff;outline-offset:3px}
-.hv-guide{left:0;top:0;width:1672px;height:941px;z-index:60;display:none;background:radial-gradient(ellipse 60% 40% at 70% 0,rgba(130,70,255,.35),transparent 70%),rgba(5,7,18,.97)}
-.hv-guide.open{display:block}
-#hvGuide #tvBrowse{padding:40px 0 80px}
-#hvGuide .tvb-head,#hvGuide .chips,#hvGuide .atv-row h3{padding-left:60px;padding-right:60px}
-#hvGuide .rail{padding:22px 60px 34px!important}
-#hvGuide .chip{background:rgba(255,255,255,.1)}#hvGuide .chip.on{background:#fff;color:#000}
-#hvGuideX{padding:12px 26px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:700;font-size:18px;margin-left:auto}
-#hvGuideX:focus-visible{outline:4px solid #fff;outline-offset:3px}
-</style>
-<script>
-/* ===== AuraTV · TV dentro la Home ===== */
-function hvExpanded(){ return $s('hvTvBox').classList.contains('full'); }
-function hvGuideOn(){ return $s('hvGuide').classList.contains('open'); }
-window.hvBlockNav=()=>hvExpanded()||hvGuideOn();
-function hvExpand(){ $s('hvTvBox').classList.add('full'); document.body.classList.add('tvp'); $s('hvTvExp').textContent='⤡'; tvUi(); }
-function hvCollapse(){ $s('hvTvBox').classList.remove('full'); document.body.classList.remove('tvp'); $s('tvSidebar').classList.remove('open'); $s('hvTvExp').textContent='⤢'; }
-function hvToggleFull(){ hvExpanded()?hvCollapse():hvExpand(); }
-function hvGuideOpen(q){ if(typeof q==='string'){ tvQuery=q; $s('tvSearch').value=q; } tvRenderBrowse(); $s('hvGuide').classList.add('open'); }
-function hvGuideClose(){ $s('hvGuide').classList.remove('open'); }
-function tvPlayInline(){ let n=1; try{ n=parseInt(localStorage.getItem('aura_last_ch'),10)||1; }catch(e){} if(n>tvLineup.length) n=1; selectTvChannel(n); }
-$s('hvTvIdle').onclick=tvPlayInline;
-hmRender();
 </script>
 </body>
 </html>
