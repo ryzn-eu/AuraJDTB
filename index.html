@@ -744,7 +744,7 @@ body.tvp .corner-trigger{display:none}
     <div id="home-view" class="view-frame active">
         <div class="hv-aurora"></div>
         <div class="hv-stage" id="hvStage">
-            <div class="hv-logo" onclick="hmGo('home-view')"><b id="hvBrand">Aura</b><sup>TV</sup><small id="hvTag">More than TV</small></div>
+            <div class="hv-logo" onclick="hmGo('home-view')"><b id="hvBrand">Aura</b><sup>TV</sup></div>
             <div class="hv-search"><i data-lucide="search"></i><input id="hvSearch" placeholder="Cerca film, serie, canali e app..." autocomplete="off"></div>
             <div class="hv-right">
                 <i data-lucide="wifi" class="hv-wifi"></i><span class="hv-sep"></span>
@@ -755,24 +755,9 @@ body.tvp .corner-trigger{display:none}
             <div class="hv-side"></div>
             <nav class="hv-nav" id="hvNav"></nav>
             <button class="hv-prem" id="hvPrem" data-hvf><i data-lucide="crown"></i><div><b id="hvPremT">Aura Premium</b><small id="hvPremS">Sblocca di più!</small></div><i data-lucide="chevron-right" class="hv-chev"></i></button>
-            <div class="hv-hero" id="hvHero"></div>
-            <div class="hv-sec" style="top:455px"><h3><i data-lucide="star" class="hv-star"></i><span id="hvAppsT">Le tue app preferite</span></h3><a data-hvf tabindex="0" onclick="hmGo('store-view')">Vedi tutte <i data-lucide="arrow-right"></i></a></div>
-            <div class="hv-apps" id="hvApps"></div>
-            <div class="hv-sec" style="top:637px"><h3><i data-lucide="radio-tower" class="hv-radio"></i><span id="hvLiveT">Canali TV in diretta</span></h3><a data-hvf tabindex="0" onclick="hmGo('tv-view')">Vedi tutti <i data-lucide="arrow-right"></i></a></div>
-            <div class="hv-live" id="hvLive"></div>
-            <div class="hv-ticker"><i data-lucide="sparkles"></i><div class="hv-tk"><div id="hvTk"></div></div><span class="hv-pow"><u></u><em id="hvPow">Powered by Aura</em></span></div>
-        </div>
-        <div class="shelf-container" style="display:none"><div id="homeGrid"></div></div>
-        <span id="sysTopTime" hidden></span><span id="centerTime" hidden></span><span id="centerDate" hidden></span>
-    </div>
-
-    <div id="tv-view" class="view-frame">
-        <div id="tvBrowse">
-            <div class="tvb-head"><h1>Aura TV</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"></div>
-            <div id="tvLists" class="chips"></div>
-            <div id="tvRows"></div>
-        </div>
-        <div id="tvPlayer">
+            <div class="hv-tvbox" id="hvTvBox">
+<button class="hv-tvidle" id="hvTvIdle" data-hvf aria-label="Guarda la TV"><span class="hv-play"></span><b>Guarda la TV</b><small>Tocca per iniziare</small><span class="hv-liveb">LIVE</span></button>
+<div id="tvPlayer">
             <div class="tv-screen-wrapper">
                 <div class="tv-osd-input" id="tvOsdDisplay"></div>
                 <div class="tv-channel-overlay"><h1 id="tvChTitle"></h1><p id="tvChStatus"></p></div>
@@ -784,10 +769,25 @@ body.tvp .corner-trigger{display:none}
                 <div id="tvPlayerCore"></div>
                 <div id="tvMsg"></div>
             </div>
-            <button id="tvBack" onclick="tvBackToBrowse()">‹ Canali</button>
-            <button id="tvHome" onclick="goHome()">⌂ Home</button>
+            <div class="hv-tvctl"><button onclick="tvStep(-1)" aria-label="Canale precedente">‹</button><button onclick="tvStep(1)" aria-label="Canale successivo">›</button><button id="hvTvExp" data-hvf onclick="hvToggleFull()" aria-label="Schermo intero">⤢</button><button onclick="tvStop()" aria-label="Chiudi">✕</button></div>
             <div class="tv-sidebar-channels" id="tvSidebar"><div class="ch-list-scroll" id="chListContainer"></div></div>
         </div>
+</div>
+</div>
+            <div class="hv-hero" id="hvHero"></div>
+            <div class="hv-sec" style="top:455px"><h3><i data-lucide="star" class="hv-star"></i><span id="hvAppsT">Le tue app preferite</span></h3><a data-hvf tabindex="0" onclick="hmGo('store-view')">Vedi tutte <i data-lucide="arrow-right"></i></a></div>
+            <div class="hv-apps" id="hvApps"></div>
+            <div class="hv-sec" style="top:637px"><h3><i data-lucide="radio-tower" class="hv-radio"></i><span id="hvLiveT">Canali TV in diretta</span></h3><a data-hvf tabindex="0" onclick="hvGuideOpen()">Vedi tutti <i data-lucide="arrow-right"></i></a></div>
+            <div class="hv-live" id="hvLive"></div>
+            <div class="hv-ticker"><i data-lucide="sparkles"></i><div class="hv-tk"><div id="hvTk"></div></div><span class="hv-pow"><u></u><em id="hvPow">Powered by Aura</em></span></div>
+            <div class="hv-guide" id="hvGuide"><div id="tvBrowse">
+            <div class="tvb-head"><h1>Tutti i canali</h1><input id="tvSearch" type="search" placeholder="Cerca un canale" autocomplete="off"><button id="hvGuideX" onclick="hvGuideClose()">✕ Chiudi</button></div>
+            <div id="tvLists" class="chips"></div>
+            <div id="tvRows"></div>
+        </div></div>
+        </div>
+        <div class="shelf-container" style="display:none"><div id="homeGrid"></div></div>
+        <span id="sysTopTime" hidden></span><span id="centerTime" hidden></span><span id="centerDate" hidden></span>
     </div>
 
     <div id="guidatv-view" class="view-frame full-app-padding">
@@ -1607,7 +1607,7 @@ body.tvp .corner-trigger{display:none}
                         goHome();
                         break;
                     case 'MEDIA_TOGGLE':
-                        if(currentActiveView === 'tv-view' && window.tvToggleM3u && tvToggleM3u()) {} else if(currentActiveView === 'tv-view') {
+                        if(currentActiveView === 'home-view' && tvPlaying && window.tvToggleM3u && tvToggleM3u()) {} else if(currentActiveView === 'home-view' && tvPlaying) {
  if(ytPlayerInstance && typeof ytPlayerInstance.getPlayerState === 'function') {
                                 if(ytPlayerInstance.getPlayerState() === 1) pauseWebTV();
                                 else ytPlayerInstance.playVideo();
@@ -2027,7 +2027,7 @@ body.tvp .corner-trigger{display:none}
             });
         }
 
-        function installApp(id) { if(!installedAppsId.includes(id)) { installedAppsId.push(id); localStorage.setItem('aura_installed_cache', JSON.stringify(installedAppsId)); triggerNotification(`App installata con successo!`); renderSystemHomeTiles(); renderStoreCatalog(); } }
+        function installApp(id) { if(!installedAppsId.includes(id)) { installedAppsId.push(id); localStorage.setItem('aura_installed_cache', JSON.stringify(installedAppsId)); const p = storeCatalogDatabase.find(x => x.id === id); triggerNotification(`${p ? p.name : 'App'} aggiunta alla Home`); renderSystemHomeTiles(); renderStoreCatalog(); if (window.hmRenderApps) hmRenderApps(true); } }
 
         function switchSettingsTab(tabId, el) {
             if(el) { document.querySelectorAll('.settings-opt-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
@@ -2086,7 +2086,7 @@ body.tvp .corner-trigger{display:none}
 
         let tvInputBuffer = ""; let tvInputTimeout;
         document.addEventListener('keydown', (e) => {
-            if(currentActiveView === 'tv-view' && !isMobileDevice && !/INPUT|TEXTAREA/.test(e.target.tagName)) {
+            if(currentActiveView === 'home-view' && !isMobileDevice && !/INPUT|TEXTAREA/.test(e.target.tagName)) {
                 if(e.key >= '0' && e.key <= '9') {
                     tvInputBuffer += e.key; if(tvInputBuffer.length > 3) tvInputBuffer = tvInputBuffer.slice(-3);
                     const osd = document.getElementById('tvOsdDisplay'); osd.innerText = tvInputBuffer; osd.classList.add('visible');
@@ -2714,24 +2714,18 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.
 /* ===== AURA TV · HOME guidata da Firebase (aura_home) + editor Staff ===== */
 const HM_IMG = 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1600&q=80';
 const HM_DEF = {
-  config: { brand: 'Aura', tag: 'More than TV', search: 'Cerca film, serie, canali e app...', appsTitle: 'Le tue app preferite', liveTitle: 'Canali TV in diretta', premTitle: 'Aura Premium', premSub: 'Sblocca di più!', premLink: 'settings-view', powered: 'Powered by Aura', heroSec: 6 },
+  config: { brand: 'Aura', search: 'Cerca film, serie, canali e app...', appsTitle: 'Le tue app preferite', liveTitle: 'Canali TV in diretta', premTitle: 'Aura Premium', premSub: 'Sblocca di più!', premLink: 'settings-view', powered: 'Powered by Aura', heroSec: 6 },
   banners: { b1: { kicker: 'Benvenuto su', title: 'Aura TV', sub: 'La tua TV, senza limiti.', btn: 'Inizia a guardare', img: HM_IMG, link: 'tv-view', order: 1, enabled: true } },
   apps: {
-    a1: { label: 'TV Live', icon: 'tv', c1: '#7b2cf0', c2: '#2b1170', target: 'tv-view', order: 1, enabled: true },
     a2: { label: 'Film', icon: 'clapperboard', c1: '#d8182c', c2: '#5a0a14', target: 'm3u-view', order: 2, enabled: true },
     a3: { label: 'Serie TV', icon: 'film', c1: '#2f6df0', c2: '#0f2a78', target: 'm3u-view', order: 3, enabled: true },
     a4: { label: 'Applicazioni', icon: 'layout-grid', c1: '#2a2f3d', c2: '#0e1118', target: 'store-view', order: 4, enabled: true },
-    a5: { label: 'Preferiti', icon: 'star', c1: '#e8a317', c2: '#6b4106', target: 'tv-view', order: 5, enabled: true },
-    a6: { label: 'Cronologia', icon: 'history', c1: '#10a56a', c2: '#073d2c', target: 'tv-view', order: 6, enabled: true },
     a7: { label: 'Impostazioni', icon: 'settings', c1: '#4a5470', c2: '#1a2033', target: 'settings-view', order: 7, enabled: true } },
   nav: {
     n1: { label: 'Home', icon: 'home', target: 'home-view', order: 1, enabled: true },
-    n2: { label: 'TV Live', icon: 'tv', target: 'tv-view', order: 2, enabled: true },
     n3: { label: 'Film', icon: 'clapperboard', target: 'm3u-view', order: 3, enabled: true },
     n4: { label: 'Serie TV', icon: 'film', target: 'm3u-view', order: 4, enabled: true },
     n5: { label: 'Applicazioni', icon: 'layout-grid', target: 'store-view', order: 5, enabled: true },
-    n6: { label: 'Preferiti', icon: 'star', target: 'tv-view', order: 6, enabled: true },
-    n7: { label: 'Cronologia', icon: 'history', target: 'tv-view', order: 7, enabled: true },
     n8: { label: 'Impostazioni', icon: 'settings', target: 'settings-view', order: 8, enabled: true } },
   ticker: { t1: { text: 'Aura TV · La migliore esperienza di intrattenimento, sempre con te.', order: 1, enabled: true } }
 };
@@ -2741,10 +2735,12 @@ const hmIcons = () => { try { window.lucide && lucide.createIcons(); } catch (e)
 function hmIcon(v) { v = String(v || ''); if (/^https?:/.test(v)) return `<img src="${esc2(v)}" alt="" referrerpolicy="no-referrer">`; if (/^[a-z0-9-]+$/.test(v)) return `<i data-lucide="${v}"></i>`; return `<em>${esc2(v)}</em>`; }
 function hmGo(t) {
   if (!t) return; t = String(t).trim();
+  if (t === 'tv-view') { tvPlayInline(); return; }
   if (/^https?:/.test(t)) window.open(t, '_blank', 'noopener');
   else if (t.startsWith('list:')) sbOpenList(t.slice(5));
   else if (t === 'staff-view') { if (sbIsStaff) sbOpenStaff(); }
-  else openTargetView(t);
+  else if (document.getElementById(t)) openTargetView(t);
+  else triggerNotification('App non ancora disponibile');
 }
 window.hmGo = hmGo;
 
@@ -2760,12 +2756,12 @@ hmClock(); setInterval(hmClock, 1000);
 
 function hmRender() {
   const c = HM.config;
-  $s('hvBrand').textContent = c.brand; $s('hvTag').textContent = c.tag; $s('hvSearch').placeholder = c.search;
+  $s('hvBrand').textContent = c.brand; $s('hvSearch').placeholder = c.search;
   $s('hvAppsT').textContent = c.appsTitle; $s('hvLiveT').textContent = c.liveTitle;
   $s('hvPremT').textContent = c.premTitle; $s('hvPremS').textContent = c.premSub; $s('hvPow').textContent = c.powered;
   $s('hvPrem').onclick = () => hmGo(c.premLink);
-  $s('hvNav').innerHTML = hmSorted(HM.nav).map(([id, n], i) => `<button data-hvf data-t="${esc2(n.target)}" class="${i ? '' : 'on'}">${hmIcon(n.icon)}<span>${esc2(n.label)}</span></button>`).join('');
-  $s('hvApps').innerHTML = hmSorted(HM.apps).map(([id, a]) => `<button class="hv-app" data-hvf data-t="${esc2(a.target)}" style="--c1:${esc2(a.c1 || '#444')};--c2:${esc2(a.c2 || '#111')}">${hmIcon(a.icon)}<span>${esc2(a.label)}</span></button>`).join('');
+  $s('hvNav').innerHTML = hmSorted(HM.nav).filter(([, n]) => n.target !== 'tv-view').map(([id, n], i) => `<button data-hvf data-t="${esc2(n.target)}" class="${i ? '' : 'on'}">${hmIcon(n.icon)}<span>${esc2(n.label)}</span></button>`).join('');
+  hmRenderApps();
   const bs = hmSorted(HM.banners);
   $s('hvHero').innerHTML = bs.map(([id, b], i) => `<div class="hv-slide ${i ? '' : 'on'}" style="background-image:url('${esc2(b.img)}')"><div><i>${esc2(b.kicker)}</i><h1>${esc2(b.title)}</h1><p>${esc2(b.sub)}</p>${b.btn ? `<button data-hvf data-t="${esc2(b.link)}">${esc2(b.btn)}</button>` : ''}</div></div>`).join('') + (bs.length > 1 ? `<div class="hv-dots">${bs.map((b, i) => `<span data-i="${i}" class="${i ? '' : 'on'}"></span>`).join('')}</div>` : '');
   hmSlide = 0; clearInterval(hmTimer);
@@ -2775,13 +2771,21 @@ function hmRender() {
   requestAnimationFrame(() => { const d = el.firstChild; if (d.scrollWidth > el.clientWidth) { d.className = 'mq'; d.style.setProperty('--d', Math.max(15, d.scrollWidth / 70) + 's'); } });
   hmLive(); hmIcons();
 }
+function hmRenderApps(scrollEnd) {
+  const box = $s('hvApps'); if (!box) return;
+  const base = hmSorted(HM.apps).filter(([, a]) => a.target !== 'tv-view').map(([id, a]) => `<button class="hv-app" data-hvf data-t="${esc2(a.target)}" style="--c1:${esc2(a.c1 || '#444')};--c2:${esc2(a.c2 || '#111')}">${hmIcon(a.icon)}<span>${esc2(a.label)}</span></button>`);
+  const inst = installedAppsId.map(id => { const p = storeCatalogDatabase.find(x => x.id === id); if (!p) return ''; const h = hmHue(p.name); return `<button class="hv-app hv-inst" data-hvf data-t="${esc2(p.id)}" style="--c1:hsl(${h},65%,46%);--c2:hsl(${(h + 45) % 360},65%,16%)">${hmIcon(p.icon)}<span>${esc2(p.name)}</span></button>`; });
+  box.innerHTML = base.concat(inst).join(''); hmIcons();
+  if (scrollEnd) setTimeout(() => box.scrollTo({ left: box.scrollWidth, behavior: 'smooth' }), 60);
+}
+window.hmRenderApps = hmRenderApps;
 function hmShow(i) {
   const s = document.querySelectorAll('.hv-slide'), d = document.querySelectorAll('.hv-dots span'); if (!s.length) return;
   hmSlide = (i + s.length) % s.length; s.forEach((e, k) => e.classList.toggle('on', k === hmSlide)); d.forEach((e, k) => e.classList.toggle('on', k === hmSlide));
 }
 $s('hvHero').onclick = e => { const d = e.target.closest('.hv-dots span'); if (d) return hmShow(+d.dataset.i); const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
 $s('hvNav').onclick = $s('hvApps').onclick = e => { const b = e.target.closest('[data-t]'); if (b) hmGo(b.dataset.t); };
-$s('hvSearch').onkeydown = e => { if (e.key === 'Enter') { openTargetView('tv-view'); tvQuery = e.target.value; $s('tvSearch').value = tvQuery; tvRenderBrowse(); } };
+$s('hvSearch').onkeydown = e => { if (e.key === 'Enter') hvGuideOpen(e.target.value); };
 
 /* Canali in diretta: generati dalla lista M3U attiva (nome + logo dalla lista), colori automatici dal logo */
 const hmHue = n => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
@@ -2799,7 +2803,7 @@ function hmLive() {
   } catch (e) {} }; img.complete ? go() : img.addEventListener('load', go); });
 }
 window.tvRenderHome = hmLive;
-$s('hvLive').onclick = e => { const c = e.target.closest('.hv-ch'); if (c) { openTargetView('tv-view'); selectTvChannel(+c.dataset.n); } };
+$s('hvLive').onclick = e => { const c = e.target.closest('.hv-ch'); if (c) selectTvChannel(+c.dataset.n); };
 
 /* Avatar */
 firebase.auth().onAuthStateChanged(u => {
@@ -2821,13 +2825,13 @@ hmRender();
 
 /* Navigazione con frecce / telecomando */
 document.addEventListener('keydown', e => {
-  if (currentActiveView !== 'home-view' || !/^Arrow/.test(e.key) || /INPUT/.test(e.target.tagName)) return;
-  const all = [...document.querySelectorAll('#hvStage [data-hvf]')], i = all.indexOf(document.activeElement);
+  if (currentActiveView !== 'home-view' || !/^Arrow/.test(e.key) || /INPUT/.test(e.target.tagName) || (window.hvBlockNav && hvBlockNav())) return;
+  const all = [...document.querySelectorAll('#hvStage [data-hvf]')].filter(el => el.offsetParent), i = all.indexOf(document.activeElement);
   const n = all[(i < 0 ? 0 : i + (/Left|Up/.test(e.key) ? -1 : 1) + all.length) % all.length]; if (n) { n.focus(); e.preventDefault(); }
 }, true);
 
 /* ---------- Editor Staff ---------- */
-const HM_CFG = [['brand', 'Nome logo'], ['tag', 'Slogan logo'], ['search', 'Testo ricerca'], ['appsTitle', 'Titolo app'], ['liveTitle', 'Titolo canali'], ['premTitle', 'Premium · titolo'], ['premSub', 'Premium · sottotitolo'], ['premLink', 'Premium · destinazione'], ['powered', 'Testo “Powered by”'], ['heroSec', 'Secondi per banner']];
+const HM_CFG = [['brand', 'Nome logo'], ['search', 'Testo ricerca'], ['appsTitle', 'Titolo app'], ['liveTitle', 'Titolo canali'], ['premTitle', 'Premium · titolo'], ['premSub', 'Premium · sottotitolo'], ['premLink', 'Premium · destinazione'], ['powered', 'Testo “Powered by”'], ['heroSec', 'Secondi per banner']];
 const HM_SCH = {
   banners: ['Banner scorrevoli', [['kicker', 'Sopratitolo'], ['title', 'Titolo'], ['sub', 'Sottotitolo'], ['btn', 'Testo pulsante'], ['img', 'Link immagine (https://…)'], ['link', 'Destinazione (vista, list:ID o https://…)'], ['order', 'Ordine', 1]]],
   apps: ['App preferite (riquadri colorati)', [['label', 'Nome'], ['icon', 'Icona (nome lucide, emoji o link)'], ['c1', 'Colore 1 (#hex)'], ['c2', 'Colore 2 (#hex)'], ['target', 'Destinazione'], ['order', 'Ordine', 1]]],
@@ -2954,8 +2958,8 @@ function tvRenderHome(){
 document.addEventListener('click',e=>{
     const c=e.target.closest('.atv-card'); if(!c) return;
     if(c.dataset.more){tvMore[c.dataset.more]=true;tvRenderBrowse();return;}
-    if(c.dataset.all){openTargetView('tv-view');return;}
-    if(currentActiveView!=='tv-view') openTargetView('tv-view'); selectTvChannel(+c.dataset.n);
+    if(c.dataset.all){hvGuideOpen();return;}
+    hvGuideClose(); selectTvChannel(+c.dataset.n);
 });
 $s('tvLists').onclick=e=>{const b=e.target.closest('.chip');if(b&&b.dataset.l){tvMore={};sbSelectList(b.dataset.l);}};
 $s('chListContainer').onclick=e=>{const r=e.target.closest('.ch-row');if(r){selectTvChannel(+r.dataset.n);}};
@@ -2966,11 +2970,11 @@ function sbSetChs(a){ sbChs=a; sbApply(); tvBuild(); }
 const _sbRL=sbRenderLists; sbRenderLists=function(){ _sbRL(); tvBuild(); };
 
 /* player */
-function tvShow(p){ tvPlaying=p; $s('tv-view').classList.toggle('tv-playing',p); document.body.classList.toggle('tvp',p&&currentActiveView==='tv-view'); }
+function tvShow(p){ tvPlaying=p; $s('hvTvBox').classList.toggle('live',p); if(!p) hvCollapse(); }
 function tvKill(){ if(tvHls){tvHls.destroy();tvHls=null;} const v=$s('tvVideo'); if(v){v.pause();v.removeAttribute('src');v.load();} }
 function tvStop(){ tvKill(); pauseWebTV(); $s('tvPlayerCore').innerHTML=''; $s('tvMsg').textContent=''; tvShow(false); }
 function tvBackToBrowse(){ tvStop(); document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active')); }
-function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
+function tvUi(){ const p=$s('tvPlayer'); p.classList.add('ui'); if(hvExpanded()) $s('tvSidebar').classList.add('open'); clearTimeout(tvUiT); tvUiT=setTimeout(()=>{p.classList.remove('ui');$s('tvSidebar').classList.remove('open');},4500); }
 $s('tvPlayer').addEventListener('mousemove',tvUi); $s('tvPlayer').addEventListener('touchstart',tvUi,{passive:true});
 function tvMsg(t){ const m=$s('tvMsg'); m.textContent=t||''; m.className=/ASSENTE/.test(t||'')?'err':''; }
 function tvPlayUrl(ch){
@@ -2988,7 +2992,8 @@ function selectTvChannel(num){
     num=parseInt(num,10);
     if(!(num>=1&&num<=tvLineup.length)){ triggerNotification('Canale non disponibile'); return; }
     currentChannelNum=num; const ch=tvLineup[num-1];
-    tvShow(true); document.body.classList.toggle('tvp',currentActiveView==='tv-view');
+    tvShow(true); try{localStorage.setItem('aura_last_ch',num);}catch(e){}
+    document.querySelectorAll('.hv-ch').forEach(b=>b.classList.toggle('playing',+b.dataset.n===num));
     document.querySelectorAll('.ch-row').forEach(r=>r.classList.remove('active'));
     const row=$s('sidebar-ch-'+num); if(row){ row.classList.add('active'); row.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}); }
     $s('tvChTitle').innerText=tvNn(num)+' - '+ch.name; $s('tvChStatus').innerText=ch.web?'Palinsesto WebTV Cloud':(ch.group||'');
@@ -3001,43 +3006,44 @@ function selectTvChannel(num){
 function tvStep(d){ let n=currentChannelNum+d; if(n<1) n=tvLineup.length; if(n>tvLineup.length) n=1; selectTvChannel(n); }
 window.tvToggleM3u=function(){ const v=$s('tvVideo'); if(currentChannelNum===1||!v) return false; v.paused?v.play():v.pause(); return true; };
 const _sbStepOld=window.sbStep;
-sbStep=function(d){ if(currentActiveView==='tv-view'||currentActiveView==='home-view'){ if(currentActiveView!=='tv-view') openTargetView('tv-view'); if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
+sbStep=function(d){ if(currentActiveView==='home-view'){ if(!tvPlaying&&currentChannelNum===1&&tvLineup.length>1) currentChannelNum=d>0?1:2; tvStep(d); } else _sbStepOld(d); };
 window.sbStep=sbStep;
 
 /* navigazione viste (Staff = schermata a sé, sempre visibile) */
 function openTargetView(id){
-    const leaving=currentActiveView==='tv-view'&&id!=='tv-view';
+    if(id==='tv-view') id='home-view';          /* la TV vive nella home */
+    const leaving=currentActiveView==='home-view'&&id!=='home-view';
     document.querySelectorAll('.view-frame').forEach(v=>v.classList.remove('active'));
     $s('staff-view').classList.toggle('open',id==='staff-view');
     const t=document.getElementById(id); if(t&&t.classList.contains('view-frame')) t.classList.add('active');
     currentActiveView=id; $s('tvSidebar').classList.remove('open');
-    if(leaving) tvStop();
-    if(id==='tv-view'&&!tvPlaying) tvShow(false);
-    if(id==='tv-view'&&tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync();
-    document.body.classList.toggle('tvp',id==='tv-view'&&tvPlaying);
+    if(leaving){ tvStop(); hvGuideClose(); }
+    if(id==='home-view'){ hvGuideClose(); hvCollapse(); if(tvPlaying&&currentChannelNum===1&&window.webtvInitialized) forceLiveSync(); }
 }
 function goHome(){ openTargetView('home-view'); }
 const tvIsBack=e=>/^(Escape|Backspace|GoBack|BrowserBack|XF86Back)$/.test(e.key)||e.keyCode===10009||e.keyCode===461;
 document.addEventListener('keydown',e=>{
-    if(currentActiveView==='tv-view'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){
-        if(tvPlaying){
-            const k=e.key; let h=true;
-            if(tvIsBack(e)) tvBackToBrowse();
-            else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
-            else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
-            else if(k==='Enter'||k===' '){ tvUi(); if(!window.tvToggleM3u()){} } else h=false;
-            if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
-        } else if(tvIsBack(e)){
-            e.preventDefault(); e.stopImmediatePropagation(); goHome();
-        } else if(e.key.startsWith('Arrow')){
-            const all=[...document.querySelectorAll('#tvBrowse .atv-card,#tvBrowse .chip,#tvSearch')],a=document.activeElement,i=all.indexOf(a);
-            if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
-            const r=a.getBoundingClientRect();let t=null;
-            if(e.key==='ArrowRight')t=all[i+1];else if(e.key==='ArrowLeft')t=all[i-1];
-            else{const dir=e.key==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
-            if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
-        }
+    if(currentActiveView!=='home-view') return;
+    const inp=/INPUT|TEXTAREA|SELECT/.test(e.target.tagName), k=e.key;
+    if(hvGuideOn()){
+        if(tvIsBack(e)&&!(inp&&k==='Backspace')){ e.preventDefault(); e.stopImmediatePropagation(); hvGuideClose(); return; }
+        if(inp||!k.startsWith('Arrow')) return;
+        const all=[...document.querySelectorAll('#hvGuide .atv-card,#hvGuide .chip,#tvSearch,#hvGuideX')],a=document.activeElement,i=all.indexOf(a);
+        if(!all.length) return; if(i<0){all[0].focus();e.preventDefault();return;}
+        const r=a.getBoundingClientRect();let t=null;
+        if(k==='ArrowRight')t=all[i+1];else if(k==='ArrowLeft')t=all[i-1];
+        else{const dir=k==='ArrowDown'?1:-1;let bd=1e9;all.forEach(c=>{const b=c.getBoundingClientRect(),dy=(b.top-r.top)*dir;if(dy>20){const d=dy*3+Math.abs(b.left-r.left);if(d<bd){bd=d;t=c;}}});}
+        if(t){e.preventDefault();t.focus();t.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}
+        return;
     }
+    if(inp||!hvExpanded()) return;
+    if((k==='Enter'||k===' ')&&e.target.closest&&e.target.closest('.hv-tvctl')) return;
+    let h=true;
+    if(tvIsBack(e)) hvCollapse();
+    else if(k==='ArrowRight'||k==='ArrowUp'||k==='ChannelUp') tvStep(1);
+    else if(k==='ArrowLeft'||k==='ArrowDown'||k==='ChannelDown') tvStep(-1);
+    else if(k==='Enter'||k===' '){ tvUi(); window.tvToggleM3u(); } else h=false;
+    if(h){ e.preventDefault(); e.stopImmediatePropagation(); }
 },true);
 
 /* ---------- STAFF: lettura robusta + errori visibili ---------- */
@@ -3058,6 +3064,57 @@ async function sbFetchText(url){
     throw new Error(((last&&last.message)||'Download non riuscito')+' Prova con “File” o “Incolla”.');
 }
 tvBuild();
+</script>
+<style id="aura-home-tv">
+/* ===== TV integrata nella Home ===== */
+.hv-tvbox{left:313px;top:131px;width:544px;height:306px;border-radius:34px;border:2px solid rgba(190,130,255,.9);overflow:hidden;box-shadow:0 0 28px rgba(150,80,255,.55);background:#000;z-index:3}
+.hv-tvbox.full{left:0;top:0;width:1672px;height:941px;border-radius:0;border:0;box-shadow:none;z-index:70}
+#hvTvBox .hv-tvidle{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:radial-gradient(circle at 50% 38%,rgba(130,70,255,.5),transparent 70%),linear-gradient(135deg,#120a34,#1d0f4d 55%,#08323f)}
+.hv-play{width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.14);border:3px solid #fff;display:grid;place-items:center;box-shadow:0 0 26px rgba(170,90,255,.8);transition:.25s}
+.hv-play::before{content:'';margin-left:8px;border-left:28px solid #fff;border-top:17px solid transparent;border-bottom:17px solid transparent}
+.hv-tvidle:hover .hv-play,.hv-tvidle:focus-visible .hv-play{transform:scale(1.1)}
+.hv-tvidle b{font-size:30px;font-weight:800;margin-top:10px}.hv-tvidle small{font-size:18px;color:#d9c8ff}
+#hvTvBox.live .hv-tvidle{display:none}
+#hvTvBox #tvPlayer{display:none}#hvTvBox.live #tvPlayer{display:block}
+#hvTvBox:not(.full) #tvSidebar{display:none!important}
+#hvTvBox .tv-channel-overlay{top:16px!important;bottom:auto!important;left:22px!important}
+#hvTvBox .tv-channel-overlay h1{font-size:28px!important}#hvTvBox .tv-channel-overlay p{font-size:13px;margin-top:4px}
+#hvTvBox.full .tv-channel-overlay{top:40px!important;left:60px!important}
+#hvTvBox.full .tv-channel-overlay h1{font-size:64px!important}#hvTvBox.full .tv-channel-overlay p{font-size:22px}
+#hvTvBox .tv-osd-input{font-size:2rem;padding:4px 16px;right:20px;top:64px}
+#hvTvBox.full .tv-osd-input{font-size:5rem;padding:10px 40px;right:60px;top:40px}
+.hv-tvctl{position:absolute;top:14px;right:14px;z-index:60;display:flex;gap:10px;opacity:0;transition:.3s}
+#tvPlayer.ui .hv-tvctl,.hv-tvctl:focus-within{opacity:1}
+#hvTvBox .hv-tvctl button{width:44px;height:44px;border-radius:50%;background:rgba(20,24,40,.65);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.3);font-size:22px;line-height:1;display:grid;place-items:center}
+#hvTvBox.full .hv-tvctl{top:30px;right:40px;gap:16px}#hvTvBox.full .hv-tvctl button{width:60px;height:60px;font-size:30px}
+.hv-hero{left:873px!important;width:777px!important}
+.hv-slide div{left:48px!important;top:36px!important}.hv-slide h1{font-size:72px!important}.hv-slide p{font-size:24px!important;margin-bottom:18px!important}
+.hv-slide button{width:236px!important}
+.hv-apps{left:296px!important;top:489px!important;width:1364px!important;height:134px!important;padding:10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.hv-apps::-webkit-scrollbar{display:none}.hv-app{flex:1 0 150px}
+.hv-ch.playing{outline:3px solid #fff;outline-offset:3px}
+.hv-guide{left:0;top:0;width:1672px;height:941px;z-index:60;display:none;background:radial-gradient(ellipse 60% 40% at 70% 0,rgba(130,70,255,.35),transparent 70%),rgba(5,7,18,.97)}
+.hv-guide.open{display:block}
+#hvGuide #tvBrowse{padding:40px 0 80px}
+#hvGuide .tvb-head,#hvGuide .chips,#hvGuide .atv-row h3{padding-left:60px;padding-right:60px}
+#hvGuide .rail{padding:22px 60px 34px!important}
+#hvGuide .chip{background:rgba(255,255,255,.1)}#hvGuide .chip.on{background:#fff;color:#000}
+#hvGuideX{padding:12px 26px;border-radius:999px;background:rgba(255,255,255,.14);font-weight:700;font-size:18px;margin-left:auto}
+#hvGuideX:focus-visible{outline:4px solid #fff;outline-offset:3px}
+</style>
+<script>
+/* ===== AuraTV · TV dentro la Home ===== */
+function hvExpanded(){ return $s('hvTvBox').classList.contains('full'); }
+function hvGuideOn(){ return $s('hvGuide').classList.contains('open'); }
+window.hvBlockNav=()=>hvExpanded()||hvGuideOn();
+function hvExpand(){ $s('hvTvBox').classList.add('full'); document.body.classList.add('tvp'); $s('hvTvExp').textContent='⤡'; tvUi(); }
+function hvCollapse(){ $s('hvTvBox').classList.remove('full'); document.body.classList.remove('tvp'); $s('tvSidebar').classList.remove('open'); $s('hvTvExp').textContent='⤢'; }
+function hvToggleFull(){ hvExpanded()?hvCollapse():hvExpand(); }
+function hvGuideOpen(q){ if(typeof q==='string'){ tvQuery=q; $s('tvSearch').value=q; } tvRenderBrowse(); $s('hvGuide').classList.add('open'); }
+function hvGuideClose(){ $s('hvGuide').classList.remove('open'); }
+function tvPlayInline(){ let n=1; try{ n=parseInt(localStorage.getItem('aura_last_ch'),10)||1; }catch(e){} if(n>tvLineup.length) n=1; selectTvChannel(n); }
+$s('hvTvIdle').onclick=tvPlayInline;
+hmRender();
 </script>
 </body>
 </html>
